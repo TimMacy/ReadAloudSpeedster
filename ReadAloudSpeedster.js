@@ -3,13 +3,13 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      GNU AFFERO GENERAL PUBLIC LICENSE-3.0
-// @version      3.0
+// @version      3.0.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
 // @grant        GM.setValue
 // @grant        GM.getValue
-// @run-at       document-end
+// @run-at       document-start
 // @homepageURL  https://github.com/TimMacy/ReadAloudSpeedster
 // @supportURL   https://github.com/TimMacy/ReadAloudSpeedster/issues
 // @updateURL    https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js
@@ -92,12 +92,34 @@
             opacity: 0.5;
         } */
 
-        /* select color
+        /* select color */
         ::selection {
-            background: #00519d;
-
             background-color: var(--text-primary);
             color: var(--main-surface-tertiary);
+        }
+
+        /* right button height
+        .w-7 {
+            width: 2.25rem !important
+        }
+
+        .h-7 {
+            height: 2.25rem !important
+        }
+
+        [data-testid="composer-speech-button"].w-7.\\!h-7,
+        button[data-testid="composer-speech-button"] {
+            width: 2.25rem !important;
+            height: 2.25rem !important;
+        } */
+
+        /* darker bg for chatbox and header
+        main form .bg-token-main-surface-primary {
+            background-color: #141414 !important;;
+        }
+
+        .light .h-header-height {
+            background: #171717 !important;
         } */
 
         /**************************************
@@ -258,7 +280,10 @@
                     }
 
                     /* chatbox - radius */
-                    .rounded-3xl {
+                    .rounded-3xl,
+                    .rounded-b-3xl,
+                    .rounded-t-3xl,
+                    .rounded-\\[28px\\] {
                         border-radius: .25em !important;
                     }
 
