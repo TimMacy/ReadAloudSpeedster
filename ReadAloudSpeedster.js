@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      GNU AFFERO GENERAL PUBLIC LICENSE-3.0
-// @version      3.0.1
+// @version      3.0.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -15,6 +15,17 @@
 // @updateURL    https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js
 // @downloadURL  https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js
 // ==/UserScript==
+
+/************************************************************************
+*                                                                       *
+*                    Copyright © 2025 Tim Macy                          *
+*                    GNU Affero General Public License v3.0             *
+*                    Version: 3.0.2 - Read Aloud Speedster              *
+*                    All Rights Reserved.                               *
+*                                                                       *
+*             Visit: https://github.com/TimMacy                         *
+*                                                                       *
+************************************************************************/
 
 (function() {
     'use strict';
@@ -94,6 +105,7 @@
 
         /* select color */
         ::selection {
+            /*background: #00519d;*/
             background-color: var(--text-primary);
             color: var(--main-surface-tertiary);
         }
@@ -118,7 +130,7 @@
             background-color: #141414 !important;;
         }
 
-        .light .h-header-height {
+        .h-header-height {
             background: #171717 !important;
         } */
 
@@ -261,7 +273,7 @@
                 squareStyleSheet.textContent = `
                     /* button 'send prompt' radius */
                     button[aria-label="Send prompt"], button[aria-label="Stop streaming"], button[aria-label="Start voice mode"] {
-                        border-radius: 8px !important;
+                        border-radius: 4px !important;
                     }
 
                     /* button radii */
@@ -411,6 +423,7 @@
         configPopup.appendChild(input);
         configPopup.appendChild(toggleContainer);
         configPopup.appendChild(saveButton);
+        document.body.appendChild(configPopup);
 
         return configPopup;
     }
@@ -468,11 +481,18 @@
 
         function handleSpeedClick(e) {
             e.stopPropagation();
-            if (!configPopup || !document.contains(configPopup)) {
+            if (!configPopup || !document.body.contains(configPopup)) {
                 configPopup = createConfigPopup();
-                controlsContainer.appendChild(configPopup);
             }
             configPopup.classList.toggle('show');
+
+            if (configPopup.classList.contains('show')) {
+                const rect = e.target.getBoundingClientRect();
+                configPopup.style.position = 'absolute';
+                configPopup.style.bottom = `${window.innerHeight - rect.top + 10}px`;
+                configPopup.style.left = `${rect.left + (rect.width / 2)}px`;
+                configPopup.style.transform = 'translateX(-50%)';
+            }
         }
 
         minusButton.addEventListener('click', handleMinus);
@@ -485,6 +505,7 @@
 
         const target = document.querySelector('div[style*="var(--vt-composer-system-hint-action)"]');
         if (target) target.insertAdjacentElement('beforebegin', controlsContainer);
+        else if (document.querySelector('div[style*="var(--vt-composer-attach-file-action)"]')?.insertAdjacentElement('afterend', controlsContainer));
     }
 
     // handle cleanup
