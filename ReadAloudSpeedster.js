@@ -175,12 +175,12 @@
 
         .speed-btn:hover,
         .speed-control-config-popup button:hover {
-            background-color: rgb(66 66 66/var(--tw-bg-opacity));
+            background-color: var(--main-surface-secondary);
         }
 
         .speed-btn:active,
         .speed-control-config-popup button:active {
-            background-color: #0000001a;
+            background-color: oklab(0 0 0/.1);
         }
 
         .speed-display {
