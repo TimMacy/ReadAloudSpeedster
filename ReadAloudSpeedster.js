@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      GNU AFFERO GENERAL PUBLIC LICENSE-3.0
-// @version      3.0.3
+// @version      3.0.7
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.0.3 - Read Aloud Speedster              *
+*                    Version: 3.0.7 - Read Aloud Speedster              *
 *                    All Rights Reserved.                               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
@@ -45,8 +45,19 @@
         }
 
         /* chatbox - fade effect for content */
-        main form > div > .w-full {
-            box-shadow: 0 -10px 10px 0px var(--main-surface-primary);
+        main form {
+            box-shadow: 0 -10px 10px 0px var(--main-surface-primary) !important;
+            border-top-left-radius: .25em !important;
+            border-top-right-radius: .25em !important;
+        }
+
+        /* chatbox border color
+        main form > div:first-child {
+            border: 1px solid #2d2d2d;
+        }  */
+
+        .light main form > div:first-child {
+            border: 1px solid #e6e6e6;
         }
 
         /* copy icon */
@@ -66,6 +77,16 @@
             opacity: .8;
         }
 
+        /* edit in canvas icon */
+        button[aria-label="Edit in canvas"] .icon-md {
+            color: darkorchid !important;
+        }
+
+        /* switch model icon */
+        main .flex.justify-start button[aria-haspopup="menu"][data-state="closed"] > div {
+            color: gray !important;
+        }
+
         /* read aloud and stop icon */
         button[aria-label="Read aloud"] .icon-md-heavy,
         button[aria-label="Stop"] .icon-md-heavy {
@@ -82,18 +103,33 @@
             color: darkviolet !important;
         }
 
-        /* hide 'view plans' banner
-        .h-full.w-\\[260px\\] .dark\\:border-white\\/20:is(.dark *) {
+        /* red delete color */
+        [data-testid="delete-chat-menu-item"] {
+            color: #e02e2a !important;
+        }
+
+        [data-testid="delete-chat-menu-item"]:hover {
+            color: white !important;
+            background: rgba(255, 0, 0, .5) !important;
+        }
+
+        /* hide dictate button
+        button[aria-label="Dictate button"] {
             display: none;
         } */
 
-        /* hide 'chat can make mistakes' text
+        /* hide 'view plans' banner
+        a.group:has(svg.icon-sm path[d^="M12.5001 3.44338"]) {
+            display: none;
+        } */
+
+        /* hide 'chat can make mistakes'
         .relative.flex.min-h-8.w-full.items-center.justify-center.p-2.text-center.text-xs.text-token-text-secondary.md\\:px-\\[60px\\] {
             display: none;
         } */
 
         /* add space below chatbox
-        .xl\\:px-5 {
+        .xl\\:px-5, main form {
             padding-bottom: 1rem;
         } */
 
@@ -105,33 +141,28 @@
 
         /* select color */
         ::selection {
-            /*background: #00519d;*/
             background-color: var(--text-primary);
             color: var(--main-surface-tertiary);
         }
 
-        /* right button height
-        .w-7 {
-            width: 2.25rem !important
-        }
-
-        .h-7 {
-            height: 2.25rem !important
-        }
-
-        [data-testid="composer-speech-button"].w-7.\\!h-7,
-        button[data-testid="composer-speech-button"] {
-            width: 2.25rem !important;
-            height: 2.25rem !important;
-        } */
-
         /* darker bg for chatbox and header
-        main form .bg-token-main-surface-primary {
+        main form > div:first-child {
             background-color: #141414 !important;;
         }
 
         .h-header-height {
             background: #171717 !important;
+        } */
+
+        /* hide 'Get Pro' button
+        div.flex.shrink-0.gap-2.pb-1.md\\:pb-0 {
+            display: none;
+        } */
+
+        /* keep icons visible
+        main [class*="[mask-image"] {
+            mask-image: none !important;
+            -webkit-mask-image: none !important;
         } */
 
         /**************************************
@@ -150,7 +181,7 @@
             justify-content: center;
             height: 36px;
             min-width: 36px;
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border-default);
             font-size: .75rem;
             line-height: 1rem;
             font-weight: 600;
@@ -175,12 +206,12 @@
 
         .speed-btn:hover,
         .speed-control-config-popup button:hover {
-            background-color: var(--main-surface-secondary);
+            background-color: oklab(0 none none/.15);
         }
 
         .speed-btn:active,
         .speed-control-config-popup button:active {
-            background-color: oklab(0 0 0/.1);
+            background-color: oklab(0 none none/.25);
         }
 
         .speed-display {
@@ -190,7 +221,7 @@
             height: 36px;
             min-width: 36px;
             padding: .5rem;
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border-default);
             font-size: .75rem;
             line-height: 1rem;
             font-weight: 600;
@@ -209,7 +240,7 @@
             left: 50%;
             transform: translateX(-50%);
             background: var(--main-surface-primary);
-            border: 1px solid var(--border-light);
+            border: 1px solid var(--border-default);
             border-radius: 3px;
             padding: 8px;
             margin-bottom: 4px;
@@ -225,7 +256,7 @@
 
         .speed-control-config-popup input[type="number"] {
             width: 6ch;
-            border: 1px solid var(--border-light);
+            border: 1px solid rgba(255, 255, 255, 0.27);
             border-radius: 3px;
             background: transparent;
             color: var(--text-primary);
@@ -235,7 +266,7 @@
 
         .speed-control-config-popup button {
             padding: 4px 8px;
-            border: 1px solid var(--border-light);
+            border: 1px solid rgba(255, 255, 255, 0.27);
             border-radius: 3px;
             background: transparent;
             color: var(--text-secondary);
@@ -295,19 +326,30 @@
                     .rounded-3xl,
                     .rounded-b-3xl,
                     .rounded-t-3xl,
-                    .rounded-\\[28px\\] {
-                        border-radius: .25em !important;
+                    .rounded-\\[28px\\],
+                    .rounded-\\[24px\\] {
+                        border-radius: 2px !important;
                     }
 
-                    /* popup radii */
-                    .rounded-lg, .rounded-2xl {
-                        border-radius: .25rem !important;
+                    /* popup radii and overlay */
+                    .rounded-lg, .rounded-2xl, .rounded-\\[10px\\] {
+                        border-radius: 2px !important;
                     }
 
                     /* reply radii */
                     .rounded-b-lg,
                     .rounded-t-\\[20px\\] {
                         border-radius: 0 !important;
+                    }
+
+                    /* canvas */
+                    body > div.flex.h-full.w-full.flex-col > div > div.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow > div > div > section > main > div > div > div.block.h-auto > div > div.border-token-border-default.absolute.overflow-visible.border.transition-colors.select-none.z-70.bg-white\\!.text-black\\!,
+                    body > div.flex.h-full.w-full.flex-col > div > div.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow > div > div > section > main > div > div > div.block.h-auto > div > div.border-token-border-default.absolute.overflow-visible.border.transition-colors.select-none.z-70.bg-token-main-surface-primary.shadow-xl,
+                    body > div.flex.h-full.w-full.flex-col > div > div.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow > div > div > section > main > div > div > div.block.h-auto > div > div.border-token-border-default.absolute.overflow-visible.border.transition-colors.select-none.z-70.bg-token-main-surface-primary.shadow-lg {
+                        border-radius: 0 !important;
+                        right: -1px !important;
+                        bottom: -1px !important;
+
                     }
                 `;
                 document.head.appendChild(squareStyleSheet);
