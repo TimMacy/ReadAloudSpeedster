@@ -2,8 +2,8 @@
 // @name         Read Aloud Speedster
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
-// @license      GNU AFFERO GENERAL PUBLIC LICENSE-3.0
-// @version      3.0.7.1
+// @license      AGPL-3.0-or-later
+// @version      3.0.8
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.0.7.1 - Read Aloud Speedster            *
+*                    Version: 3.0.8 - Read Aloud Speedster              *
 *                    All Rights Reserved.                               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
@@ -54,7 +54,7 @@
         /* chatbox border color
         main form > div:first-child {
             border: 1px solid #2d2d2d;
-        }  */
+        } */
 
         .light main form > div:first-child {
             border: 1px solid #e6e6e6;
@@ -183,6 +183,7 @@
             position: relative;
             display: flex;
             align-items: center;
+            margin: 0 8px;
         }
 
         .speed-btn {
@@ -191,7 +192,6 @@
             justify-content: center;
             height: 36px;
             min-width: 36px;
-            border: 1px solid var(--border-default);
             font-size: .75rem;
             line-height: 1rem;
             font-weight: 600;
@@ -205,13 +205,41 @@
         }
 
         .speed-btn.minus {
-            border-radius: 100% 0 0 100%;
+            border-radius: 50%;
             border-right: none;
         }
 
         .speed-btn.plus {
-            border-radius: 0 100% 100% 0;
+            border-radius: 50%;
             border-left: none;
+        }
+
+        .speed-btn.plus::before,
+        .speed-btn.minus::before,
+        .speed-display::before,
+        .speed-display::after {
+            content: '';
+            position: absolute;
+            width: 1px;
+            height: 12px;
+            background-color: var(--border-default);
+            display: var(--show-dividers, block);
+        }
+
+        .speed-btn.plus::before {
+            right: 0;
+        }
+
+        .speed-btn.minus::before {
+            left: 0;
+        }
+
+        .speed-display::after {
+            transform: translateX(18px);
+        }
+
+        .speed-display::before {
+            transform: translateX(-18px);
         }
 
         .speed-btn:hover,
@@ -231,7 +259,6 @@
             height: 36px;
             min-width: 36px;
             padding: .5rem;
-            border: 1px solid var(--border-default);
             font-size: .75rem;
             line-height: 1rem;
             font-weight: 600;
@@ -274,6 +301,10 @@
             margin-right: 10px;
         }
 
+        .light .speed-control-config-popup input[type="number"] {
+            border-color: rgba(0, 0, 0, 0.27);
+        }
+
         .speed-control-config-popup button {
             padding: 4px 8px;
             border: 1px solid rgba(255, 255, 255, 0.27);
@@ -281,6 +312,10 @@
             background: transparent;
             color: var(--text-secondary);
             cursor: pointer;
+        }
+
+        .light .speed-control-config-popup button {
+            border-color: rgba(0, 0, 0, 0.27);
         }
 
         .speed-control-config-popup .toggle-container {
@@ -337,7 +372,9 @@
                     .rounded-b-3xl,
                     .rounded-t-3xl,
                     .rounded-\\[28px\\],
-                    .rounded-\\[24px\\] {
+                    .rounded-\\[24px\\],
+                    .composer-btn::before,
+                    .surface-popover:before {
                         border-radius: 2px !important;
                     }
 
@@ -353,13 +390,29 @@
                     }
 
                     /* canvas */
-                    body > div.flex.h-full.w-full.flex-col > div > div.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow > div > div > section > main > div > div > div.block.h-auto > div > div.border-token-border-default.absolute.overflow-visible.border.transition-colors.select-none.z-70.bg-white\\!.text-black\\!,
-                    body > div.flex.h-full.w-full.flex-col > div > div.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow > div > div > section > main > div > div > div.block.h-auto > div > div.border-token-border-default.absolute.overflow-visible.border.transition-colors.select-none.z-70.bg-token-main-surface-primary.shadow-xl,
-                    body > div.flex.h-full.w-full.flex-col > div > div.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow > div > div > section > main > div > div > div.block.h-auto > div > div.border-token-border-default.absolute.overflow-visible.border.transition-colors.select-none.z-70.bg-token-main-surface-primary.shadow-lg {
+                    main .text-black\\!,
+                    #prosemirror-context-children > div,
+                    main .shadow-xl:not([role="toolbar"]),
+                    main .shadow-lg:not([role="toolbar"]),
+                    main div.border-token-border-default.z-70 {
                         border-radius: 0 !important;
                         right: -1px !important;
                         bottom: -1px !important;
 
+                    }
+
+                    .speed-btn,
+                    .speed-display,
+                    .composer-btn:enabled {
+                        border: 1px solid var(--border-default);
+                    }
+
+                    :root {
+                        --show-dividers: none !important;
+                    }
+
+                    .bg-token-border-default {
+                        background-color: transparent;
                     }
                 `;
                 document.head.appendChild(squareStyleSheet);
