@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#changelog"><img align="right" src="https://img.shields.io/badge/Version-3.0.8-white.svg" alt="Version: 3.0.8"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a> 
+# Read Aloud Speedster <a href="#changelog"><img align="right" src="https://img.shields.io/badge/Version-3.0.8.1-white.svg" alt="Version: 3.0.8.1"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a> 
 
 This script integrates intuitive playback speed controls into the chatbox interface. Clicking the speed display opens a popup menu to set a preferred default playback speed and the option to toggle the square design. Furthermore, the icons under Chat's responses are color-coded, and bold text is highlighted in color.
 
@@ -22,6 +22,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 2. **Install** [ReadAloudSpeedster.js](https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js)
 
 ## Changelog
+- **3.0.8.1**: fixed spacing for research sources button when using square design
 - **3.0.8**: adjustments for the latest changes
 - **3.0.7.1**: dark and light mode adjustments for “Edit in canvas” and “Switch model” icons
 - **3.0.7**: improvements
