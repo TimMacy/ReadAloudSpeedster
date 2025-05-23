@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.0.8.1
+// @version      3.0.8.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.0.8.1 - Read Aloud Speedster            *
+*                    Version: 3.0.8.2 - Read Aloud Speedster            *
 *                    All Rights Reserved.                               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
@@ -129,12 +129,12 @@
         } */
 
         /* hide 'view plans' banner
-        a.group:has(svg.icon-sm path[d^="M12.5001 3.44338"]) {
+        div.__menu-item:has(svg.icon-md path[d^="M12.5001 3.44338"]) {
             display: none;
         } */
 
-        /* hide 'chat can make mistakes'
-        .relative.flex.min-h-8.w-full.items-center.justify-center.p-2.text-center.text-xs.text-token-text-secondary.md\\:px-\\[60px\\] {
+        /* hide 'chat can make mistakes' text 
+        div.text-token-text-secondary[class*="md:px-"] {
             display: none;
         } */
 
@@ -368,6 +368,7 @@
                     }
 
                     /* chatbox - radius */
+                    .__menu-item,
                     .rounded-3xl,
                     .rounded-b-3xl,
                     .rounded-t-3xl,
