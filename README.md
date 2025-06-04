@@ -33,7 +33,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **3.0**: initial public release
 
 ## License
-This project is licensed under the AGPL-3.0 License. See the [LICENSE](https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE) file for details.
+The code of this project is licensed under the AGPL-3.0 License. See the [LICENSE](https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE) file for details.
 
 <br>
 
