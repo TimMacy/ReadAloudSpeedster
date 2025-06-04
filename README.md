@@ -6,7 +6,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **Native Integration**: Implements a native-looking UI that seamlessly blends with the existing layout in both light and dark modes.
 - **Default Speed Control**: Automatically applies the saved playback speed to detected audio elements.
 - **Adjust On-the-Fly**: Easily adjust playback speed from 1x to 17x in 0.25x increments using plus/minus buttons.
-- **Persistent Storage**: Clicking the speed display opens a popup menu for saving a default speed and toggling the square design.
+- **Persistent Storage**: Clicking the speed display opens a popup menu for saving a default speed and toggling the square design.
 - **Color-Coded Icons**: Copy, thumbs up/down, read aloud, and stop buttons are assigned specific colors.
 - **Highlight Color**: Green in dark mode and violet in light mode.
 - **Customizable**: Appearance can be easily modified through clearly commented code in the `user settings` section at the top of the script.
