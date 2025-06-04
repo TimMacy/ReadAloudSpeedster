@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.0.8.2
+// @version      3.0.9
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -12,16 +12,15 @@
 // @run-at       document-start
 // @homepageURL  https://github.com/TimMacy/ReadAloudSpeedster
 // @supportURL   https://github.com/TimMacy/ReadAloudSpeedster/issues
-// @updateURL    https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js
-// @downloadURL  https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js
+// @updateURL    https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/main/ReadAloudSpeedster.js
+// @downloadURL  https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/main/ReadAloudSpeedster.js
 // ==/UserScript==
 
 /************************************************************************
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.0.8.2 - Read Aloud Speedster            *
-*                    All Rights Reserved.                               *
+*                    Version: 3.0.9 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -61,18 +60,24 @@
         }
 
         /* copy icon */
-        button[aria-label="Copy"] .icon-md-heavy {
+        button[aria-label="Copy"] .icon-md-heavy,
+        div[role="menuitem"]:has(path[d^="M12 7.1a"]),
+        button.surface-nav-element:has(svg path[d^="M12 7.1a"]) {
             color: darkorange !important;
             opacity: .8;
         }
 
         /* thumbs up icon */
+        button .icon-md path[d^="M12.1318"],
+        div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
         button[aria-label="Good response"] .icon-md-heavy {
             color: forestgreen !important;
         }
 
         /* thumbs down icon */
-        button[aria-label="Bad response"] .icon-md-heavy {
+        button .icon-md path[d^="M11.8727"],
+        button[aria-label="Bad response"] .icon-md-heavy,
+        button.surface-nav-element:has(svg path[d^="M11.868 21"]) {
             color: crimson !important;
             opacity: .8;
         }
@@ -98,8 +103,9 @@
         }
 
         /* read aloud and stop icon */
+        button[aria-label="Stop"] .icon-md-heavy,
         button[aria-label="Read aloud"] .icon-md-heavy,
-        button[aria-label="Stop"] .icon-md-heavy {
+        div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]) {
             color: deepskyblue !important;
         }
 
@@ -108,19 +114,41 @@
             color: springgreen !important;
         }
 
+        /* sora star icon */
+        a:has(svg path[d^="M9.822 2.077c"]),
+        div.pointer-events-none path[d^="M10.258"],
+        button.surface-nav-element path[d^="M10.258"],
+        div[role="menuitem"]:has(path[d^="M9.822 2.077c"]),
+        button.surface-nav-element path[d^="M9.822 2.077c"],
+        div[role="menuitem"]:has(path[d^="M10.258 1.555c"]) {
+            color: gold;
+        }
+
         /* highlight color - light mode */
         .light .markdown strong {
             color: darkviolet !important;
         }
 
         /* red delete color */
-        [data-testid="delete-chat-menu-item"] {
+        .text-token-text-destructive,
+        button:has(path[d^="m10 11.5 4"]),
+        [data-testid="delete-chat-menu-item"],
+        div[role="menuitem"]:has(path[d^="M10.556 4a1 1 0"]) {
             color: #e02e2a !important;
         }
 
-        [data-testid="delete-chat-menu-item"]:hover {
+        .text-token-text-destructive:hover,
+        button:has(path[d^="m10 11.5 4"]):hover,
+        [data-testid="delete-chat-menu-item"]:hover,
+        div[role="menuitem"]:has(path[d^="M10.556 4a1 1 0"]):hover {
             color: white !important;
             background: rgba(255, 0, 0, .5) !important;
+        }
+
+        /* sore green restore color */
+        div[role="menuitem"]:has(path[d^="m4.5 4.944"]):hover {
+            color: white !important;
+            background: rgba(0, 255, 0, .5) !important;
         }
 
         /* hide dictate button
@@ -133,7 +161,7 @@
             display: none;
         } */
 
-        /* hide 'chat can make mistakes' text 
+        /* hide 'chat can make mistakes' text
         div.text-token-text-secondary[class*="md:px-"] {
             display: none;
         } */
@@ -173,6 +201,40 @@
         main [class*="[mask-image"] {
             mask-image: none !important;
             -webkit-mask-image: none !important;
+        } */
+
+        /* left bar section seperators and make it compact */
+        .mt-5 {
+            margin-top: 10px;
+        }
+
+        .__menu-item {
+            min-height: calc(var(--spacing)*8);
+        }
+
+        .mt-5::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: 1px;
+            background-color: color(srgb 1 1 1 / 0.17);
+            display: block;
+            transform: translateY(-5px);
+        }
+
+        .light .mt-5::before {
+            background-color: color(srgb 0 0 0 / 0.17);
+        }
+
+        /* hide plus and pro icon in the avatar
+        .px-1 span {
+            display: none;
+        } */
+
+        /* remove focus outlines; used for keyboard users and screen readers
+        :focus {
+            outline: none;
+            box-shadow: 0 0 0 0 transparent;
         } */
 
         /**************************************
@@ -432,11 +494,9 @@
 
     // load playback speed and square design values from config or use default
     async function initializeSpeed() {
-        savedSpeed = await GM.getValue('defaultSpeed');
-        if (savedSpeed !== undefined) {
-            playbackSpeed = savedSpeed;
-            lastUserRate = playbackSpeed;
-        }
+        savedSpeed = await GM.getValue('defaultSpeed', 1);
+        playbackSpeed = savedSpeed;
+        lastUserRate = playbackSpeed;
 
         // load square design setting
         squareDesignEnabled = await GM.getValue('squareDesign');
