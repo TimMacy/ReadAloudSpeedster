@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.0.9
+// @version      3.0.9.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.0.9 - Read Aloud Speedster              *
+*                    Version: 3.0.9.2 - Read Aloud Speedster            *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -45,9 +45,12 @@
 
         /* chatbox - fade effect for content */
         main form {
-            box-shadow: 0 -10px 10px 0px var(--main-surface-primary) !important;
             border-top-left-radius: .25em !important;
             border-top-right-radius: .25em !important;
+        }
+
+        #thread-bottom-container {
+            box-shadow: 0 -20px 20px 0px var(--main-surface-primary) !important;
         }
 
         /* chatbox border color
@@ -227,7 +230,7 @@
         }
 
         /* hide plus and pro icon in the avatar
-        .px-1 span {
+        #page-header .px-1 span {
             display: none;
         } */
 
@@ -236,6 +239,54 @@
             outline: none;
             box-shadow: 0 0 0 0 transparent;
         } */
+
+        /* change width of chat containers */
+        #thread-bottom-container > div {
+            margin: 0 5vw;
+            padding: 0;
+        }
+
+        #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
+            margin: 0 10vw;
+        }
+
+        #thread-bottom > div {
+            padding-inline: 0 !important;
+            --thread-content-margin: 0 !important;
+        }
+
+        [data-message-author-role="user"] > div > div {
+            max-width: 100%;
+            /* background-color: rgba(50, 50, 50, 0.85); */
+        }
+
+        .px-\\(--thread-content-margin\\):has([data-message-author-role="user"]) {
+            margin: 20px 5vw 20px 15vw;
+        }
+        .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
+            margin: 20px 5vw;
+            padding: 0;
+        }
+
+        .grow.overflow-hidden > div > div {
+            overflow-x:hidden;
+        }
+
+        [class^="_tableContainer_"] {
+            padding-right: 10vw;
+        }
+
+        .border-token-border-sharp [class^="_tableContainer_"] {
+            padding-right: 0;
+        }
+
+        .\\[--composer-overlap-px\\:24px\\] {
+            --composer-overlap-px: 0;
+        }
+
+        .bottom-8 {
+            bottom: .5rem;
+        }
 
         /**************************************
                  Read Aloud Speedster
@@ -431,6 +482,7 @@
 
                     /* chatbox - radius */
                     .__menu-item,
+                    .rounded-xl,
                     .rounded-3xl,
                     .rounded-b-3xl,
                     .rounded-t-3xl,
@@ -442,12 +494,15 @@
                     }
 
                     /* popup radii and overlay */
-                    .rounded-lg, .rounded-2xl, .rounded-\\[10px\\] {
+                    .rounded-t-2xl,
+                    .rounded-\\[10px\\],
+                    .rounded-lg, .rounded-2xl {
                         border-radius: 2px !important;
                     }
 
                     /* reply radii */
                     .rounded-b-lg,
+                    .rounded-\\[14px\\],
                     .rounded-t-\\[20px\\] {
                         border-radius: 0 !important;
                     }
