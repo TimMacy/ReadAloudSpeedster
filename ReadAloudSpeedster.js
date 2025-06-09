@@ -261,7 +261,8 @@
         }
 
         .px-\\(--thread-content-margin\\):has([data-message-author-role="user"]) {
-            margin: 20px 5vw 20px 15vw;
+            margin: 20px 5vw 20px 30vw;
+            padding: 0;
         }
         .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
             margin: 20px 5vw;
