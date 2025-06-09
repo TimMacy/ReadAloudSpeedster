@@ -288,7 +288,16 @@
         .bottom-8 {
             bottom: .5rem;
         }
+        
+        /* justify text */
+        .markdown {
+            text-align: justify;
+        }
 
+        .markdown h1 {
+            text-align: left;
+        }
+        
         /**************************************
                  Read Aloud Speedster
         **************************************/
