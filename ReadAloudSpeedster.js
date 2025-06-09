@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.0.9.3
+// @version      3.0.9.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.0.9.3 - Read Aloud Speedster            *
+*                    Version: 3.0.9.4 - Read Aloud Speedster            *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -65,6 +65,7 @@
         /* copy icon */
         button[aria-label="Copy"] .icon-md-heavy,
         div[role="menuitem"]:has(path[d^="M12 7.1a"]),
+        button[data-testid="copy-turn-action-button"] svg,
         button.surface-nav-element:has(svg path[d^="M12 7.1a"]) {
             color: darkorange !important;
             opacity: .8;
@@ -73,14 +74,16 @@
         /* thumbs up icon */
         button .icon-md path[d^="M12.1318"],
         div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
-        button[aria-label="Good response"] .icon-md-heavy {
+        button[aria-label="Good response"] .icon-md-heavy,
+        button[data-testid="good-response-turn-action-button"] svg {
             color: forestgreen !important;
         }
 
         /* thumbs down icon */
         button .icon-md path[d^="M11.8727"],
         button[aria-label="Bad response"] .icon-md-heavy,
-        button.surface-nav-element:has(svg path[d^="M11.868 21"]) {
+        button.surface-nav-element:has(svg path[d^="M11.868 21"]),
+        button[data-testid="bad-response-turn-action-button"] svg {
             color: crimson !important;
             opacity: .8;
         }
@@ -108,7 +111,8 @@
         /* read aloud and stop icon */
         button[aria-label="Stop"] .icon-md-heavy,
         button[aria-label="Read aloud"] .icon-md-heavy,
-        div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]) {
+        div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
+        button[data-testid="voice-play-turn-action-button"] svg {
             color: deepskyblue !important;
         }
 
