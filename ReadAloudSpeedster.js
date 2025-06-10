@@ -73,6 +73,7 @@
 
         /* thumbs up icon */
         button .icon-md path[d^="M12.1318"],
+        button svg.icon-md path[d^="M10.9153"],
         div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
         button[aria-label="Good response"] .icon-md-heavy,
         button[data-testid="good-response-turn-action-button"] svg {
@@ -81,6 +82,7 @@
 
         /* thumbs down icon */
         button .icon-md path[d^="M11.8727"],
+        button svg.icon-md path[d^="M12.6687"],
         button[aria-label="Bad response"] .icon-md-heavy,
         button.surface-nav-element:has(svg path[d^="M11.868 21"]),
         button[data-testid="bad-response-turn-action-button"] svg {
