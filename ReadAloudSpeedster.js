@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a popup to save the default playback speed and toggle the square design. Also adds color-coded icons for copy, thumbs up, thumbs down, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.0.9.4
+// @version      3.0.9.7
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.0.9.4 - Read Aloud Speedster            *
+*                    Version: 3.0.9.7 - Read Aloud Speedster            *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -184,6 +184,12 @@
             opacity: 0.5;
         } */
 
+        /* stop icon size inner */
+        #thread-bottom-container .icon-lg {
+            height: calc(var(--spacing)*5);;
+            width: calc(var(--spacing)*5);;
+        }
+
         /* select color */
         ::selection {
             background-color: var(--text-primary);
@@ -211,15 +217,19 @@
         } */
 
         /* left bar section seperators and make it compact */
-        .mt-5 {
-            margin-top: 10px;
-        }
-
         .__menu-item {
             min-height: calc(var(--spacing)*8);
         }
 
-        .mt-5::before {
+        .mt-\\(--sidebar-section-first-margin-top\\) {
+            margin-top: 0!important;
+        }
+
+        .mt-\\(--sidebar-section-margin-top\\) {
+            margin-top: 10px!important;
+        }
+
+        .mt-\\(--sidebar-section-margin-top\\)::before {
             content: '';
             position: absolute;
             width: 100%;
@@ -229,7 +239,7 @@
             transform: translateY(-5px);
         }
 
-        .light .mt-5::before {
+        .light .mt-\\(--sidebar-section-margin-top\\)::before {
             background-color: color(srgb 0 0 0 / 0.17);
         }
 
@@ -292,6 +302,11 @@
         .bottom-8 {
             bottom: .5rem;
         }
+
+        main .loading-shimmer,
+        .flex.max-w-full.flex-col.grow:empty + .flex.min-h-\\[46px\\].justify-start [class*="mask-image"] {
+            margin-left: calc(5vw - var(--spacing)*6) !important;
+        }
         
         /* justify text */
         .markdown {
@@ -300,6 +315,19 @@
 
         .markdown h1 {
             text-align: left;
+        }
+
+        /* menu hover shadow fix */
+        .shadow-long:is(.dark *) {
+            --tw-shadow: 0px 8px 16px 0px var(--tw-shadow-color,#00000052),0px 0px 1px 0px var(--tw-shadow-color,#0000009e);
+            box-shadow: var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow);
+            border:1px solid #272727;
+        }
+
+        .shadow-long {
+            --tw-shadow: 0px 8px 12px 0px var(--tw-shadow-color,var(--shadow-color-1,#00000014)),0px 0px 1px 0px var(--tw-shadow-color,var(--shadow-color-2,#0000009e));
+            box-shadow: var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow);
+            border: 1px solid #e6e6e6;
         }
         
         /**************************************
