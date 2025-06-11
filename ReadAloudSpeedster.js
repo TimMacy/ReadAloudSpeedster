@@ -326,6 +326,11 @@
         main div:has(> .loading-shimmer) {
             margin-left: 6.263%;
         }
+
+        div.text-base {
+            --thread-content-max-width: unset!important;
+            max-width: 1129px;
+        }
         
         /* justify text */
         .markdown {
