@@ -2,7 +2,7 @@
 
 This script integrates intuitive playback speed controls into the chatbox interface. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
 
-<p align="center"><img width="50%" alt="Settings Panel" title="Settings Panel" src="https://github.com/user-attachments/assets/90974091-3198-45a7-b1dc-ac0e8bfcc432" /></p>
+<p align="center"><img width="50%" alt="Settings Panel" title="Settings Panel" src="https://github.com/user-attachments/assets/cb120c02-0e8d-49f7-a192-958b90943540" /></p>
 
 ## Features
 - **Native Integration**: Implements a native-looking UI that seamlessly blends with the existing layout in both light and dark modes.
@@ -13,7 +13,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **Customizable**: Clicking the speed display opens a settings menu for saving a default speed and toggling various interface options.
    - Square Design, Darker Background for Header and Chat Window, Keep Icons Visible, No Icon Animation, Hide Plus/Pro Avatar icon, Hide "View Plans", Hide "Get Pro" Button, Hide "Dictate" Button, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" text, Compact Sidebar with Separators, Justify Text, and Remove Focus Outlines.
 
-<p align="center"><img width="100%" alt="Read Aloud Speedster by Tim Macy" src="https://github.com/user-attachments/assets/942024bd-72f8-4c54-a817-84bbf120d3b6" /></p> 
+<p align="center"><img width="100%" alt="Read Aloud Speedster by Tim Macy" src="https://github.com/user-attachments/assets/b51bb846-2829-484a-91aa-bd4ead3d94f1" /></p> 
 
 <br><br>
 
