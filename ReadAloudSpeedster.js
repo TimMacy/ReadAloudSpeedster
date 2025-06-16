@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a settings menu to save the default playback speed and toggle additional UI tweaks Also adds color-coded icons for copy, thumbs up, thumbs down, edit, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.7
+// @version      3.8
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.7 - Read Aloud Speedster                *
+*                    Version: 3.8 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -307,6 +307,15 @@
         div.text-base,div[class*="turn-messages"] {
             --thread-content-max-width: unset!important;
             max-width: 1129px;
+        }
+
+        #prosemirror-editor-container,
+        #prosemirror-editor-container > .markdown.prose {
+            width: 100% !important;
+        }
+
+        main .h-full.w-full >.justify-center {
+            margin: 0 5dvw !important;
         }
 
         /* menu hover shadow fix */
@@ -654,7 +663,8 @@
                 .rounded-\\[28px\\],
                 .rounded-\\[24px\\],
                 .composer-btn::before,
-                .surface-popover:before {
+                .surface-popover:before,
+                .__menu-item-trailing-btn {
                     border-radius: 2px !important;
                 }
 
@@ -821,13 +831,61 @@
                 }
             `
         },
+        navIconsUp: {
+            label: "Compact Search and Library Buttons",
+            enabled: true,
+            sheet: null,
+            style: `
+                nav > aside > a:has(svg path[d^="M2.6687"]),
+                nav > aside > div:has(svg path[d^="M14.0857"]) div.text-token-text-tertiary,
+                nav > aside > a:has(svg path[d^="M9.38759"]) div.text-token-text-tertiary {
+                    display: none;
+                }
+
+                nav > aside.last\\:mb-5.mt-\\(--sidebar-section-first-margin-top\\) {
+                    height: 0;
+                    margin-bottom: -10px;
+                }
+
+                nav > aside > div:has(svg path[d^="M14.0857"]),nav > aside > a:has(svg path[d^="M9.38759"]) {
+                    margin: 0;
+                    z-index: 31;
+                    color: var(--text-tertiary);
+                }
+
+                nav > aside > div:has(svg path[d^="M14.0857"]) {
+                    transform: translate(52px, -44px);
+                    width: 40px;
+                }
+
+                nav > aside > a:has(svg path[d^="M9.38759"]) {
+                    transform: translate(100px, -80px);
+                    width: 92px;
+                }
+
+                nav > aside > div:has(svg path[d^="M14.0857"]):hover,
+                nav > aside > a:has(svg path[d^="M9.38759"]):hover,
+                nav button:has(svg path[d^="M6.83496"]):hover {
+                    color:var(--text-primary);
+                }
+            `
+        },
         sidebarSections: {
             label: "Compact Sidebar with Separators",
             enabled: true,
             sheet: null,
             style: `
-                .__menu-item {
+                .__menu-item,
+                .__menu-item-trailing-btn {
                     min-height: calc(var(--spacing)*8);
+                }
+
+                .__menu-item-trailing-btn:hover {
+                    background: rgba(255, 255, 255, .1);
+                }
+
+                .light .__menu-item-trailing-btn:hover {
+                    background: rgba(1, 1, 1, .1);
                 }
 
                 .mt-\\(--sidebar-section-first-margin-top\\) {
