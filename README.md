@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#changelog"><img align="right" src="https://img.shields.io/badge/Version-3.7-white.svg" alt="Version: 3.7"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#changelog"><img align="right" src="https://img.shields.io/badge/Version-3.8-white.svg" alt="Version: 3.8"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 This script integrates intuitive playback speed controls into the chatbox interface. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
 
@@ -24,6 +24,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 2. **Install** [ReadAloudSpeedster.js](https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js)
 
 ## Changelog
+- **3.8**: bug fixes and improvements. new toggleable option: Compact Search and Library Buttons
 - **3.7**: bug fixes and improvements. new toggleable options have been added to the settings menu: a darker background for the header and chat window, persistent icon visibility, reduced icon animation, hide the Plus/Pro avatar, hide the "View Plans," "Get Pro," and "Dictate" buttons, disable the voice mode button, hide the "ChatGPT can make mistakes" text, compact sidebar with separators, justified text, and removed focus outlines.
 - **3.1.1**: Updated stylesheet injection logic.
 - **3.1**: Adjustments for the latest changes.
