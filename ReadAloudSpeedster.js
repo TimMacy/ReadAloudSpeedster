@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Read Aloud Speedster
-// @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a settings menu to save the default playback speed and toggle additional UI tweaks Also adds color-coded icons for copy, thumbs up, thumbs down, edit, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
+// @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a settings menu to save the default playback speed and toggle additional UI tweaks. Additionally, adds color-coded icons for copy, thumbs up, thumbs down, edit, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.8
+// @version      3.8.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.8 - Read Aloud Speedster                *
+*                    Version: 3.8.2 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -792,7 +792,7 @@
             enabled: true,
             sheet: null,
             style: `
-                div.flex.shrink-0.gap-2.pb-1.md\\:pb-0 {
+                .flex > button.btn-primary:first-child:last-child {
                     display: none;
                 }
             `
@@ -831,6 +831,21 @@
                 }
             `
         },
+        CodexNxtSora: {
+            label: "Codex and Sora Buttons Next to Each Other",
+            enabled: true,
+            sheet: null,
+            style: `
+                nav > aside > a.group.__menu-item#sora,
+                nav > aside > a.group.__menu-item[href="/codex"] {
+                    width:calc(50% - 6px);
+                }
+                nav > aside > a.group.__menu-item#sora {
+                    transform:translate(100%,-100%);
+                    margin-bottom:-36px;
+                }
+            `
+        },
         navIconsUp: {
             label: "Compact Search and Library Buttons",
             enabled: true,
@@ -842,9 +857,10 @@
                     display: none;
                 }
 
+                .tall\\:top-header-height,
                 nav > aside.last\\:mb-5.mt-\\(--sidebar-section-first-margin-top\\) {
                     height: 0;
-                    margin-bottom: -10px;
+                    margin-bottom: -10px!important;
                 }
 
                 nav > aside > div:has(svg path[d^="M14.0857"]),nav > aside > a:has(svg path[d^="M9.38759"]) {
@@ -875,28 +891,32 @@
             enabled: true,
             sheet: null,
             style: `
-                .__menu-item,
-                .__menu-item-trailing-btn {
+                nav .__menu-item,
+                nav .__menu-item-trailing-btn {
                     min-height: calc(var(--spacing)*8);
+                    max-height:35px;
                 }
 
-                .__menu-item-trailing-btn:hover {
+                nav .__menu-item-trailing-btn:hover {
                     background: rgba(255, 255, 255, .1);
                 }
 
-                .light .__menu-item-trailing-btn:hover {
+                nav .light .__menu-item-trailing-btn:hover {
                     background: rgba(1, 1, 1, .1);
                 }
 
-                .mt-\\(--sidebar-section-first-margin-top\\) {
-                    margin-top: 0!important;
-                }
-
-                .mt-\\(--sidebar-section-margin-top\\) {
+                nav .mt-\\(--sidebar-section-first-margin-top\\),
+                nav .pt-\\(--sidebar-section-first-margin-top\\),
+                nav .mt-\\(--sidebar-section-margin-top\\),
+                nav .pt-\\(--sidebar-section-margin-top\\) {
                     margin-top: 10px!important;
+                    padding: 0!important;
                 }
 
-                .mt-\\(--sidebar-section-margin-top\\)::before {
+                nav .mt-\\(--sidebar-section-first-margin-top\\)::before,
+                nav .pt-\\(--sidebar-section-first-margin-top\\)::before,
+                nav .mt-\\(--sidebar-section-margin-top\\)::before,
+                nav .pt-\\(--sidebar-section-margin-top\\)::before {
                     content: '';
                     position: absolute;
                     width: 100%;
@@ -906,8 +926,19 @@
                     transform: translateY(-5px);
                 }
 
-                .light .mt-\\(--sidebar-section-margin-top\\)::before {
+                nav .light .mt-\\(--sidebar-section-first-margin-top\\)::before,
+                nav .light .pt-\\(--sidebar-section-first-margin-top\\)::before,
+                nav .light .mt-\\(--sidebar-section-margin-top\\)::before,
+                nav .light .pt-\\(--sidebar-section-margin-top\\)::before {
                     background-color: color(srgb 0 0 0 / 0.17);
+                }
+
+                nav .tall\\:top-header-height {
+                    margin-top:0!important;
+                }
+
+                nav .tall\\:top-header-height::before {
+                    background-color:transparent;
                 }
             `
         },
