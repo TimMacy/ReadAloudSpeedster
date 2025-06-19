@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a settings menu to save the default playback speed and toggle additional UI tweaks. Additionally, adds color-coded icons for copy, thumbs up, thumbs down, edit, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.8.2
+// @version      3.8.3
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.8.2 - Read Aloud Speedster              *
+*                    Version: 3.8.3 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -314,7 +314,7 @@
             width: 100% !important;
         }
 
-        main .h-full.w-full >.justify-center {
+        main.min-h-0 .h-full.w-full >.justify-center {
             margin: 0 5dvw !important;
         }
 
