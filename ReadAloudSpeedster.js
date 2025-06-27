@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Read Aloud Speedster
-// @description  Set playback speed for Read Aloud on ChatGPT.com. Clicking the speed display opens a settings menu to save the default playback speed and toggle additional UI tweaks. Additionally, adds color-coded icons for copy, thumbs up, thumbs down, edit, read aloud, and stop buttons. Highlight color for strong text is green in dark mode and violet in light mode.
+// @description  Set a default playback speed for Read Aloud on ChatGPT.com, browse between messages via navigation buttons, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses; highlighted color for bold text; dark and light mode support; compact sidebar with separators; square design, and much more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      3.8.3
+// @version      4.0
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 3.8.3 - Read Aloud Speedster              *
+*                    Version: 4.0 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -240,14 +240,12 @@
 
         /* select color */
         ::selection {
-            background: #00519d;
-            /* cent'anni
             background-color: var(--text-primary);
             color: var(--main-surface-tertiary);
-            */
         }
 
         /* change width of chat containers */
+        div.text-base.my-auto:has(.bg-token-main-surface-tertiary),
         #thread-bottom-container > div {
             margin: 0 6.263%;
             padding: 0;
@@ -292,16 +290,16 @@
             --composer-overlap-px: 0;
         }
 
-        .bottom-8 {
-            bottom: .5rem;
-        }
-
         .flex.max-w-full.flex-col.grow:empty + .flex.min-h-\\[46px\\].justify-start [class*="mask-image"] {
             margin-left: calc(6.263% - var(--spacing)*6) !important;
         }
 
-        main div:has(> .loading-shimmer) {
-            margin-left: 6.263%;
+        main div.text-base.my-auto:has(.loading-shimmer) {
+            padding-left: 6.263%;
+        }
+
+        main .mx-\\[calc\\(--spacing\\(-2\\)-1px\\)\\]:not(.loading-shimmer) {
+            margin-left:-6px;
         }
 
         div.text-base,div[class*="turn-messages"] {
@@ -316,6 +314,19 @@
 
         main.min-h-0 .h-full.w-full >.justify-center {
             margin: 0 5dvw !important;
+        }
+
+        main div.flex.basis-auto.flex-col .pb-25 {
+            padding:0;
+        }
+
+        :root:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
+            position: fixed;
+            bottom: 125px;
+            height: calc(100dvh - 177px);
+            width: -webkit-fill-available;
+            width: -moz-available;
+            width: fill-available;
         }
 
         /* menu hover shadow fix */
@@ -607,6 +618,18 @@
             align-items: center;
             text-wrap: nowrap;
         }
+
+        .CentAnni-style-nav-btn.enabled  {
+            opacity: 1;
+        }
+
+        .CentAnni-style-nav-btn.disabled {
+            opacity: .5;
+        }
+
+        .CentAnni-style-nav-btn:active {
+            opacity: .8;
+        }
     `;
 
     // append css
@@ -711,6 +734,12 @@
                 button.composer-btn[data-pill="true"][aria-haspopup="menu"] {
                     margin-left: 8px;
                 }
+
+                main div:has(.loading-shimmer) a>span.rounded-ee-full,
+                main div:has(.loading-shimmer) a>span.rounded-se-full {
+                    border-start-end-radius: 2px;
+                    border-end-end-radius: 2px;
+                }
             `
         },
         darkerMode: {
@@ -754,6 +783,12 @@
                     transition-timing-function: unset;
                 }
             `
+        },
+        jumpToChat: {
+            label: "Navigate to User's Responses Instead of ChatGPT's",
+            enabled: false,
+            sheet: null,
+            style: ``
         },
         hideShareIcon: {
             label: "Hide Share Icon",
@@ -831,7 +866,7 @@
                 }
             `
         },
-        CodexNxtSora: {
+        codexNxtSora: {
             label: "Codex and Sora Buttons Next to Each Other",
             enabled: true,
             sheet: null,
@@ -840,9 +875,34 @@
                 nav > aside > a.group.__menu-item[href="/codex"] {
                     width:calc(50% - 6px);
                 }
+
                 nav > aside > a.group.__menu-item#sora {
                     transform:translate(100%,-100%);
                     margin-bottom:-36px;
+                }
+            `
+        },
+        projectNxtMore: {
+            label: "'New project' and 'See more' Buttons Next to Each Other",
+            enabled: true,
+            sheet: null,
+            style: `
+                nav #snorlax-heading {
+                    display:flex;
+                    flex-direction:column;
+                }
+
+                nav > #snorlax-heading > div:first-child,
+                nav > #snorlax-heading > div:last-child {
+                    width:calc(50% - 6px);
+                }
+
+                nav > #snorlax-heading > div:last-child {
+                    position: absolute;
+                    transform:translateX(100%);
+                    flex-direction:row-reverse;
+                    padding:8px 10px 8px 20px;
+                    order:-1;
                 }
             `
         },
@@ -860,7 +920,8 @@
                 .tall\\:top-header-height,
                 nav > aside.last\\:mb-5.mt-\\(--sidebar-section-first-margin-top\\) {
                     height: 0;
-                    margin-bottom: -10px!important;
+                    padding:0;
+                    margin-bottom: -8px;
                 }
 
                 nav > aside > div:has(svg path[d^="M14.0857"]),nav > aside > a:has(svg path[d^="M9.38759"]) {
@@ -891,10 +952,14 @@
             enabled: true,
             sheet: null,
             style: `
-                nav .__menu-item,
+                nav .__menu-item:not(:has(svg path[d^="M14.0857"])):not(:has(svg path[d^="M9.38759"])),
                 nav .__menu-item-trailing-btn {
                     min-height: calc(var(--spacing)*8);
-                    max-height:35px;
+                    max-height:32px;
+                }
+
+                .self-stretch {
+                    align-self:center;
                 }
 
                 nav .__menu-item-trailing-btn:hover {
@@ -940,6 +1005,15 @@
                 nav .tall\\:top-header-height::before {
                     background-color:transparent;
                 }
+
+                .tall\\:top-header-height,
+                nav > aside.last\\:mb-5.mt-\\(--sidebar-section-first-margin-top\\) {
+                    margin-bottom: -10px!important;
+                }
+
+                nav > #history > aside > h2 {
+                    padding:3px 10px 0 10px;
+                }
             `
         },
         justifyText: {
@@ -973,7 +1047,7 @@
         const feature = features[key];
         if (!feature) return;
         if (feature.enabled) {
-            if (!feature.sheet) {
+            if (feature.style && !feature.sheet) {
                 feature.sheet = document.createElement('style');
                 feature.sheet.textContent = feature.style;
                 document.head.appendChild(feature.sheet);
@@ -1005,7 +1079,9 @@
     };loadCSSsettings();
 
     let speedDisplayElement = null;
-    let audioListeners = new Map();
+    let playingAudio = new Set();
+    let playListener = null;
+    let rateListener = null;
     let controlsContainer = null;
     let configPopup = null;
     let observer = null;
@@ -1030,27 +1106,31 @@
 
     // set playback speed and manage listeners
     function setPlaybackSpeed() {
-        const audioElements = document.querySelectorAll('audio');
-        audioElements.forEach(audio => {
-            if (audioListeners.has(audio)) {
-                const { playListener, rateListener } = audioListeners.get(audio);
-                audio.removeEventListener('play', playListener);
-                audio.removeEventListener('ratechange', rateListener);
-                audioListeners.delete(audio);
-            }
+        playingAudio.forEach(audio => audio.playbackRate = playbackSpeed);
 
-            audio.playbackRate = playbackSpeed;
-            const playListener = () => audio.playbackRate = playbackSpeed;
+        if (!playListener) {
+            playListener = e => {
+                const audio = e.target;
+                if (!(audio instanceof HTMLAudioElement)) return;
+                audio.playbackRate = playbackSpeed;
+                playingAudio.add(audio);
 
-            const rateListener = () => {
-                if (ignoreRateChange) { ignoreRateChange = false; return; }
+                const remove = () => {playingAudio.delete(audio);};
+                audio.addEventListener('pause',remove,{once:true});
+                audio.addEventListener('ended',remove,{once:true});
+            };
+            document.addEventListener('play',playListener,true);
+        }
+
+        if (!rateListener) {
+            rateListener = e => {
+                const audio = e.target;
+                if (!(audio instanceof HTMLAudioElement)) return;
+                if (ignoreRateChange) {ignoreRateChange = false;return;}
                 audio.playbackRate = lastUserRate;
             };
-
-            audio.addEventListener('play', playListener);
-            audio.addEventListener('ratechange', rateListener);
-            audioListeners.set(audio, { playListener, rateListener });
-        });
+            document.addEventListener('ratechange',rateListener,true);
+        }
     }
 
     // config popup
@@ -1067,15 +1147,16 @@
         headerWrapper.classList.add('popup-header');
 
         const title = document.createElement('a');
-        title.classList.add('popup-title');
         title.href = 'https://github.com/TimMacy/ReadAloudSpeedster';
         title.target = '_blank';
         title.rel = 'noopener';
         title.textContent = 'Read Aloud Speedster';
+        title.title = 'GitHub Repository for Read Aloud Speedster';
+        title.classList.add('popup-title');
 
         const versionSpan = document.createElement('span');
         const scriptVersion = GM.info.script.version;
-        versionSpan.innerText = `v${scriptVersion}`;
+        versionSpan.textContent = `v${scriptVersion}`;
         versionSpan.classList.add('CentAnni-version-label');
 
         headerWrapper.appendChild(title);
@@ -1135,10 +1216,19 @@
                 setPlaybackSpeed();
             }
 
-            for (const { key, checkbox } of toggleElements) {
-                features[key].enabled = checkbox.checked;
-                await GM.setValue(key, features[key].enabled);
-                applyFeature(key);
+            let navChanged = false;
+            for (const { key,checkbox } of toggleElements) {
+                if (features[key].enabled !== checkbox.checked) {
+                    features[key].enabled = checkbox.checked;
+                    await GM.setValue(key,features[key].enabled);
+                    applyFeature(key);
+                    if (key === 'jumpToChat') navChanged = true;
+                }
+            }
+
+            if (navChanged) {
+                navCleanup?.();
+                navCleanup = navBtns();
             }
 
             configPopup.classList.remove('show');
@@ -1160,6 +1250,7 @@
         copyrightLink.target = '_blank';
         copyrightLink.rel = 'noopener';
         copyrightLink.textContent = 'Copyright © 2025 Tim Macy';
+        copyrightLink.title = 'Copyright © 2025 Tim Macy';
 
         footer.appendChild(copyrightLink);
         footer.appendChild(saveButton);
@@ -1179,7 +1270,6 @@
     // speed display
     function updateSpeedDisplay() {
         if (speedDisplayElement) {
-            // speedDisplayElement.textContent = `${playbackSpeed.toFixed(2)}x`; // display speed with always two decimals
             speedDisplayElement.textContent = `${playbackSpeed}x`; // raw speed value without formatting
         }
     }
@@ -1197,7 +1287,6 @@
 
         const speedDisplay = document.createElement('span');
         speedDisplay.classList.add('speed-display');
-        // speedDisplay.textContent = `${playbackSpeed.toFixed(2)}x`; // display speed with always two decimals
         speedDisplay.textContent = `${playbackSpeed}x`; // raw speed value without formatting
         speedDisplayElement = speedDisplay;
 
@@ -1250,55 +1339,193 @@
         else if (document.querySelector('div[style*="var(--vt-composer-attach-file-action)"]')?.insertAdjacentElement('afterend', controlsContainer));
     }
 
+    // message navigation button section
+    const HEADER_OFFSET = 52;
+    const UP_ARROW_PATH = 'M10 3.293l-6.354 6.353a1 1 0 001.414 1.414L9 6.414V17a1 1 0 102 0V6.414l3.939 3.939a1 1 0 001.415-1.414L10 3.293z';
+    const DOWN_ARROW_PATH = 'M10 16.707l6.354-6.353a1 1 0 00-1.414-1.414L11 13.586V3a1 1 0 10-2 0v10.586L5.061 8.94a1 1 0 10-1.415 1.415L10 16.707z';
+    const createIcon = (pathData) => {
+        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
+        svg.setAttribute('width','20');
+        svg.setAttribute('height','20');
+        svg.setAttribute('viewBox','0 0 20 20');
+        svg.setAttribute('fill','currentColor');
+        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
+        path.setAttribute('fill-rule','evenodd');
+        path.setAttribute('clip-rule','evenodd');
+        path.setAttribute('d',pathData);
+        svg.appendChild(path);
+        const wrapper = document.createElement('div');
+        wrapper.className = 'flex w-full items-center justify-center';
+        wrapper.appendChild(svg);
+        return wrapper;
+    };
+
+    const createNavButton = (pathData,label) => {
+        const btn = document.createElement('button');
+        btn.className = 'CentAnni-style-nav-btn btn relative btn-ghost text-token-text-primary';
+        btn.setAttribute('aria-label',label);
+        btn.appendChild(createIcon(pathData));
+        return btn;
+    };
+
+    const upBtn = createNavButton(UP_ARROW_PATH, 'Jump to previous message');
+    const downBtn = createNavButton(DOWN_ARROW_PATH, 'Jump to next message');
+
+    let navCleanup = null;
+    function navBtns() {
+        const targetChat = document.querySelector('main > #thread div.flex.basis-auto.flex-col.grow');
+        const actions = document.querySelector('#conversation-header-actions');
+        const shareBtn = actions.querySelector('button[aria-label="Share"]');
+        if (!shareBtn || !actions || !targetChat) return;
+
+        let chatObserver = null;
+        let messageCache = [];
+
+        const role = features.jumpToChat?.enabled?'user':'assistant';
+        const queryMessages = () => Array.from(targetChat.querySelectorAll(`[data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"])`));
+        const populateCache = () => {messageCache = queryMessages();};
+
+        const getNextMessage = () => {
+            const current = window.scrollY + HEADER_OFFSET;
+            for (const msg of messageCache) {
+                const top = msg.getBoundingClientRect().top + window.scrollY;
+                if (top > current + 1) return msg;
+            }
+            return null;
+        };
+
+        const getPrevMessage = () => {
+            const current = window.scrollY + HEADER_OFFSET;
+            for (let i = messageCache.length - 1; i >= 0; i--) {
+                const top = messageCache[i].getBoundingClientRect().top + window.scrollY;
+                if (top < current - 1) return messageCache[i];
+            }
+            return null;
+        };
+
+        const checkForNewBelow = () => {
+            const msgs = queryMessages();
+            if (msgs.length > messageCache.length) {
+                const newMsgs = msgs.slice(messageCache.length);
+                messageCache.push(...newMsgs);
+                return newMsgs[0];
+            }
+            return null;
+        };
+
+        const setState = (btn, enabled) => {
+            btn.classList.toggle("enabled",enabled);
+            btn.classList.toggle("disabled",!enabled);
+        };
+
+        const update = () => {
+            setState(upBtn,!!getPrevMessage());
+            setState(downBtn,!!getNextMessage());
+        };
+
+        const jump = (prev) => {
+            let target = prev?getPrevMessage():getNextMessage();
+            if (!prev && !target) target = checkForNewBelow();
+            if (target) target.scrollIntoView({behavior:'auto',block:'start'});
+            update();
+        };
+
+        const createButtons = () => {
+            if (document.body.contains(upBtn)) return;
+
+            upBtn.onclick = () => jump(true);
+            downBtn.onclick = () => jump(false);
+
+            actions.insertBefore(downBtn,shareBtn);
+            actions.insertBefore(upBtn,downBtn);
+
+            populateCache();
+            startObserver();
+        };
+
+        const startObserver = () => {
+            if (chatObserver||!targetChat) return;
+            if (queryMessages().length) {
+                populateCache();
+                update();
+                return;
+            }
+
+            chatObserver = new MutationObserver(() => {
+                if (queryMessages().length) {
+                    populateCache();
+                    stopObserver();
+                    setTimeout(update,250);
+                }
+            });
+            chatObserver.observe(targetChat,{childList:true});
+        };
+
+        const stopObserver = () => {
+            if (chatObserver) {
+                chatObserver.disconnect();
+                chatObserver = null;
+            }
+        };
+
+        createButtons();
+
+        return () => {
+            stopObserver();
+            messageCache = [];
+            upBtn.remove();
+            downBtn.remove();
+        };
+    }
+
     // handle cleanup
     function cleanup() {
-        audioListeners.forEach((listeners, audio) => {
-            audio.removeEventListener('play', listeners.playListener);
-            audio.removeEventListener('ratechange', listeners.rateListener);
-        });
-
-        audioListeners.clear();
-        if (observer) { observer.disconnect(); observer = null; }
+        if (playListener) {
+            document.removeEventListener('play',playListener,true);
+            playListener = null;
+        }
+        if (rateListener) {
+            document.removeEventListener('ratechange',rateListener,true);
+            rateListener = null;
+        }
+        playingAudio.clear();
+        if (observer) {observer.disconnect();observer=null;}
         controlsContainer?.remove();
         controlsContainer = null;
         speedDisplayElement = null;
         configPopup?.remove();
+        navCleanup?.();
+        navCleanup = null;
     }
 
-    // initialize everything when DOM is fully loaded
+    // initialization after DOM has loaded
     function init() {
-        // observer for new audio elements
         observer = new MutationObserver(mutations => {
-            if (!document.body.contains(controlsContainer)) createControlButtons();
+            const hasMainMutations = mutations.some(mutation => mutation.target.closest("#main"));
+            if (!hasMainMutations)return;
 
-            let audioFound = false;
-            for (const mutation of mutations) {
-                for (const node of mutation.addedNodes) {
-                    if (node.nodeName === 'AUDIO' || (node.querySelector && node.querySelector('audio'))) {
-                        audioFound = true;
-                        break;
-                    }
-                }
-                if (audioFound) break;
-            }
+            // observer for new audio elements
+            const audioFound = mutations.some(mutation => Array.from(mutation.addedNodes).some(node => node.nodeName === 'AUDIO' || (node.querySelector && node.querySelector('audio'))));
 
+            // handle UI updates and audio playback speed
             if (audioFound) setPlaybackSpeed();
+            if (!document.body.contains(controlsContainer)) createControlButtons();
+            if (!document.querySelector('#conversation-header-actions button[aria-label="Jump to next message"]')) {
+                navCleanup?.();
+                navCleanup = navBtns();
+            }
         });
 
         if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true });
+            observer.observe(document.body,{childList:true,subtree:true});
 
-            // initiate the script
             initializeSpeed();
             createControlButtons();
+            navCleanup = navBtns();
         }
     }
 
-    // wait for document to be ready
-    if (document.readyState === 'loading') {
-        document.addEventListener('DOMContentLoaded', init);
-    } else init();
-
-    // cleanup when page unloads
+    // wait for document to be ready and cleanup when page unloads
+    document.readyState === "loading"?document.addEventListener("DOMContentLoaded", init,{once:true}):init();
     window.addEventListener('unload', cleanup);
 })();
