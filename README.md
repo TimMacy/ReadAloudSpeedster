@@ -1,8 +1,8 @@
-# Read Aloud Speedster <a href="#changelog"><img align="right" src="https://img.shields.io/badge/Version-3.8.3-white.svg" alt="Version: 3.8.3"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#changelog"><img align="right" src="https://img.shields.io/badge/Version-4.0-white.svg" alt="Version: 4.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
-This script integrates intuitive playback speed controls into the chatbox interface. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
+This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
 
-<p align="center"><img width="50%" alt="Settings Panel" title="Settings Panel" src="https://github.com/user-attachments/assets/cb120c02-0e8d-49f7-a192-958b90943540" /></p>
+<p align="center"><img width="50%" alt="Read Aloud Speedster by Tim Macy Overview" title="Settings Panel" src="https://github.com/user-attachments/assets/11731e93-0eaf-4a29-a948-d99c709066f1" /></p>
 
 ## Features
 - **Native Integration**: Implements a native-looking UI that seamlessly blends with the existing layout in both light and dark modes.
@@ -11,7 +11,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **Color-Coded Icons**: Copy, thumbs up/down, read aloud/stop, and edit buttons are assigned specific colors.
 - **Highlight Color**: Green in dark mode and violet in light mode.
 - **Customizable**: Clicking the speed display opens a settings menu for saving a default speed and toggling various interface options.
-   - Square Design, Darker Background for Header and Chat Window, Keep Icons Visible, No Icon Animation, Hide Plus/Pro Avatar icon, Hide "View Plans", Hide "Get Pro" Button, Hide "Dictate" Button, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" text, Compact Sidebar with Separators, Justify Text, and Remove Focus Outlines.
+   - Square Design, Darker Background for Header and Chat Window, Keep Icons Visible, No Icon Animation, Hide Plus/Pro Avatar icon, Hide "View Plans", Hide "Get Pro" Button, Hide "Dictate" Button, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" Text, Codex/Sora and "New project"/"See more" Buttons Next to Each Other, Compact Search and Library Buttons, Compact Sidebar with Separators, Justify Text, Remove Focus Outlines, and Navigate Between Messages.
 
 <p align="center"><img width="100%" alt="Read Aloud Speedster by Tim Macy" src="https://github.com/user-attachments/assets/b51bb846-2829-484a-91aa-bd4ead3d94f1" /></p> 
 
@@ -24,6 +24,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 2. **Install** [ReadAloudSpeedster.js](https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js)
 
 ## Changelog
+- **4.0**: bug fixes and improvements. new toggleable options have been added to the settings menu: grouping Codex/Sora and "New project"/"See more" buttons, compacting search and library buttons, browsing to user or ChatGPT's responses.
 - **3.8.3**: Sora bug fix
 - **3.8.2**: adjustments for the latest changes
 - **3.8**: bug fixes and improvements. new toggleable option: Compact Search and Library Buttons
