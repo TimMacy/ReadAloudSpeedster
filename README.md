@@ -4,7 +4,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 
 <p align="center"><img width="50%" alt="Read Aloud Speedster by Tim Macy Overview" title="Settings Panel" src="https://github.com/user-attachments/assets/11731e93-0eaf-4a29-a948-d99c709066f1" /></p>
 
-## Features
+## 🪄 Features
 - **Native Integration**: Implements a native-looking UI that seamlessly blends with the existing layout in both light and dark modes.
 - **Default Speed Control**: Automatically applies the saved playback speed from persistent storage to detected audio elements.
 - **Adjust On-the-Fly**: Easily adjust playback speed from 1x to 17x in 0.25x increments using plus/minus buttons.
@@ -17,7 +17,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 
 <br><br>
 
-## Installation <a href="https://www.opera.com"><img align="right" src="https://img.shields.io/badge/Opera-Untested-yellow.svg" alt="Opera Untested"></a><a href="https://www.microsoft.com/edge"><img align="right" src="https://img.shields.io/badge/Edge-Untested-yellow.svg" alt="Edge Untested"></a><a href="https://www.mozilla.org/firefox"><img align="right" src="https://img.shields.io/badge/Firefox-Untested-yellow.svg" alt="Firefox Untested"></a><a href="https://www.google.com/chrome"><img align="right" src="https://img.shields.io/badge/Chrome-Supported-brightgreen.svg" alt="Chrome Support"></a><a href="https://www.apple.com/safari"><img align="right" src="https://img.shields.io/badge/Safari-Supported-brightgreen.svg" alt="Safari Support"></a>
+## 🚀 Installation <a href="https://www.opera.com"><img align="right" src="https://img.shields.io/badge/Opera-Untested-yellow.svg" alt="Opera Untested"></a><a href="https://www.microsoft.com/edge"><img align="right" src="https://img.shields.io/badge/Edge-Untested-yellow.svg" alt="Edge Untested"></a><a href="https://www.mozilla.org/firefox"><img align="right" src="https://img.shields.io/badge/Firefox-Untested-yellow.svg" alt="Firefox Untested"></a><a href="https://www.google.com/chrome"><img align="right" src="https://img.shields.io/badge/Chrome-Supported-brightgreen.svg" alt="Chrome Support"></a><a href="https://www.apple.com/safari"><img align="right" src="https://img.shields.io/badge/Safari-Supported-brightgreen.svg" alt="Safari Support"></a>
 
 1. **Install or open a userscript manager**.
    A userscript manager is required, such as [Userscripts for Safari](https://itunes.apple.com/us/app/userscripts/id1463298887) or [Tampermonkey](https://www.tampermonkey.net/) (available for [Chrome](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd), [Safari](https://apps.apple.com/us/app/tampermonkey/id1482490089), [Opera Next](https://addons.opera.com/en/extensions/details/tampermonkey-beta/), and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/).
@@ -26,7 +26,9 @@ This script integrates intuitive playback speed controls into the chatbox interf
 > [!NOTE]
 > This script is designed primarily for desktop browsers; compatibility and functionality on mobile devices may vary.
 
-## Changelog
+<br>
+
+## 📜 Changelog
 - **4.0**: bug fixes and improvements. new toggleable options have been added to the settings menu: grouping Codex/Sora and "New project"/"See more" buttons, compacting search and library buttons, browsing to user or ChatGPT's responses.
 - **3.8.3**: Sora bug fix
 - **3.8.2**: adjustments for the latest changes
@@ -49,13 +51,15 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **3.0.1**: bug fixes.
 - **3.0**: initial public release.
 
-## License
+<br>
+
+## ⚖️ License
 The code in `ReadAloudSpeedster.js` is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See the [LICENSE](https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE) file for details. The `README.md` and all images are Copyright © 2025 Tim Macy. All rights reserved.
 
 <br>
 
 > [!TIP]
-> # YouTube Alchemy
+> # 💡 YouTube Alchemy
 > A toolkit that enhances YouTube by customizing the layout and adding more than 130 seamless, native-feeling features. Designed to be resource-efficient, it primarily relies on YouTube's own event listeners while using timeouts and mutation observers strategically to minimize overhead. Additionally, a main settings panel, along with three sub-panels, provides an intuitive interface for easy customization.
 >
 > <br>
@@ -64,3 +68,8 @@ The code in `ReadAloudSpeedster.js` is licensed under the GNU Affero General Pub
 >
 > <br>
 > <p align="center"><img width="100%" alt="YouTube Alchemy by Tim Macy" src="https://github.com/user-attachments/assets/42016ac0-b4b1-4b02-a6dc-23620b127e10" /></p>
+
+<br>
+
+## 🔸 Disclaimer
+*Read Aloud Speedster* is an independent, private project. It’s not affiliated with, endorsed by, sponsored by, or in any way officially connected to OpenAI, ChatGPT, or any related entity. "ChatGPT" and the ChatGPT logo are trademarks of OpenAI; all other trademarks are the property of their respective owners.
