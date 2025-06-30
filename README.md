@@ -23,6 +23,9 @@ This script integrates intuitive playback speed controls into the chatbox interf
    A userscript manager is required, such as [Userscripts for Safari](https://itunes.apple.com/us/app/userscripts/id1463298887) or [Tampermonkey](https://www.tampermonkey.net/) (available for [Chrome](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd), [Safari](https://apps.apple.com/us/app/tampermonkey/id1482490089), [Opera Next](https://addons.opera.com/en/extensions/details/tampermonkey-beta/), and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/).
 2. **Install** [ReadAloudSpeedster.js](https://raw.githubusercontent.com/TimMacy/ReadAloudSpeedster/refs/heads/main/ReadAloudSpeedster.js)
 
+> [!NOTE]
+> This script is designed primarily for desktop browsers; compatibility and functionality on mobile devices may vary.
+
 ## Changelog
 - **4.0**: bug fixes and improvements. new toggleable options have been added to the settings menu: grouping Codex/Sora and "New project"/"See more" buttons, compacting search and library buttons, browsing to user or ChatGPT's responses.
 - **3.8.3**: Sora bug fix
