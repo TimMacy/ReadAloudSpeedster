@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Read Aloud Speedster
-// @description  Set a default playback speed for Read Aloud on ChatGPT.com, browse between messages via navigation buttons, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses; highlighted color for bold text; dark and light mode support; compact sidebar with separators; square design, and much more.
+// @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.0
+// @version      4.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.0 - Read Aloud Speedster                *
+*                    Version: 4.2 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -30,6 +30,7 @@
     'use strict';
     const className = "sm:mt-5";
     const escapedClassName = CSS.escape(className);
+    const escapeURL = url => url.replace(/["\\]/g,'\\$&');
     const styleSheet = document.createElement('style');
     styleSheet.textContent = `
         /**************************************
@@ -71,6 +72,10 @@
         .${escapedClassName} {
             margin-top: .5rem !important;
             margin-bottom: .25rem !important;
+        }
+
+        main button.cursor-pointer.z-10 {
+            bottom:50px;
         }
 
         /* chatbox - fade effect for content */
@@ -163,6 +168,7 @@
 
         /* hover opacity icons */
         :is(
+            main button[aria-label="Turn on temporary chat"],
             button[aria-label="Copy"],
             div[role="menuitem"]:has(path[d^="M12 7.1a"]),
             header button:has(path[d^="M12.668 10.667C12"]),
@@ -189,6 +195,10 @@
             button[data-testid="voice-play-turn-action-button"] svg,
             article button[aria-label="Share"]
         ):hover {opacity:1;}
+
+        main button[aria-label="Turn on temporary chat"] {
+            opacity:.7;
+        }
 
         /* sora star icon */
         a:has(svg path[d^="M9.822 2.077c"]),
@@ -234,8 +244,8 @@
 
         /* stop icon size inner */
         #thread-bottom-container .icon-lg {
-            height: calc(var(--spacing)*5);;
-            width: calc(var(--spacing)*5);;
+            height: calc(var(--spacing)*5);
+            width: calc(var(--spacing)*5);
         }
 
         /* select color */
@@ -261,7 +271,7 @@
         }
 
         [data-message-author-role="user"] > div > div {
-            max-width: 100%;
+            width: 100%;
         }
 
         .px-\\(--thread-content-margin\\):has([data-message-author-role="user"]) {
@@ -327,6 +337,10 @@
             width: -webkit-fill-available;
             width: -moz-available;
             width: fill-available;
+        }
+
+        main #thread article div.mt-3.w-full.empty\\:hidden {
+            margin-bottom:20px;
         }
 
         /* menu hover shadow fix */
@@ -452,7 +466,7 @@
             background: var(--main-surface-primary);
             border: 1px solid var(--border-default);
             border-radius: 3px;
-            padding: 15px 30px;
+            padding: 15px 10px 15px 30px;
             margin-bottom: 4px;
             z-index: 2077;
             display: none;
@@ -471,7 +485,8 @@
             font-family: -apple-system, "Roboto", "Arial", sans-serif;
             color: var(--text-secondary);
             font-weight: 600;
-            width: 100%
+            width: 100%;
+            padding-right:20px;
             text-decoration: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -500,6 +515,7 @@
             flex-direction: column;
             gap: 10px;
             padding-bottom: 30px;
+            padding-right: 20px;
         }
 
         .speed-control-config-popup .popup-footer {
@@ -508,6 +524,7 @@
             justify-content: space-between;
             gap: 10px;
             width: 100%;
+            padding-right:20px;
         }
 
         .speed-control-config-popup .popup-footer a {
@@ -572,14 +589,26 @@
             margin-right: 10px;
         }
 
+        .speed-control-config-popup input[type="url"] {
+            flex: 1;
+            color: var(--text-primary);
+            background: transparent;
+            margin-left: 10px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, .27);
+        }
+
+        .light .speed-control-config-popup input[type="url"],
         .light .speed-control-config-popup input[type="number"] {
             border-color: rgba(0, 0, 0, 0.27);
         }
 
+        .speed-control-config-popup input[type="url"]:hover,
         .speed-control-config-popup input[type="number"]:hover {
             border-color: color(display-p3 0.1216 0.3059 0.5804)
         }
 
+        .speed-control-config-popup input[type="url"]:focus,
         .speed-control-config-popup input[type="number"]:focus {
             border-color: color(display-p3 0 0.402 1)
         }
@@ -636,9 +665,9 @@
     (document.head
         ? Promise.resolve(document.head)
         : new Promise(resolve => {
-            if (document.readyState === 'loading')
-                document.addEventListener('DOMContentLoaded', () => resolve(document.head),{once:true});
-            else resolve(document.head);
+            document.readyState === 'loading'
+                ? document.addEventListener('DOMContentLoaded', () => resolve(document.head),{once:true})
+                : resolve(document.head);
         })
     ).then(head => {
         if (head)
@@ -757,6 +786,47 @@
                 }
             `
         },
+        jumpToChat: {
+            label: "Navigate to User's Responses Instead of ChatGPT's",
+            enabled: false,
+            sheet: null,
+            style: ``
+        },
+        heightUserMessage: {
+            label: "User Message Height Limiter",
+            enabled: true,
+            sheet: null,
+            style: `
+                div[data-message-author-role="user"]  div.whitespace-pre-wrap {
+                    max-height: 25dvh;
+                    overflow:auto;
+                    padding-right:15px;
+                }
+
+                div[data-message-author-role="user"]  div.relative {
+                    padding-right:5px;
+                }
+
+                main .bg-token-main-surface-tertiary {
+                    padding-right:0;
+                }
+
+                main .bg-token-main-surface-tertiary .justify-end,
+                main .bg-token-main-surface-tertiary>div.overflow-auto {
+                    padding-right:12px;
+                }
+            `
+        },
+        hideShareIcon: {
+            label: "Hide Share Icon",
+            enabled: false,
+            sheet: null,
+            style: `
+                article button[aria-label="Share"] {
+                    display: none;
+                }
+            `
+        },
         keepIconsVisible: {
             label: "Keep Icons Visible",
             enabled: false,
@@ -766,6 +836,7 @@
                     mask-image: none !important;
                     -webkit-mask-image: none !important;
                 }
+
                 .group\\/turn-messages .pointer-events-none.opacity-0 {
                     opacity: 1 !important;
                     pointer-events: auto !important;
@@ -781,22 +852,6 @@
                     transition-duration: unset;
                     transition-property: none;
                     transition-timing-function: unset;
-                }
-            `
-        },
-        jumpToChat: {
-            label: "Navigate to User's Responses Instead of ChatGPT's",
-            enabled: false,
-            sheet: null,
-            style: ``
-        },
-        hideShareIcon: {
-            label: "Hide Share Icon",
-            enabled: false,
-            sheet: null,
-            style: `
-                article button[aria-label="Share"] {
-                    display: none;
                 }
             `
         },
@@ -824,7 +879,7 @@
         },
         hideGetProBtn: {
             label: "Hide 'Get Pro' Button",
-            enabled: true,
+            enabled: false,
             sheet: null,
             style: `
                 .flex > button.btn-primary:first-child:last-child {
@@ -861,6 +916,7 @@
                 div.text-token-text-secondary[class*="md:px-"] {
                     display: none;
                 }
+
                 .xl\\:px-5, main form {
                     padding-bottom: 1rem;
                 }
@@ -1031,13 +1087,28 @@
             `
         },
         removeFocusOutlines: {
-            label: "Remove Focus Outlines (used for keyboard users and screen readers)",
+            label: "Remove Focus Outlines",
             enabled: false,
             sheet: null,
             style: `
                 :focus {
                     outline: none;
                     box-shadow: 0 0 0 0 transparent;
+                }
+
+                [data-testid="profile-button"] .group-focus-visible\\:ring-2 {
+                    --tw-ring-shadow: 0 0 #0000;
+                    --tw-ring-offset-shadow: 0 0 #0000;
+                }
+            `
+        },
+        changeAvatar: {
+            label: "Custom Avatar",
+            enabled: false,
+            sheet: null,
+            style: `
+                [data-testid="profile-button"] img[alt="Profile image"] {
+                    content: url("setAvatarURL");
                 }
             `
         },
@@ -1060,15 +1131,11 @@
 
     // load feature settings from config or use defaults
     const loadCSSsettings = async () => {
-        // Apply defaults immediately
-        for (const key in features) {
-            applyFeature(key);
-        }
+        // apply defaults immediately
+        for (const key in features) applyFeature(key);
 
-        // Fetch stored values concurrently
-        const entries = await Promise.all(
-            Object.keys(features).map(async key => [key, await GM.getValue(key)])
-        );
+        // fetch stored values concurrently
+        const entries = await Promise.all(Object.keys(features).filter(key => key !== 'changeAvatar').map(async key => [key, await GM.getValue(key)]));
 
         for (const [key, value] of entries) {
             if (value !== undefined) {
@@ -1084,11 +1151,13 @@
     let rateListener = null;
     let controlsContainer = null;
     let configPopup = null;
+    let docListenerActive = false;
     let observer = null;
     let playbackSpeed = 1;
     let ignoreRateChange = false;
     let lastUserRate = playbackSpeed;
     let savedSpeed;
+    let savedAvatarURL;
 
     const MIN_SPEED = 1;
     const MAX_SPEED = 17;
@@ -1100,6 +1169,12 @@
         playbackSpeed = savedSpeed;
         lastUserRate = playbackSpeed;
 
+        savedAvatarURL = await GM.getValue('avatarURL','');
+        const sanitizedURL = escapeURL(savedAvatarURL);
+        features.changeAvatar.style = savedAvatarURL?features.changeAvatar.style.replace('setAvatarURL',sanitizedURL):features.changeAvatar.style;
+        features.changeAvatar.enabled = !!savedAvatarURL;
+
+        applyFeature('changeAvatar');
         updateSpeedDisplay();
         setPlaybackSpeed();
     }
@@ -1137,6 +1212,7 @@
     function createConfigPopup() {
         if (configPopup) {
             document.removeEventListener('click', handleDocumentClick);
+            docListenerActive = false;
             configPopup.remove();
         }
 
@@ -1185,23 +1261,43 @@
         speedContainer.appendChild(speedLabel);
         content.appendChild(speedContainer);
 
+        // build settings interface
         const toggleElements = [];
-        for (const key in features) {
-            const container = document.createElement('div');
-            container.classList.add('toggle-container');
-            const checkbox = document.createElement('input');
-            checkbox.type = 'checkbox';
-            checkbox.id = `${key}Toggle`;
-            checkbox.checked = features[key].enabled;
-            const label = document.createElement('label');
-            label.classList.add('toggle-label');
-            label.textContent = features[key].label;
-            label.htmlFor = checkbox.id;
-            container.appendChild(checkbox);
-            container.appendChild(label);
-            toggleElements.push({ key, checkbox });
+        const createElement = (tag,className,attributes = {}) => {
+            const element = document.createElement(tag);
+            if (className) element.className = className;
+            Object.assign(element,attributes);
+            return element;
+        };
+
+        Object.entries(features).filter(([key]) => key !== 'changeAvatar').forEach(([key,feature]) => {
+            const container = createElement('div','toggle-container');
+            const checkbox = createElement('input','', {
+                type: 'checkbox',
+                id: `${key}Toggle`,
+                checked: feature.enabled
+            });
+            const label = createElement('label','toggle-label', {
+                textContent: feature.label,
+                htmlFor: checkbox.id
+            });
+
+            container.append(checkbox,label);
+            toggleElements.push({key,checkbox});
             content.appendChild(container);
-        }
+        });
+
+        const avatarContainer = createElement('div','toggle-container');
+        const avatarLabel = createElement('span','speed-label',{textContent:features.changeAvatar.label});
+        const avatarInput = createElement('input','', {
+            type: 'url',
+            placeholder: 'Image URL',
+            id: 'avatarUrlInput',
+            value: savedAvatarURL||''
+        });
+
+        avatarContainer.append(avatarLabel, avatarInput);
+        content.appendChild(avatarContainer);
 
         // save button
         const saveButton = document.createElement('button');
@@ -1226,18 +1322,30 @@
                 }
             }
 
+            const url = avatarInput.value.trim();
+            await GM.setValue('avatarURL',url);
+            savedAvatarURL = url;
+            features.changeAvatar.enabled = !!url;
+
+            const sanitizedURL = escapeURL(url);
+            url
+            ? (features.changeAvatar.style = features.changeAvatar.style.replace(/setAvatarURL|https?:[^\"]+/,sanitizedURL),features.changeAvatar.sheet?features.changeAvatar.sheet.textContent = features.changeAvatar.style:applyFeature('changeAvatar'))
+            : applyFeature('changeAvatar');
+
             if (navChanged) {
                 navCleanup?.();
                 navCleanup = navBtns();
             }
 
             configPopup.classList.remove('show');
+            if (docListenerActive) {
+                document.removeEventListener('click', handleDocumentClick);
+                docListenerActive = false;
+            }
         }
 
         saveButton.classList.add('save-button');
         saveButton.addEventListener('click', handleSave);
-
-        document.addEventListener('click', handleDocumentClick);
 
         configPopup.appendChild(headerWrapper);
         configPopup.appendChild(content);
@@ -1264,13 +1372,15 @@
     function handleDocumentClick(e) {
         if (!configPopup.contains(e.target) && !e.target.classList.contains('speed-display')) {
             configPopup.classList.remove('show');
+            document.removeEventListener('click', handleDocumentClick);
+            docListenerActive = false;
         }
     }
 
     // speed display
     function updateSpeedDisplay() {
         if (speedDisplayElement) {
-            speedDisplayElement.textContent = `${playbackSpeed}x`; // raw speed value without formatting
+            speedDisplayElement.textContent = `${playbackSpeed}x`;
         }
     }
 
@@ -1287,7 +1397,7 @@
 
         const speedDisplay = document.createElement('span');
         speedDisplay.classList.add('speed-display');
-        speedDisplay.textContent = `${playbackSpeed}x`; // raw speed value without formatting
+        speedDisplay.textContent = `${playbackSpeed}x`;
         speedDisplayElement = speedDisplay;
 
         const plusButton = document.createElement('button');
@@ -1315,14 +1425,21 @@
             if (!configPopup || !document.body.contains(configPopup)) {
                 configPopup = createConfigPopup();
             }
-            configPopup.classList.toggle('show');
+            const show = configPopup.classList.toggle('show');
 
-            if (configPopup.classList.contains('show')) {
+            if (show) {
+                if (!docListenerActive) {
+                    document.addEventListener('click', handleDocumentClick);
+                    docListenerActive = true;
+                }
                 const rect = e.target.getBoundingClientRect();
                 configPopup.style.position = 'absolute';
                 configPopup.style.bottom = `${window.innerHeight - rect.top + 10}px`;
                 configPopup.style.left = `${rect.left + (rect.width / 2)}px`;
                 configPopup.style.transform = 'translateX(-50%)';
+            } else if (docListenerActive) {
+                document.removeEventListener('click', handleDocumentClick);
+                docListenerActive = false;
             }
         }
 
@@ -1397,8 +1514,11 @@
         const getPrevMessage = () => {
             const current = window.scrollY + HEADER_OFFSET;
             for (let i = messageCache.length - 1; i >= 0; i--) {
-                const top = messageCache[i].getBoundingClientRect().top + window.scrollY;
-                if (top < current - 1) return messageCache[i];
+                const rect = messageCache[i].getBoundingClientRect();
+                const top = rect.top + window.scrollY;
+                const bottom = rect.bottom + window.scrollY;
+                if (top < current && bottom > current) return messageCache[i];
+                if (bottom < current - 1) return messageCache[i];
             }
             return null;
         };
@@ -1408,7 +1528,11 @@
             if (msgs.length > messageCache.length) {
                 const newMsgs = msgs.slice(messageCache.length);
                 messageCache.push(...newMsgs);
-                return newMsgs[0];
+                const current = window.scrollY + HEADER_OFFSET;
+                for (const msg of newMsgs) {
+                    const top = msg.getBoundingClientRect().top + window.scrollY;
+                    if (top > current + 1) return msg;
+                }
             }
             return null;
         };
@@ -1478,26 +1602,6 @@
         };
     }
 
-    // handle cleanup
-    function cleanup() {
-        if (playListener) {
-            document.removeEventListener('play',playListener,true);
-            playListener = null;
-        }
-        if (rateListener) {
-            document.removeEventListener('ratechange',rateListener,true);
-            rateListener = null;
-        }
-        playingAudio.clear();
-        if (observer) {observer.disconnect();observer=null;}
-        controlsContainer?.remove();
-        controlsContainer = null;
-        speedDisplayElement = null;
-        configPopup?.remove();
-        navCleanup?.();
-        navCleanup = null;
-    }
-
     // initialization after DOM has loaded
     function init() {
         observer = new MutationObserver(mutations => {
@@ -1525,7 +1629,6 @@
         }
     }
 
-    // wait for document to be ready and cleanup when page unloads
+    // wait for document to be ready
     document.readyState === "loading"?document.addEventListener("DOMContentLoaded", init,{once:true}):init();
-    window.addEventListener('unload', cleanup);
 })();
