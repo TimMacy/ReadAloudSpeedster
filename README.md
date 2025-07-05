@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-4.2-white.svg" alt="Version: 4.2"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-4.3-white.svg" alt="Version: 4.3"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
 
@@ -17,7 +17,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 
 <br><br>
 
-## 🚀 Installation <a href="https://www.opera.com"><img align="right" src="https://img.shields.io/badge/Opera-Untested-yellow.svg" alt="Opera Untested"></a><a href="https://www.microsoft.com/edge"><img align="right" src="https://img.shields.io/badge/Edge-Untested-yellow.svg" alt="Edge Untested"></a><a href="https://www.mozilla.org/firefox"><img align="right" src="https://img.shields.io/badge/Firefox-Untested-yellow.svg" alt="Firefox Untested"></a><a href="https://www.google.com/chrome"><img align="right" src="https://img.shields.io/badge/Chrome-Supported-brightgreen.svg" alt="Chrome Support"></a><a href="https://www.apple.com/safari"><img align="right" src="https://img.shields.io/badge/Safari-Supported-brightgreen.svg" alt="Safari Support"></a>
+## 🚀 Installation <a href="https://www.opera.com"><img align="right" src="https://img.shields.io/badge/Opera-Untested-yellow.svg" alt="Opera Untested"></a><a href="https://www.microsoft.com/edge"><img align="right" src="https://img.shields.io/badge/Edge-Untested-yellow.svg" alt="Edge Untested"></a><a href="https://www.mozilla.org/firefox"><img align="right" src="https://img.shields.io/badge/Firefox-Supported-brightgreen.svg" alt="Firefox Support"></a><a href="https://www.google.com/chrome"><img align="right" src="https://img.shields.io/badge/Chrome-Supported-brightgreen.svg" alt="Chrome Support"></a><a href="https://www.apple.com/safari"><img align="right" src="https://img.shields.io/badge/Safari-Supported-brightgreen.svg" alt="Safari Support"></a>
 
 1. **Install or open a userscript manager**.
    A userscript manager is required, such as [Userscripts for Safari](https://itunes.apple.com/us/app/userscripts/id1463298887) or [Tampermonkey](https://www.tampermonkey.net/) (available for [Chrome](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd), [Safari](https://apps.apple.com/us/app/tampermonkey/id1482490089), [Opera Next](https://addons.opera.com/en/extensions/details/tampermonkey-beta/), and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/).
@@ -29,6 +29,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **4.3**: Firefox support and improvements
 - **4.2**: bug fixes and improvements. new toggleable options have been added to the settings menu: user message height limiter and custom avatar support via URL
 - **4.0**: bug fixes and improvements. new toggleable options have been added to the settings menu: grouping Codex/Sora and "New project"/"See more" buttons, compacting search and library buttons, browsing to user or ChatGPT's responses.
 - **3.8.3**: Sora bug fix
