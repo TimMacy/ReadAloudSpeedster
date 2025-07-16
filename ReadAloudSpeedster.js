@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.3
+// @version      4.3.6
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.3 - Read Aloud Speedster                *
+*                    Version: 4.3.6 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -92,9 +92,8 @@
         button[aria-label="Copy"],
         div[role="menuitem"]:has(path[d^="M12 7.1a"]),
         header button:has(path[d^="M12.668 10.667C12"]),
-        button[data-testid="copy-turn-action-button"] svg,
         button.surface-nav-element:has(svg path[d^="M12 7.1a"]) {
-            color: darkorange !important;
+            color: darkorange;
             opacity:.9;
         }
 
@@ -288,14 +287,6 @@
             overflow-x:hidden;
         }
 
-        [class^="_tableContainer_"] {
-            padding-right: 12.525%;
-        }
-
-        .border-token-border-sharp [class^="_tableContainer_"] {
-            padding-right: 0;
-        }
-
         .\\[--composer-overlap-px\\:24px\\] {
             --composer-overlap-px: 0;
         }
@@ -341,6 +332,11 @@
 
         main #thread article div.mt-3.w-full.empty\\:hidden {
             margin-bottom:20px;
+        }
+
+        :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]),
+        :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]) > table {
+            width:100%;
         }
 
         /* menu hover shadow fix */
@@ -776,7 +772,7 @@
             enabled: false,
             sheet: null,
             style: `
-                main form > div:first-child {
+                main form > div.contain-inline-size {
                     background-color: #141414 !important;
                     border: 1px solid #2d2d2d;
                 }
@@ -882,7 +878,7 @@
             enabled: false,
             sheet: null,
             style: `
-                .flex > button.btn-primary:first-child:last-child {
+                main .flex > button.btn-primary:first-child:last-child {
                     display: none;
                 }
             `
@@ -1509,7 +1505,7 @@
         };
 
         const getPrevMessage = () => {
-            const current = window.scrollY + HEADER_OFFSET;
+            const current = window.scrollY + HEADER_OFFSET - 1;
             for (let i = messageCache.length - 1; i >= 0; i--) {
                 const rect = messageCache[i].getBoundingClientRect();
                 const top = rect.top + window.scrollY;
@@ -1565,7 +1561,7 @@
         };
 
         const startObserver = () => {
-            if (chatObserver||!targetChat) return;
+            if (chatObserver || !targetChat) return;
             if (queryMessages().length) {
                 populateCache();
                 update();
