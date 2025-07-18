@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.3.6
+// @version      4.5.3.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.3.6 - Read Aloud Speedster              *
+*                    Version: 4.5.3.1 - Read Aloud Speedster            *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -601,12 +601,12 @@
 
         .speed-control-config-popup input[type="url"]:hover,
         .speed-control-config-popup input[type="number"]:hover {
-            border-color: color(display-p3 0.1216 0.3059 0.5804)
+            border-color: color(display-p3 0.1216 0.3059 0.5804);
         }
 
         .speed-control-config-popup input[type="url"]:focus,
         .speed-control-config-popup input[type="number"]:focus {
-            border-color: color(display-p3 0 0.402 1)
+            border-color: color(display-p3 0 0.402 1);
         }
 
         .speed-control-config-popup .toggle-label {
@@ -654,6 +654,18 @@
 
         .CentAnni-style-nav-btn:active {
             opacity: .8;
+        }
+
+        /* avatar position */
+        #stage-slideover-sidebar .opacity-100{padding-bottom:10px;}
+        #page-header {padding-right:130.5px;}
+        [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
+            position:fixed;
+            top:8px;
+            right:0;
+            padding:0 6px;
+            margin-right:12px;
+            min-height:36px;
         }
     `;
 
@@ -780,6 +792,15 @@
                 .h-header-height {
                     background: #181818 !important;
                 }
+
+                .border-token-border-light {
+                    border-color: rgba(0, 0, 0, 0.27);
+                }
+
+                .shadow-short,
+                .shadow-short:is(.dark *) {
+                    box-shadow:unset;
+                }
             `
         },
         jumpToChat: {
@@ -860,6 +881,14 @@
                 main button[aria-label="Open Profile Menu"] span span,
                 #page-header #conversation-header-actions button[aria-label="Open profile menu"] span {
                     display: none;
+                }
+
+                [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
+                    width:36px;
+                }
+
+                #page-header {
+                    padding-right:60px;
                 }
             `
         },
@@ -1103,6 +1132,7 @@
             enabled: false,
             sheet: null,
             style: `
+                [data-testid="accounts-profile-button"] img[alt="Profile image"],
                 [data-testid="profile-button"] img[alt="Profile image"] {
                     content: url("setAvatarURL");
                 }
@@ -1140,6 +1170,13 @@
             }
         }
     };loadCSSsettings();
+
+    // avatar position
+    const avatarPosition = () => {
+        const avatar = document?.querySelector('nav [data-testid="accounts-profile-button"]');
+        const location = document?.querySelector('body');
+        if (avatar && location) location.appendChild(avatar);
+    };
 
     let speedDisplayElement = null;
     let playingAudio = new Set();
@@ -1618,6 +1655,8 @@
 
             initializeSpeed();
             createControlButtons();
+            avatarPosition();
+            setTimeout(avatarPosition,500);
             navCleanup = navBtns();
         }
     }
