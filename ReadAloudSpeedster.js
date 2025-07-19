@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.5.3.1
+// @version      4.5.3.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.5.3.1 - Read Aloud Speedster            *
+*                    Version: 4.5.3.2 - Read Aloud Speedster            *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -712,13 +712,14 @@
                     border-radius: 0 2px 2px 0;
                 }
 
-                /* chatbox - radius */
+                /* general radii */
                 .rounded-md,
                 .__menu-item,
                 .rounded-xl,
                 .rounded-3xl,
                 .rounded-b-3xl,
                 .rounded-t-3xl,
+                .rounded-\\[18px\\],
                 .rounded-\\[36px\\],
                 .rounded-\\[28px\\],
                 .rounded-\\[24px\\],
