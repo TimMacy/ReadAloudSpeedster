@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.5.3.2
+// @version      4.7
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.5.3.2 - Read Aloud Speedster            *
+*                    Version: 4.7 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -68,14 +68,16 @@
                     general settings
         **************************************/
 
+        main .popover > div.relative.flex.min-h-0.w-full.flex-1.flex-col.self-end > div.absolute.bottom-0.z-20.h-24.w-full.transition-colors {display:none;}
+
         /* chatbox - reduced vertical margin */
         .${escapedClassName} {
             margin-top: .5rem !important;
-            margin-bottom: .25rem !important;
+            margin-bottom: var(--spacing) !important;
         }
 
         main button.cursor-pointer.z-10 {
-            bottom:50px;
+            bottom:80px;
         }
 
         /* chatbox - fade effect for content */
@@ -85,7 +87,11 @@
         }
 
         #thread-bottom-container {
-            box-shadow: 0 -20px 20px 0px var(--main-surface-primary) !important;
+            box-shadow: 0 -20px 20px 0 var(--bg-primary);
+        }
+
+        .content-fade::after {
+            background: var(--bg-primary);
         }
 
         /* copy icon */
@@ -264,6 +270,10 @@
             margin: 0 12.525%;
         }
 
+        [class*="--thread-content-max-width"] {
+            max-width:unset;
+        }
+
         #thread-bottom > div {
             padding-inline: 0 !important;
             --thread-content-margin: 0 !important;
@@ -296,7 +306,8 @@
         }
 
         main div.text-base.my-auto:has(.loading-shimmer) {
-            padding-left: 6.263%;
+            padding-left:6.263%;
+            padding-right:4.263%;
         }
 
         main .mx-\\[calc\\(--spacing\\(-2\\)-1px\\)\\]:not(.loading-shimmer) {
@@ -337,6 +348,17 @@
         :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]),
         :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]) > table {
             width:100%;
+        }
+
+        div.relative.mx-5:has([class*="_prosemirror-parent_"]) {
+            padding-block:calc(var(--spacing)*3);
+            align-items:center;
+        }
+
+        #prompt-textarea,
+        textarea[class*="_fallbackTextarea_"] {
+            padding:0;
+            margin:0;
         }
 
         /* menu hover shadow fix */
@@ -657,8 +679,9 @@
         }
 
         /* avatar position */
-        #stage-slideover-sidebar .opacity-100{padding-bottom:10px;}
+        #stage-slideover-sidebar .opacity-100 {padding-bottom:10px;}
         #page-header {padding-right:130.5px;}
+        .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin-right:125px;}
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
             position:fixed;
             top:8px;
@@ -666,6 +689,16 @@
             padding:0 6px;
             margin-right:12px;
             min-height:36px;
+        }
+
+        .bg-token-sidebar-surface-primary .px-6,
+        .bg-token-sidebar-surface-primary .p-1\\.5 {
+            padding-right:0;
+        }
+
+        /* scroll position fix */
+        article:has([data-message-author-role]) {
+            scroll-margin-top: 0 !important;
         }
     `;
 
@@ -720,6 +753,7 @@
                 .rounded-b-3xl,
                 .rounded-t-3xl,
                 .rounded-\\[18px\\],
+                .rounded-\\[20px\\],
                 .rounded-\\[36px\\],
                 .rounded-\\[28px\\],
                 .rounded-\\[24px\\],
@@ -790,7 +824,8 @@
                     border: 1px solid #2d2d2d;
                 }
 
-                .h-header-height {
+                .h-header-height,
+                .bg-token-main-surface-primary {
                     background: #181818 !important;
                 }
 
@@ -801,6 +836,14 @@
                 .shadow-short,
                 .shadow-short:is(.dark *) {
                     box-shadow:unset;
+                }
+
+                .dark\\:hover\\:bg-token-main-surface-tertiary:is(.dark *):hover {
+                    background-color: var(--main-surface-tertiary)!important;
+                }
+
+                .hover\\:bg-token-main-surface-secondary:hover {
+                    background-color: var(--main-surface-secondary)!important;
                 }
             `
         },
@@ -815,13 +858,13 @@
             enabled: true,
             sheet: null,
             style: `
-                div[data-message-author-role="user"]  div.whitespace-pre-wrap {
+                div[data-message-author-role="user"] div.whitespace-pre-wrap {
                     max-height: 25dvh;
                     overflow:auto;
                     padding-right:15px;
                 }
 
-                div[data-message-author-role="user"]  div.relative {
+                div[data-message-author-role="user"] div.relative {
                     padding-right:5px;
                 }
 
@@ -891,6 +934,8 @@
                 #page-header {
                     padding-right:60px;
                 }
+
+                .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin-right:55px;}
             `
         },
         hideViewPlans: {
@@ -1026,6 +1071,10 @@
                 nav > aside > a:has(svg path[d^="M9.38759"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover {
                     color:var(--text-primary);
+                }
+
+                #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
+                    z-index:17;
                 }
             `
         },
