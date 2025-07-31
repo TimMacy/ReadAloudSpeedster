@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.7
+// @version      4.8
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.7 - Read Aloud Speedster                *
+*                    Version: 4.8 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -261,7 +261,7 @@
 
         /* change width of chat containers */
         div.text-base.my-auto:has(.bg-token-main-surface-tertiary),
-        #thread-bottom-container > div {
+        #thread-bottom-container #thread-bottom {
             margin: 0 6.263%;
             padding: 0;
         }
@@ -345,9 +345,10 @@
             margin-bottom:20px;
         }
 
+        :where([class*="_tableContainer_"]),
         :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]),
         :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]) > table {
-            width:100%;
+            width:100%!important;
         }
 
         div.relative.mx-5:has([class*="_prosemirror-parent_"]) {
@@ -888,6 +889,12 @@
                 }
             `
         },
+        shiftEnterSend: {
+            label: "Send Message with Shift+Enter instead of Enter",
+            enabled: false,
+            sheet: null,
+            style: ``
+        },
         keepIconsVisible: {
             label: "Keep Icons Visible",
             enabled: false,
@@ -1089,6 +1096,7 @@
                     max-height:32px;
                 }
 
+                nav .__menu-item-trailing-btn,
                 .self-stretch {
                     align-self:center;
                 }
@@ -1190,9 +1198,18 @@
         },
     };
 
+    let swapEnterDetach = null;
     function applyFeature(key) {
         const feature = features[key];
         if (!feature) return;
+        if (key === 'shiftEnterSend') {
+            if (feature.enabled && !swapEnterDetach) swapEnterDetach = swapEnterBehavior();
+            else if (!feature.enabled && swapEnterDetach) {
+                swapEnterDetach();
+                swapEnterDetach = null;
+            }
+            return;
+        }
         if (feature.enabled) {
             if (feature.style && !feature.sheet) {
                 feature.sheet = document.createElement('style');
@@ -1680,6 +1697,37 @@
             upBtn.remove();
             downBtn.remove();
         };
+    }
+
+    // swap ENTER and SHIFT+ENTER
+    function swapEnterBehavior() {
+        function handleKeyDown(event) {
+            if (event.key === 'Enter') {
+                const isPromptTextarea = event.target.matches('#prompt-textarea') || event.target.closest('.ProseMirror') || event.target.matches('[name="prompt-textarea"]');
+                if (!isPromptTextarea) return;
+                event.preventDefault();
+                event.stopPropagation();
+
+                const newEvent = new KeyboardEvent('keydown', {
+                    key: 'Enter',
+                    code: 'Enter',
+                    keyCode: 13,
+                    which: 13,
+                    shiftKey: !event.shiftKey,
+                    ctrlKey: event.ctrlKey,
+                    altKey: event.altKey,
+                    metaKey: event.metaKey,
+                    bubbles: true,
+                    cancelable: true
+                });
+
+                document.removeEventListener('keydown',handleKeyDown,true);
+                event.target.dispatchEvent(newEvent);
+                setTimeout(() => {document.addEventListener('keydown',handleKeyDown,true);},0);
+            }
+        }
+        document.addEventListener('keydown',handleKeyDown,true);
+        return () => document.removeEventListener('keydown',handleKeyDown,true);
     }
 
     // initialization after DOM has loaded
