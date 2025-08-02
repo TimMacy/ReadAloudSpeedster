@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-4.8.1-white.svg" alt="Version: 4.8.1"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-4.8.2-white.svg" alt="Version: 4.8.2"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
 
@@ -29,6 +29,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **4.8.1**: added custom avatar support for Sora
 - **4.8.1**: adjustments for the latest changes (added option to hide 'Get Plus')
 - **4.8**: bug fixes and a new toggleable option has been added to the settings menu: Send Message with Shift+Enter instead of Enter
 - **4.7**: bug fixes and adjustments for the latest changes
