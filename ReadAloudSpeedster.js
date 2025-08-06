@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.8.2
+// @version      4.8.5
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.8.2 - Read Aloud Speedster              *
+*                    Version: 4.8.5 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -681,7 +681,7 @@
 
         /* avatar position */
         #stage-slideover-sidebar .opacity-100 {padding-bottom:10px;}
-        #page-header {padding-right:130.5px;}
+        #page-header,main > div > header {padding-right:130.5px;}
         .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin-right:125px;}
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
             position:fixed;
@@ -700,6 +700,10 @@
         /* scroll position fix */
         article:has([data-message-author-role]) {
             scroll-margin-top: 0 !important;
+        }
+
+        #sidebar-header button:has(svg path[d^="M7.94556"]) {
+            display:none;
         }
     `;
 
@@ -804,7 +808,8 @@
                     background-color: transparent;
                 }
 
-                button.composer-btn[data-pill="true"][aria-haspopup="menu"] {
+                button.composer-btn[data-pill="true"][aria-haspopup="menu"],
+                button.composer-btn[data-pill="true"][aria-haspopup="dialog"] {
                     margin-left: 8px;
                 }
 
@@ -897,7 +902,7 @@
         },
         keepIconsVisible: {
             label: "Keep Icons Visible",
-            enabled: false,
+            enabled: true,
             sheet: null,
             style: `
                 main [class*="[mask-image"] {
@@ -938,7 +943,8 @@
                     width:36px;
                 }
 
-                #page-header {
+                #page-header,
+                main > div > header {
                     padding-right:60px;
                 }
 
@@ -1015,7 +1021,21 @@
 
                 nav > aside > a.group.__menu-item#sora {
                     transform:translate(100%,-100%);
-                    margin-bottom:-36px;
+                    margin-bottom:-32px;
+                }
+            `
+        },
+        hideCodexSora: {
+            label: "Hide Codex/Sora Buttons and Show 'Apps' Button Instead",
+            enabled: false,
+            sheet: null,
+            style: `
+                #sidebar-header button:has(svg path[d^="M7.94556"]) {
+                    display:flex;
+                }
+
+                nav > aside > a.group.__menu-item#sora, nav > aside > a.group.__menu-item[href="/codex"] {
+                    display:none;
                 }
             `
         },
@@ -1068,12 +1088,12 @@
                 }
 
                 nav > aside > div:has(svg path[d^="M14.0857"]) {
-                    transform: translate(52px, -44px);
+                    transform: translate(45.5px, -44px);
                     width: 40px;
                 }
 
                 nav > aside > a:has(svg path[d^="M9.38759"]) {
-                    transform: translate(100px, -80px);
+                    transform: translate(86.5px, -80px);
                     width: 92px;
                 }
 
@@ -1285,7 +1305,10 @@
 
     // set playback speed and manage listeners
     function setPlaybackSpeed() {
-        playingAudio.forEach(audio => audio.playbackRate = playbackSpeed);
+        playingAudio.forEach(audio => {
+            audio.playbackRate = playbackSpeed;
+            audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = true;
+        });
 
         if (!playListener) {
             playListener = e => {
