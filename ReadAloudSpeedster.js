@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      4.8.5
+// @version      5.0
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 4.8.5 - Read Aloud Speedster              *
+*                    Version: 5.0 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -74,10 +74,6 @@
         .${escapedClassName} {
             margin-top: .5rem !important;
             margin-bottom: var(--spacing) !important;
-        }
-
-        main button.cursor-pointer.z-10 {
-            bottom:80px;
         }
 
         /* chatbox - fade effect for content */
@@ -266,6 +262,10 @@
             padding: 0;
         }
 
+        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #thread-bottom-container #thread-bottom {
+            margin:0 1dvw;
+        }
+
         #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
             margin: 0 12.525%;
         }
@@ -289,8 +289,12 @@
         }
 
         .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
-            margin: 20px 6.263%;
-            padding: 0;
+            margin: 0 6.263%;
+            padding: 0 0 20px 0;
+        }
+
+        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
+            margin:0 1dvw;
         }
 
         .grow.overflow-hidden > div > div {
@@ -328,8 +332,13 @@
             margin: 0 5dvw !important;
         }
 
+        main > #thread div.\\@thread-xl\\/thread\\:pt-header-height.flex.flex-col.text-sm,
         main div.flex.basis-auto.flex-col .pb-25 {
-            padding:0;
+            padding-bottom:60dvh!important;
+        }
+
+        #thread article[data-turn-id*="request-WEB"] {
+            min-height:10dvh;
         }
 
         :root:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
@@ -375,15 +384,31 @@
             border: 1px solid #e6e6e6 !important;
         }
 
+        /* chatbox adjustments for GPT5 changes */
+        #thread ol div.group.text-token-text-tertiary {text-wrap:nowrap;}
+        #thread-bottom-container div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(3) {height:48px!important;margin-inline-end:calc(var(--spacing)*5)!important;}
+        #thread-bottom-container div.relative.mx-5.flex.min-h-14.flex-auto.bg-transparent.items-start {transform:none!important;}
+        #thread-bottom-container [data-testid="composer-footer-actions"] {inset-inline-start:calc(2.5*var(--spacing) + 36px + 123px + 8px)!important;}
+        #thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4) {height:0!important;}
+        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #thread-bottom-container [data-testid="composer-footer-actions"] {inset-inline-start:calc(2.5*var(--spacing) + 36px)!important;}
+        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4) {height: 48px !important;}
+
         /**************************************
                  Read Aloud Speedster
         **************************************/
 
         .speed-control-container {
-            position: relative;
+            position: absolute;
             display: flex;
             align-items: center;
             margin: 0 8px;
+            inset-inline-start:calc(2.5*var(--spacing) + 36px);
+            bottom:calc(var(--spacing)*2.5);
+        }
+
+        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .speed-control-container {
+            bottom: calc(var(--spacing)*2.5 + 44px);
+            inset-inline-start: calc(2.5*var(--spacing) + -8px);
         }
 
         .speed-btn {
@@ -463,7 +488,7 @@
             align-items: center;
             justify-content: center;
             height: 36px;
-            min-width: 36px;
+            min-width: 52px;
             padding: .5rem;
             font-size: .75rem;
             line-height: 1rem;
@@ -667,34 +692,56 @@
             text-wrap: nowrap;
         }
 
-        .CentAnni-style-nav-btn.enabled  {
-            opacity: 1;
-        }
-
-        .CentAnni-style-nav-btn.disabled {
-            opacity: .5;
-        }
-
-        .CentAnni-style-nav-btn:active {
-            opacity: .8;
-        }
+        .CentAnni-style-nav-btn:active { opacity: .8; }
+        .CentAnni-style-nav-btn.enabled { opacity: 1; }
+        .CentAnni-style-nav-btn.disabled { opacity: .5; }
 
         /* avatar position */
         #stage-slideover-sidebar .opacity-100 {padding-bottom:10px;}
         #page-header,main > div > header {padding-right:130.5px;}
         .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin-right:125px;}
-        [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
+        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin:unset!important;}
+
+        div.sticky:has([data-testid="accounts-profile-button"]) {
             position:fixed;
             top:8px;
-            right:0;
-            padding:0 6px;
-            margin-right:12px;
+            right:3px;
+            height: fit-content;
+            padding:0;
+            margin:0;
+            width:125px;
+            opacity:1;
+            z-index:30;
+            box-shadow:none;
+        }
+
+        [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
             min-height:36px;
         }
 
-        .bg-token-sidebar-surface-primary .px-6,
         .bg-token-sidebar-surface-primary .p-1\\.5 {
             padding-right:0;
+        }
+
+        :root:has(section [data-testid="bar-search-sources-header"]) div.sticky:has([data-testid="accounts-profile-button"]),
+        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) div.sticky:has([data-testid="accounts-profile-button"]) {
+        opacity:0;z-index:-1;
+        }
+
+        :root:has(section [data-testid="bar-search-sources-header"]) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin-inline-end: calc(var(--spacing)*3);}
+        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .speed-control-config-popup.show {transform: translateX(-17%)!important;}
+        :root:has(section [data-testid="bar-search-sources-header"]) div.bg-token-sidebar-surface-primary.relative.z-1 {z-index:30;}
+
+        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #page-header,
+        :root:has(section [data-testid="bar-search-sources-header"]) #page-header,
+        :root:has(#stage-sidebar-tiny-bar.opacity-100) #page-header {
+            padding:calc(var(--spacing)*2);
+        }
+
+        section [data-testid="bar-search-sources-header"] {
+            background: color(srgb 0.0941 0.0941 0.0941);
+            border-bottom: 1px solid rgba(45, 45, 45, 1);
+            transform: translateY(-1px);
         }
 
         /* scroll position fix */
@@ -825,13 +872,18 @@
             enabled: false,
             sheet: null,
             style: `
+                div form > div.bg-token-bg-primary,
                 main form > div.contain-inline-size {
                     background-color: #141414 !important;
                     border: 1px solid #2d2d2d;
                 }
 
                 .h-header-height,
-                .bg-token-main-surface-primary {
+                .bg-token-main-surface-primary,
+                .bg-token-bg-elevated-secondary,
+                .bg-token-bg-elevated-secondary\\/20,
+                #stage-slideover-sidebar nav div.sticky.top-0,
+                #stage-slideover-sidebar > div > div.opacity-100.h-full {
                     background: #181818 !important;
                 }
 
@@ -851,6 +903,8 @@
                 .hover\\:bg-token-main-surface-secondary:hover {
                     background-color: var(--main-surface-secondary)!important;
                 }
+
+                body > picture {display:none;}
             `
         },
         jumpToChat: {
@@ -939,8 +993,8 @@
                     display: none;
                 }
 
-                [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
-                    width:36px;
+                div.sticky:has([data-testid="accounts-profile-button"]) {
+                    width:52px;
                 }
 
                 #page-header,
@@ -1069,6 +1123,7 @@
             sheet: null,
             style: `
                 nav > aside > a:has(svg path[d^="M2.6687"]),
+                #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > aside > div:has(svg path[d^="M14.0857"]) div.text-token-text-tertiary,
                 nav > aside > a:has(svg path[d^="M9.38759"]) div.text-token-text-tertiary {
                     display: none;
@@ -1081,7 +1136,8 @@
                     margin-bottom: -8px;
                 }
 
-                nav > aside > div:has(svg path[d^="M14.0857"]),nav > aside > a:has(svg path[d^="M9.38759"]) {
+                nav > aside > a:has(svg path[d^="M9.38759"]),
+                nav > aside > div:has(svg path[d^="M14.0857"]) {
                     margin: 0;
                     z-index: 31;
                     color: var(--text-tertiary);
@@ -1103,6 +1159,7 @@
                     color:var(--text-primary);
                 }
 
+                #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
                 #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
                     z-index:17;
                 }
@@ -1261,13 +1318,6 @@
             }
         }
     };loadCSSsettings();
-
-    // avatar position
-    const avatarPosition = () => {
-        const avatar = document?.querySelector('nav [data-testid="accounts-profile-button"]');
-        const location = document?.querySelector('body');
-        if (avatar && location) location.appendChild(avatar);
-    };
 
     let speedDisplayElement = null;
     let playingAudio = new Set();
@@ -1577,7 +1627,7 @@
         controlsContainer.appendChild(minusButton);
         controlsContainer.appendChild(speedDisplay);
         controlsContainer.appendChild(plusButton);
-        document.querySelector('div[style*="var(--vt-composer-attach-file-action)"],div[data-testid="composer-action-file-upload"]')?.insertAdjacentElement('afterend', controlsContainer);
+        document.querySelector('#thread-bottom-container div > div.absolute.start-2\\.5.bottom-2\\.5')?.insertAdjacentElement('afterend',controlsContainer);
     }
 
     // message navigation button section
@@ -1780,8 +1830,6 @@
 
             initializeSpeed();
             createControlButtons();
-            avatarPosition();
-            setTimeout(avatarPosition,500);
             navCleanup = navBtns();
         }
     }
