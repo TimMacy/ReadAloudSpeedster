@@ -65,7 +65,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## ⚖️ License
-The code in `ReadAloudSpeedster.js` is licensed under the GNU Affero General Public License v3.0 (AGPL-3.0). See the [LICENSE](https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE) file for details. The `README.md` and all images are Copyright © 2025 Tim Macy. All rights reserved.
+The code in `ReadAloudSpeedster.js` is licensed under the GNU Affero General Public License v3.0 or later (AGPL-3.0-or-later). See the [LICENSE](https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE) file for details. Not licensed under the AGPL are the `README.md` and all images. Copyright © 2025 Tim Macy. All rights reserved.
 
 <br>
 
