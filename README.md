@@ -78,7 +78,7 @@ The code in `ReadAloudSpeedster.js` is licensed under the GNU Affero General Pub
 > **Install It from the Official Repository: [https://github.com/TimMacy/YouTubeAlchemy](https://github.com/TimMacy/YouTubeAlchemy)**
 >
 > <br>
-> <p align="center"><img width="100%" alt="YouTube Alchemy by Tim Macy" src="https://github.com/user-attachments/assets/42016ac0-b4b1-4b02-a6dc-23620b127e10" /></p>
+> <p align="center"><img width="100%" alt="YouTube Alchemy by Tim Macy" src="https://github.com/user-attachments/assets/926371c9-09b7-4ab9-b8a4-53c8c0e59dcf" /></p>
 
 <br>
 
