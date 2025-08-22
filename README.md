@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-5.0-white.svg" alt="Version: 5.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-5.1-white.svg" alt="Version: 5.1"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
 
@@ -29,6 +29,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **5.1**: bug fixes, improvements, and adjustments for the latest changes
 - **5.0**: adjustments for GPT-5
 - **4.8.5**: bug fixes and adjustments for the latest changes
 - **4.8.1**: added custom avatar support for Sora
@@ -46,7 +47,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **3.8**: bug fixes and improvements. new toggleable option: Compact Search and Library Buttons
 - **3.7**: bug fixes and improvements. new toggleable options have been added to the settings menu: a darker background for the header and chat window, persistent icon visibility, reduced icon animation, hide the Plus/Pro avatar, hide the "View Plans," "Get Pro," and "Dictate" buttons, disable the voice mode button, hide the "ChatGPT can make mistakes" text, compact sidebar with separators, justified text, and removed focus outlines
 - **3.1.1**: Updated stylesheet injection logic
-- **3.1**: Adjustments for the latest changes
+- **3.1**: adjustments for the latest changes
 - **3.0.9.7**: adjustments for the latest changes (fixed margins, menu bar, and box-shadow on hover)
 - **3.0.9.4**: adjustments for the latest changes (updated icon CSS selector to match new DOM)
 - **3.0.9.3**: adjustments for the latest changes (updated 'view plans' CSS selector to match new DOM)
