@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.0
+// @version      5.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,17 +20,17 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.0 - Read Aloud Speedster                *
+*                    Version: 5.1 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
 ************************************************************************/
 
-(function() {
+(function () {
     'use strict';
     const className = "sm:mt-5";
     const escapedClassName = CSS.escape(className);
-    const escapeURL = url => url.replace(/["\\]/g,'\\$&');
+    const escapeURL = url => url.replace(/["\\]/g, '\\$&');
     const styleSheet = document.createElement('style');
     styleSheet.textContent = `
         /**************************************
@@ -68,10 +68,12 @@
                     general settings
         **************************************/
 
-        main .popover > div.relative.flex.min-h-0.w-full.flex-1.flex-col.self-end > div.absolute.bottom-0.z-20.h-24.w-full.transition-colors {display:none;}
+        main .popover > div.relative.flex.min-h-0.w-full.flex-1.flex-col.self-end > div.absolute.bottom-0.z-20.h-24.w-full.transition-colors {
+            display: none;
+        }
 
         /* chatbox - reduced vertical margin */
-        .${escapedClassName} {
+        .$ {escapedClassName} {
             margin-top: .5rem !important;
             margin-bottom: var(--spacing) !important;
         }
@@ -96,7 +98,7 @@
         header button:has(path[d^="M12.668 10.667C12"]),
         button.surface-nav-element:has(svg path[d^="M12 7.1a"]) {
             color: darkorange;
-            opacity:.9;
+            opacity: .9;
         }
 
         /* copied */
@@ -115,7 +117,7 @@
         div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
         button[data-testid="good-response-turn-action-button"] svg {
             color: #00ad00 !important;
-            opacity:.9;
+            opacity: .9;
         }
 
         /* thumbs down icon */
@@ -125,7 +127,7 @@
         button.surface-nav-element:has(svg path[d^="M11.868 21"]),
         button[data-testid="bad-response-turn-action-button"] svg {
             color: crimson !important;
-            opacity:.9;
+            opacity: .9;
         }
 
         /* edit in canvas icon */
@@ -157,14 +159,16 @@
         div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
         button[data-testid="voice-play-turn-action-button"] svg {
             color: deepskyblue !important;
-            opacity:.9;
+            opacity: .9;
         }
 
-        button[aria-label="Stop"] {color: deepskyblue !important;}
+        button[aria-label="Stop"] {
+            color: deepskyblue !important;
+        }
 
         /* share icon */
         article button[aria-label="Share"] {
-            opacity:.8;
+            opacity: .8;
         }
 
         /* hover opacity icons */
@@ -195,10 +199,11 @@
             div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
             button[data-testid="voice-play-turn-action-button"] svg,
             article button[aria-label="Share"]
-        ):hover {opacity:1;}
+            ):hover {opacity: 1;
+        }
 
         main button[aria-label="Turn on temporary chat"] {
-            opacity:.7;
+            opacity: .7;
         }
 
         /* sora star icon */
@@ -262,8 +267,8 @@
             padding: 0;
         }
 
-        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #thread-bottom-container #thread-bottom {
-            margin:0 1dvw;
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #thread-bottom-container #thread-bottom {
+            margin: 0 1dvw;
         }
 
         #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
@@ -271,7 +276,7 @@
         }
 
         [class*="--thread-content-max-width"] {
-            max-width:unset;
+            max-width: unset;
         }
 
         #thread-bottom > div {
@@ -293,12 +298,12 @@
             padding: 0 0 20px 0;
         }
 
-        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
-            margin:0 1dvw;
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
+            margin: 0 1dvw;
         }
 
         .grow.overflow-hidden > div > div {
-            overflow-x:hidden;
+            overflow-x: hidden;
         }
 
         .\\[--composer-overlap-px\\:24px\\] {
@@ -310,16 +315,17 @@
         }
 
         main div.text-base.my-auto:has(.loading-shimmer) {
-            padding-left:6.263%;
-            padding-right:4.263%;
+            padding-left: 6.263%;
+            padding-right: 4.263%;
         }
 
         main .mx-\\[calc\\(--spacing\\(-2\\)-1px\\)\\]:not(.loading-shimmer) {
-            margin-left:-6px;
+            margin-left: -6px;
         }
 
-        div.text-base,div[class*="turn-messages"] {
-            --thread-content-max-width: unset!important;
+        div.text-base,
+        div[class*="turn-messages"] {
+            --thread-content-max-width: unset !important;
             max-width: 1129px;
         }
 
@@ -328,17 +334,17 @@
             width: 100% !important;
         }
 
-        main.min-h-0 .h-full.w-full >.justify-center {
+        main.min-h-0 .h-full.w-full > .justify-center {
             margin: 0 5dvw !important;
         }
 
         main > #thread div.\\@thread-xl\\/thread\\:pt-header-height.flex.flex-col.text-sm,
         main div.flex.basis-auto.flex-col .pb-25 {
-            padding-bottom:60dvh!important;
+            padding-bottom: 60dvh !important;
         }
 
         #thread article[data-turn-id*="request-WEB"] {
-            min-height:10dvh;
+            min-height: 10dvh;
         }
 
         :root:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
@@ -351,62 +357,67 @@
         }
 
         main #thread article div.mt-3.w-full.empty\\:hidden {
-            margin-bottom:20px;
+            margin-bottom: 20px;
         }
 
         :where([class*="_tableContainer_"]),
         :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]),
         :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]) > table {
-            width:100%!important;
+            width: 100% !important;
         }
 
         div.relative.mx-5:has([class*="_prosemirror-parent_"]) {
-            padding-block:calc(var(--spacing)*3);
-            align-items:center;
+            padding-block: calc(var(--spacing)*3);
+            align-items: center;
         }
 
-        #prompt-textarea,
+        #thread #prompt-textarea,
         textarea[class*="_fallbackTextarea_"] {
-            padding:0;
-            margin:0;
+            padding: 0;
+            margin: 0;
         }
 
         /* menu hover shadow fix */
         .shadow-long:is(.dark *) {
-            --tw-shadow: 0px 8px 16px 0px var(--tw-shadow-color,#00000052),0px 0px 1px 0px var(--tw-shadow-color,#0000009e) !important;
-            box-shadow: var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow) !important;
-            border:1px solid #272727 !important;
+            --tw-shadow: 0px 8px 16px 0px var(--tw-shadow-color, #00000052), 0px 0px 1px 0px var(--tw-shadow-color, #0000009e) !important;
+            box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
+            border: 1px solid #272727 !important;
         }
 
         .shadow-long {
-            --tw-shadow: 0px 8px 12px 0px var(--tw-shadow-color,var(--shadow-color-1,#00000014)),0px 0px 1px 0px var(--tw-shadow-color,var(--shadow-color-2,#0000009e)) !important;
-            box-shadow: var(--tw-inset-shadow),var(--tw-inset-ring-shadow),var(--tw-ring-offset-shadow),var(--tw-ring-shadow),var(--tw-shadow) !important;
+            --tw-shadow: 0px 8px 12px 0px var(--tw-shadow-color, var(--shadow-color-1, #00000014)), 0px 0px 1px 0px var(--tw-shadow-color, var(--shadow-color-2, #0000009e)) !important;
+            box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
             border: 1px solid #e6e6e6 !important;
         }
 
         /* chatbox adjustments for GPT5 changes */
-        #thread ol div.group.text-token-text-tertiary {text-wrap:nowrap;}
-        #thread-bottom-container div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(3) {height:48px!important;margin-inline-end:calc(var(--spacing)*5)!important;}
-        #thread-bottom-container div.relative.mx-5.flex.min-h-14.flex-auto.bg-transparent.items-start {transform:none!important;}
-        #thread-bottom-container [data-testid="composer-footer-actions"] {inset-inline-start:calc(2.5*var(--spacing) + 36px + 123px + 8px)!important;}
-        #thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4) {height:0!important;}
-        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #thread-bottom-container [data-testid="composer-footer-actions"] {inset-inline-start:calc(2.5*var(--spacing) + 36px)!important;}
-        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4) {height: 48px !important;}
+        #thread ol div.group.text-token-text-tertiary { text-wrap: nowrap; }
+
+        #thread form.group\\/composer[data-type="unified-composer"] > div > div.grid {
+            grid-template-areas: "header header header" "primary primary primary" "leading footer trailing" !important;
+        }
+
+        #thread #thread-bottom form div.cursor-text {
+            padding-top: unset;
+        }
+
+        #thread #thread-bottom form div.group-data-expanded\\/composer\\:mb-0 {
+            padding: 10px;
+            margin: unset;
+        }
 
         /**************************************
-                 Read Aloud Speedster
+                    Read Aloud Speedster
         **************************************/
 
         .speed-control-container {
-            position: absolute;
             display: flex;
             align-items: center;
-            margin: 0 8px;
-            inset-inline-start:calc(2.5*var(--spacing) + 36px);
-            bottom:calc(var(--spacing)*2.5);
+            grid-area: leading;
+            margin-left: 44px;
         }
 
-        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .speed-control-container {
+        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .speed-control-container {
             bottom: calc(var(--spacing)*2.5 + 44px);
             inset-inline-start: calc(2.5*var(--spacing) + -8px);
         }
@@ -467,19 +478,23 @@
             transform: translateX(-18px);
         }
 
-        .speed-btn:hover,.speed-control-config-popup button:hover {
+        .speed-btn:hover,
+        .speed-control-config-popup button:hover {
             background-color: #ffffff1a;
         }
 
-        .light .speed-btn:hover,.light .speed-control-config-popup button:hover {
+        .light .speed-btn:hover,
+        .light .speed-control-config-popup button:hover {
             background-color: #0d0d0d05;
         }
 
-        .speed-btn:active,.speed-control-config-popup button:active {
+        .speed-btn:active,
+        .speed-control-config-popup button:active {
             background-color: #ffffff0d
         }
 
-        .light .speed-btn:active,.light .speed-control-config-popup button:active {
+        .light .speed-btn:active,
+        .light .speed-control-config-popup button:active {
             background-color: #0d0d0d0d
         }
 
@@ -517,8 +532,8 @@
             flex-direction: column;
             gap: 10px;
             max-height: 40dvh;
-            text-rendering:optimizeLegibility !important;
-            -webkit-font-smoothing:antialiased !important;
+            text-rendering: optimizeLegibility !important;
+            -webkit-font-smoothing: antialiased !important;
         }
 
         .speed-control-config-popup .popup-header {
@@ -530,7 +545,7 @@
             color: var(--text-secondary);
             font-weight: 600;
             width: 100%;
-            padding-right:20px;
+            padding-right: 20px;
             text-decoration: none;
             -webkit-user-select: none;
             -moz-user-select: none;
@@ -545,7 +560,7 @@
             text-overflow: ellipsis;
             white-space: normal;
             cursor: pointer;
-            display:block;
+            display: block;
             opacity: .8;
             cursor: pointer;
             transition: opacity .5s;
@@ -568,7 +583,7 @@
             justify-content: space-between;
             gap: 10px;
             width: 100%;
-            padding-right:20px;
+            padding-right: 20px;
         }
 
         .speed-control-config-popup .popup-footer a {
@@ -581,7 +596,9 @@
             transition: color 0.2s ease-in-out;
         }
 
-        .speed-control-config-popup .popup-footer a:hover { color: #369eff; }
+        .speed-control-config-popup .popup-footer a:hover {
+            color: #369eff;
+        }
 
         .CentAnni-version-label {
             grid-column: 3;
@@ -600,7 +617,8 @@
             transition: opacity .5s;
         }
 
-        .speed-control-config-popup .popup-title:hover,.popup-title:hover + .CentAnni-version-label {
+        .speed-control-config-popup .popup-title:hover,
+        .popup-title:hover + .CentAnni-version-label {
             opacity: 1;
         }
 
@@ -692,50 +710,71 @@
             text-wrap: nowrap;
         }
 
-        .CentAnni-style-nav-btn:active { opacity: .8; }
-        .CentAnni-style-nav-btn.enabled { opacity: 1; }
+        .CentAnni-style-nav-btn:active  { opacity: .8;  }
+        .CentAnni-style-nav-btn.enabled  { opacity: 1;  }
         .CentAnni-style-nav-btn.disabled { opacity: .5; }
 
         /* avatar position */
-        #stage-slideover-sidebar .opacity-100 {padding-bottom:10px;}
-        #page-header,main > div > header {padding-right:130.5px;}
-        .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin-right:125px;}
-        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin:unset!important;}
+        #stage-slideover-sidebar .opacity-100 {
+            padding-bottom: 10px;
+        }
+
+        #page-header,
+        main > div > header {
+            padding-right: 130.5px;
+        }
+
+        .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
+            margin-right: 125px;
+        }
+
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
+            margin: unset !important;
+        }
 
         div.sticky:has([data-testid="accounts-profile-button"]) {
-            position:fixed;
-            top:8px;
-            right:3px;
+            position: fixed;
+            top: 8px;
+            right: 3px;
             height: fit-content;
-            padding:0;
-            margin:0;
-            width:125px;
-            opacity:1;
-            z-index:30;
-            box-shadow:none;
+            padding: 0;
+            margin: 0;
+            width: 125px;
+            opacity: 1;
+            z-index: 30;
+            box-shadow: none;
         }
 
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
-            min-height:36px;
+            min-height: 36px;
         }
 
         .bg-token-sidebar-surface-primary .p-1\\.5 {
-            padding-right:0;
+            padding-right: 0;
         }
 
         :root:has(section [data-testid="bar-search-sources-header"]) div.sticky:has([data-testid="accounts-profile-button"]),
-        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) div.sticky:has([data-testid="accounts-profile-button"]) {
-        opacity:0;z-index:-1;
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.sticky:has([data-testid="accounts-profile-button"]) {
+            opacity: 0;
+            z-index: -1;
         }
 
-        :root:has(section [data-testid="bar-search-sources-header"]) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {margin-inline-end: calc(var(--spacing)*3);}
-        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) .speed-control-config-popup.show {transform: translateX(-17%)!important;}
-        :root:has(section [data-testid="bar-search-sources-header"]) div.bg-token-sidebar-surface-primary.relative.z-1 {z-index:30;}
+        :root:has(section [data-testid="bar-search-sources-header"]) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
+            margin-inline-end: calc(var(--spacing)*3);
+        }
 
-        :root:has(body div.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden.transition-shadow) #page-header,
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .speed-control-config-popup.show {
+            transform: translateX(-17%) !important;
+        }
+
+        :root:has(section [data-testid="bar-search-sources-header"]) div.bg-token-sidebar-surface-primary.relative.z-1 {
+            z-index: 30;
+        }
+
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #page-header,
         :root:has(section [data-testid="bar-search-sources-header"]) #page-header,
         :root:has(#stage-sidebar-tiny-bar.opacity-100) #page-header {
-            padding:calc(var(--spacing)*2);
+            padding: calc(var(--spacing)*2);
         }
 
         section [data-testid="bar-search-sources-header"] {
@@ -750,7 +789,7 @@
         }
 
         #sidebar-header button:has(svg path[d^="M7.94556"]) {
-            display:none;
+            display: none;
         }
     `;
 
@@ -759,7 +798,7 @@
         ? Promise.resolve(document.head)
         : new Promise(resolve => {
             document.readyState === 'loading'
-                ? document.addEventListener('DOMContentLoaded', () => resolve(document.head),{once:true})
+                ? document.addEventListener('DOMContentLoaded', () => resolve(document.head), { once: true })
                 : resolve(document.head);
         })
     ).then(head => {
@@ -809,9 +848,13 @@
                 .rounded-\\[36px\\],
                 .rounded-\\[28px\\],
                 .rounded-\\[24px\\],
+                .composer-btn:enabled,
                 .composer-btn::before,
                 .surface-popover:before,
-                .__menu-item-trailing-btn {
+                .__menu-item-trailing-btn,
+                form > div:nth-child(2) > div,
+                main form div.contain-inline-size,
+                #wham-message-modal-footer div.cursor-text.shadow-short {
                     border-radius: 2px !important;
                 }
 
@@ -872,8 +915,9 @@
             enabled: false,
             sheet: null,
             style: `
-                div form > div.bg-token-bg-primary,
-                main form > div.contain-inline-size {
+                form > div:nth-child(2) > div,
+                main form div.contain-inline-size,
+                div form > div.bg-token-bg-primary {
                     background-color: #141414 !important;
                     border: 1px solid #2d2d2d;
                 }
@@ -904,7 +948,7 @@
                     background-color: var(--main-surface-secondary)!important;
                 }
 
-                body > picture {display:none;}
+                body > picture { display: none; }
             `
         },
         jumpToChat: {
@@ -1060,6 +1104,10 @@
 
                 .xl\\:px-5, main form {
                     padding-bottom: 1rem;
+                }
+
+                #CentAnni-gpt-model-quickbar {
+                    bottom: 22.5px;
                 }
             `
         },
@@ -1265,14 +1313,20 @@
                 }
             `
         },
+        jumpToChatActive: {
+            label: "Add Message Navigation Arrows (default: yes)",
+            enabled: true,
+            sheet: null,
+            style: ``
+        },
         changeAvatar: {
             label: "Custom Avatar",
             enabled: false,
             sheet: null,
             style: `
                 main .mt-2 button .flex.select-none,
-                [data-testid="accounts-profile-button"] img[alt="Profile image"],
-                [data-testid="profile-button"] img[alt="Profile image"] {
+                [data-testid="profile-button"] img[alt="Profile image"],
+                [data-testid="accounts-profile-button"] img[alt="Profile image"] {
                     content: url("setAvatarURL");
                 }
             `
@@ -1317,7 +1371,7 @@
                 applyFeature(key);
             }
         }
-    };loadCSSsettings();
+    }; const cssSettingsReady = loadCSSsettings();
 
     let speedDisplayElement = null;
     let playingAudio = new Set();
@@ -1343,14 +1397,17 @@
         playbackSpeed = savedSpeed;
         lastUserRate = playbackSpeed;
 
-        savedAvatarURL = await GM.getValue('avatarURL','');
+        updateSpeedDisplay();
+        setPlaybackSpeed();
+    }
+
+    async function initializeAvatar() {
+        savedAvatarURL = await GM.getValue('avatarURL', '');
         const sanitizedURL = escapeURL(savedAvatarURL);
-        features.changeAvatar.style = savedAvatarURL?features.changeAvatar.style.replace('setAvatarURL',sanitizedURL):features.changeAvatar.style;
+        features.changeAvatar.style = savedAvatarURL ? features.changeAvatar.style.replace('setAvatarURL', sanitizedURL) : features.changeAvatar.style;
         features.changeAvatar.enabled = !!savedAvatarURL;
 
         applyFeature('changeAvatar');
-        updateSpeedDisplay();
-        setPlaybackSpeed();
     }
 
     // set playback speed and manage listeners
@@ -1367,21 +1424,21 @@
                 audio.playbackRate = playbackSpeed;
                 playingAudio.add(audio);
 
-                const remove = () => {playingAudio.delete(audio);};
-                audio.addEventListener('pause',remove,{once:true});
-                audio.addEventListener('ended',remove,{once:true});
+                const remove = () => { playingAudio.delete(audio); };
+                audio.addEventListener('pause', remove, { once: true });
+                audio.addEventListener('ended', remove, { once: true });
             };
-            document.addEventListener('play',playListener,true);
+            document.addEventListener('play', playListener, true);
         }
 
         if (!rateListener) {
             rateListener = e => {
                 const audio = e.target;
                 if (!(audio instanceof HTMLAudioElement)) return;
-                if (ignoreRateChange) {ignoreRateChange = false;return;}
+                if (ignoreRateChange) { ignoreRateChange = false; return; }
                 audio.playbackRate = lastUserRate;
             };
-            document.addEventListener('ratechange',rateListener,true);
+            document.addEventListener('ratechange', rateListener, true);
         }
     }
 
@@ -1440,37 +1497,37 @@
 
         // build settings interface
         const toggleElements = [];
-        const createElement = (tag,className,attributes = {}) => {
+        const createElement = (tag, className, attributes = {}) => {
             const element = document.createElement(tag);
             if (className) element.className = className;
-            Object.assign(element,attributes);
+            Object.assign(element, attributes);
             return element;
         };
 
-        Object.entries(features).filter(([key]) => key !== 'changeAvatar').forEach(([key,feature]) => {
-            const container = createElement('div','toggle-container');
-            const checkbox = createElement('input','', {
+        Object.entries(features).filter(([key]) => key !== 'changeAvatar').forEach(([key, feature]) => {
+            const container = createElement('div', 'toggle-container');
+            const checkbox = createElement('input', '', {
                 type: 'checkbox',
                 id: `${key}Toggle`,
                 checked: feature.enabled
             });
-            const label = createElement('label','toggle-label', {
+            const label = createElement('label', 'toggle-label', {
                 textContent: feature.label,
                 htmlFor: checkbox.id
             });
 
-            container.append(checkbox,label);
-            toggleElements.push({key,checkbox});
+            container.append(checkbox, label);
+            toggleElements.push({ key, checkbox });
             content.appendChild(container);
         });
 
-        const avatarContainer = createElement('div','toggle-container');
-        const avatarLabel = createElement('span','speed-label',{textContent:features.changeAvatar.label});
-        const avatarInput = createElement('input','', {
+        const avatarContainer = createElement('div', 'toggle-container');
+        const avatarLabel = createElement('span', 'speed-label', { textContent: features.changeAvatar.label });
+        const avatarInput = createElement('input', '', {
             type: 'url',
             placeholder: 'Image URL',
             id: 'avatarUrlInput',
-            value: savedAvatarURL||''
+            value: savedAvatarURL || ''
         });
 
         avatarContainer.append(avatarLabel, avatarInput);
@@ -1490,24 +1547,24 @@
             }
 
             let navChanged = false;
-            for (const { key,checkbox } of toggleElements) {
+            for (const { key, checkbox } of toggleElements) {
                 if (features[key].enabled !== checkbox.checked) {
                     features[key].enabled = checkbox.checked;
-                    await GM.setValue(key,features[key].enabled);
+                    await GM.setValue(key, features[key].enabled);
                     applyFeature(key);
                     if (key === 'jumpToChat') navChanged = true;
                 }
             }
 
             const url = avatarInput.value.trim();
-            await GM.setValue('avatarURL',url);
+            await GM.setValue('avatarURL', url);
             savedAvatarURL = url;
             features.changeAvatar.enabled = !!url;
 
             const sanitizedURL = escapeURL(url);
             url
-            ? (features.changeAvatar.style = features.changeAvatar.style.replace(/setAvatarURL|https?:[^\"]+/,sanitizedURL),features.changeAvatar.sheet?features.changeAvatar.sheet.textContent = features.changeAvatar.style:applyFeature('changeAvatar'))
-            : applyFeature('changeAvatar');
+                ? (features.changeAvatar.style = features.changeAvatar.style.replace(/setAvatarURL|https?:[^\"]+/, sanitizedURL), features.changeAvatar.sheet ? features.changeAvatar.sheet.textContent = features.changeAvatar.style : applyFeature('changeAvatar'))
+                : applyFeature('changeAvatar');
 
             if (navChanged) {
                 navCleanup?.();
@@ -1627,7 +1684,7 @@
         controlsContainer.appendChild(minusButton);
         controlsContainer.appendChild(speedDisplay);
         controlsContainer.appendChild(plusButton);
-        document.querySelector('#thread-bottom-container div > div.absolute.start-2\\.5.bottom-2\\.5')?.insertAdjacentElement('afterend',controlsContainer);
+        document.querySelector('#thread-bottom-container div.\\[grid-area\\:leading\\]')?.insertAdjacentElement('afterend', controlsContainer);
     }
 
     // message navigation button section
@@ -1635,15 +1692,15 @@
     const UP_ARROW_PATH = 'M10 3.293l-6.354 6.353a1 1 0 001.414 1.414L9 6.414V17a1 1 0 102 0V6.414l3.939 3.939a1 1 0 001.415-1.414L10 3.293z';
     const DOWN_ARROW_PATH = 'M10 16.707l6.354-6.353a1 1 0 00-1.414-1.414L11 13.586V3a1 1 0 10-2 0v10.586L5.061 8.94a1 1 0 10-1.415 1.415L10 16.707z';
     const createIcon = (pathData) => {
-        const svg = document.createElementNS('http://www.w3.org/2000/svg','svg');
-        svg.setAttribute('width','20');
-        svg.setAttribute('height','20');
-        svg.setAttribute('viewBox','0 0 20 20');
-        svg.setAttribute('fill','currentColor');
-        const path = document.createElementNS('http://www.w3.org/2000/svg','path');
-        path.setAttribute('fill-rule','evenodd');
-        path.setAttribute('clip-rule','evenodd');
-        path.setAttribute('d',pathData);
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '20');
+        svg.setAttribute('height', '20');
+        svg.setAttribute('viewBox', '0 0 20 20');
+        svg.setAttribute('fill', 'currentColor');
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('fill-rule', 'evenodd');
+        path.setAttribute('clip-rule', 'evenodd');
+        path.setAttribute('d', pathData);
         svg.appendChild(path);
         const wrapper = document.createElement('div');
         wrapper.className = 'flex w-full items-center justify-center';
@@ -1651,10 +1708,10 @@
         return wrapper;
     };
 
-    const createNavButton = (pathData,label) => {
+    const createNavButton = (pathData, label) => {
         const btn = document.createElement('button');
         btn.className = 'CentAnni-style-nav-btn btn relative btn-ghost text-token-text-primary';
-        btn.setAttribute('aria-label',label);
+        btn.setAttribute('aria-label', label);
         btn.appendChild(createIcon(pathData));
         return btn;
     };
@@ -1666,15 +1723,15 @@
     function navBtns() {
         const targetChat = document.querySelector('main > #thread div.flex.basis-auto.flex-col.grow');
         const actions = document.querySelector('#conversation-header-actions');
-        const shareBtn = actions.querySelector('button[aria-label="Share"]');
-        if (!shareBtn || !actions || !targetChat) return;
+        const shareBtn = actions?.querySelector('button[aria-label="Share"]');
+        if (!shareBtn || !actions || !targetChat) return () => {};
 
         let chatObserver = null;
         let messageCache = [];
 
-        const role = features.jumpToChat?.enabled?'user':'assistant';
+        const role = features.jumpToChat?.enabled ? 'user' : 'assistant';
         const queryMessages = () => Array.from(targetChat.querySelectorAll(`article:has([data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"]))`));
-        const populateCache = () => {messageCache = queryMessages();};
+        const populateCache = () => { messageCache = queryMessages(); };
 
         const getNextMessage = () => {
             const current = window.scrollY + HEADER_OFFSET;
@@ -1712,19 +1769,19 @@
         };
 
         const setState = (btn, enabled) => {
-            btn.classList.toggle("enabled",enabled);
-            btn.classList.toggle("disabled",!enabled);
+            btn.classList.toggle("enabled", enabled);
+            btn.classList.toggle("disabled", !enabled);
         };
 
         const update = () => {
-            setState(upBtn,!!getPrevMessage());
-            setState(downBtn,!!getNextMessage());
+            setState(upBtn, !!getPrevMessage());
+            setState(downBtn, !!getNextMessage());
         };
 
         const jump = (prev) => {
-            let target = prev?getPrevMessage():getNextMessage();
+            let target = prev ? getPrevMessage() : getNextMessage();
             if (!prev && !target) target = checkForNewBelow();
-            if (target) target.scrollIntoView({behavior:'auto',block:'start'});
+            if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
             update();
         };
 
@@ -1734,8 +1791,8 @@
             upBtn.onclick = () => jump(true);
             downBtn.onclick = () => jump(false);
 
-            actions.insertBefore(downBtn,shareBtn);
-            actions.insertBefore(upBtn,downBtn);
+            actions.insertBefore(downBtn, shareBtn);
+            actions.insertBefore(upBtn, downBtn);
 
             populateCache();
             startObserver();
@@ -1753,10 +1810,10 @@
                 if (queryMessages().length) {
                     populateCache();
                     stopObserver();
-                    setTimeout(update,250);
+                    setTimeout(update, 250);
                 }
             });
-            chatObserver.observe(targetChat,{childList:true});
+            chatObserver.observe(targetChat, { childList: true });
         };
 
         const stopObserver = () => {
@@ -1798,20 +1855,23 @@
                     cancelable: true
                 });
 
-                document.removeEventListener('keydown',handleKeyDown,true);
+                document.removeEventListener('keydown', handleKeyDown, true);
                 event.target.dispatchEvent(newEvent);
-                setTimeout(() => {document.addEventListener('keydown',handleKeyDown,true);},0);
+                setTimeout(() => { document.addEventListener('keydown', handleKeyDown, true); }, 0);
             }
         }
-        document.addEventListener('keydown',handleKeyDown,true);
-        return () => document.removeEventListener('keydown',handleKeyDown,true);
+        document.addEventListener('keydown', handleKeyDown, true);
+        return () => document.removeEventListener('keydown', handleKeyDown, true);
     }
 
     // initialization after DOM has loaded
     function init() {
+        requestIdleCallback(initializeAvatar, { timeout: 1000 });
+        if (window.location.pathname.startsWith('/codex') || window.location.hostname === 'sora.chatgpt.com') return;
+
         observer = new MutationObserver(mutations => {
             const hasMainMutations = mutations.some(mutation => mutation.target.closest("#main"));
-            if (!hasMainMutations)return;
+            if (!hasMainMutations) return;
 
             // observer for new audio elements
             const audioFound = mutations.some(mutation => Array.from(mutation.addedNodes).some(node => node.nodeName === 'AUDIO' || (node.querySelector && node.querySelector('audio'))));
@@ -1819,21 +1879,20 @@
             // handle UI updates and audio playback speed
             if (audioFound) setPlaybackSpeed();
             if (!document.body.contains(controlsContainer)) createControlButtons();
-            if (!document.querySelector('#conversation-header-actions button[aria-label="Jump to next message"]')) {
+            if (features.jumpToChatActive.enabled && !document.querySelector('#conversation-header-actions button[aria-label="Jump to next message"]')) {
                 navCleanup?.();
                 navCleanup = navBtns();
             }
         });
 
         if (document.body) {
-            observer.observe(document.body,{childList:true,subtree:true});
-
-            initializeSpeed();
-            createControlButtons();
-            navCleanup = navBtns();
+            observer.observe(document.body, { childList: true, subtree: true });
+            requestIdleCallback(initializeSpeed, { timeout: 1000 });
+            requestIdleCallback(createControlButtons, { timeout: 1000 });
+            cssSettingsReady.then(() => { if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 }); });
         }
     }
 
     // wait for document to be ready
-    document.readyState === "loading"?document.addEventListener("DOMContentLoaded", init,{once:true}):init();
+    document.readyState === "loading" ? document.addEventListener("DOMContentLoaded", init, { once: true }) : init();
 })();
