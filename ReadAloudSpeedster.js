@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.1.2
+// @version      5.2.5
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.1.2 - Read Aloud Speedster              *
+*                    Version: 5.2.5 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -156,13 +156,15 @@
 
         /* read aloud and stop icon */
         button[aria-label="Read aloud"],
+        div[role="menuitem"]:has(path[d^="M9.75122"]),
         div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
         button[data-testid="voice-play-turn-action-button"] svg {
             color: deepskyblue !important;
             opacity: .9;
         }
 
-        button[aria-label="Stop"] {
+        button[aria-label="Stop"],
+        div[role="menuitem"]:has(path[d^="M10 2.08496C14"]) {
             color: deepskyblue !important;
         }
 
@@ -338,8 +340,9 @@
             margin: 0 5dvw !important;
         }
 
-        main > #thread div.\\@thread-xl\\/thread\\:pt-header-height.flex.flex-col.text-sm,
-        main div.flex.basis-auto.flex-col .pb-25 {
+        main div.flex.basis-auto.flex-col .pb-25,
+        main > #thread div.flex.flex-col.text-sm.thread-xl\\:pt-header-height,
+        main > #thread div.\\@thread-xl\\/thread\\:pt-header-height.flex.flex-col.text-sm {
             padding-bottom: 60dvh !important;
         }
 
@@ -414,7 +417,7 @@
             display: flex;
             align-items: center;
             grid-area: leading;
-            margin-left: 44px;
+            margin: 0 8px 0 44px;
         }
 
         :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .speed-control-container {
@@ -791,6 +794,144 @@
         #sidebar-header button:has(svg path[d^="M7.94556"]) {
             display: none;
         }
+
+        /* GPT model picker */
+        #CentAnni-gpt-model-quickbar {
+            position: fixed;
+            display: flex;
+            left: 50%;
+            translate: var(--quickbar-shift-x-2);
+            bottom: 38.5px;
+            z-index: 47;
+            gap: 8px;
+            padding: 8px;
+            border-radius: 5px;
+            background: rgba(20, 20, 20, 1);
+            text-wrap: nowrap;
+            width: clamp(200px, 27dvw, 400px);
+            overflow: hidden;
+            overflow-x: auto;
+            scrollbar-width: none;
+        }
+
+        .CentAnni-gpt-model-btn {
+            font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+            padding: 6px 10px;
+            border-radius: 3px;
+            border: 1px solid rgba(255, 255, 255, .1);
+            background: rgba(255, 255, 255, .08);
+            color: #fff;
+            cursor: pointer;
+            transition: background-color .5s ease;
+        }
+
+        .CentAnni-gpt-model-btn:hover {
+            background: rgba(255, 255, 255, .16);
+            border-color:  rgba(255, 255, 255, .25);
+        }
+
+        .CentAnni-gpt-model-btn:active {
+            background: rgba(255, 255, 255, .2);
+            border-color: rgba(255, 255, 255, .5);
+        }
+
+        :root:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar { display: none; }
+
+        :root { --quickbar-shift-x: calc(-50% - -120px) 0; }
+        :root:has(#stage-sidebar-tiny-bar.opacity-100) { --quickbar-shift-x: calc(-50% - -30px) 0; }
+
+        :root { --quickbar-shift-x-2: calc(0% - -120px) 0; }
+        :root:has(#stage-sidebar-tiny-bar.opacity-100) { --quickbar-shift-x-2: calc(0% - 50px) 0; }
+
+        :root:has(section [data-testid="bar-search-sources-header"]) #CentAnni-gpt-model-quickbar {
+            bottom: unset;
+            top: 3.5px;
+            translate: -100%;
+            width: 140px;
+        }
+
+        :root:has(main button[aria-label="Turn on temporary chat"]) #CentAnni-gpt-model-quickbar,
+        :root:has(main button[aria-label="Turn off temporary chat"]) #CentAnni-gpt-model-quickbar,
+        :root:has(main .text-page-header button[aria-label="Edit color"]) #CentAnni-gpt-model-quickbar,
+        :root:has(main button[aria-label^="Edit the title of"]) #CentAnni-gpt-model-quickbar,
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar {
+            bottom: unset;
+            top: 3.5px;
+            translate: var(--quickbar-shift-x);
+            width: clamp(250px, 46dvw, 585px);
+            background: color(srgb 0.0941 0.0941 0.0941);
+        }
+
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar {
+            translate: calc(0% - -50px) 0 !important;
+            width: 250px;
+        }
+
+        @media (max-width: 1040px) {
+            :root:not(:is( :has(main button[aria-label="Turn on temporary chat"]),
+                :has(main button[aria-label="Turn off temporary chat"]),
+                :has(main .text-page-header button[aria-label="Edit color"]),
+                :has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden))) #CentAnni-gpt-model-quickbar {
+                    bottom: unset;
+                    top: 3.5px;
+                    translate: unset;
+                    width: 140px;
+                }
+
+            :root:has(#stage-sidebar-tiny-bar.opacity-100) #CentAnni-gpt-model-quickbar {
+                translate: -50%;
+            }
+        }
+
+        @media (max-width: 768px) {
+            #CentAnni-gpt-model-quickbar {
+                display: none;
+            }
+        }
+
+        #CentAnni-speak-btn {
+            position: absolute;
+            display: flex;
+            bottom: 135px;
+            left: 20px;
+            width: 32px;
+            height: 32px;
+            color: deepskyblue;
+            justify-content: center;
+            align-items: center;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 9999;
+            background: transparent;
+        }
+
+        #CentAnni-speak-btn:hover {
+            background: rgba(255, 255, 255, 0.07);
+        }
+
+        #CentAnni-speak-btn:active {
+            color: rgb(0, 251, 255);
+        }
+
+        :root:has(main button[aria-label^="Edit the title of"]) #CentAnni-speak-btn,
+        :root:has(main button[aria-label="Turn on temporary chat"]) #CentAnni-speak-btn,
+        :root:has(main button[aria-label="Turn off temporary chat"]) #CentAnni-speak-btn {
+            display: none;
+        }
+
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-speak-btn {
+            bottom: 115px;
+            left: 0;
+        }
+
+        div[data-radix-popper-content-wrapper][style*="--radix-popper-transform-origin: 0% 86px"] {
+            margin: 85px 0 0 50px;
+        }
+
+        div[data-radix-popper-content-wrapper][style*="--radix-popper-transform-origin: 0% 86px"] > div {
+            display: flex;
+            flex-direction: column-reverse;
+        }
     `;
 
     // append css
@@ -843,6 +984,8 @@
                 .rounded-3xl,
                 .rounded-b-3xl,
                 .rounded-t-3xl,
+                .__composer-pill,
+                form > div > div,
                 .rounded-\\[18px\\],
                 .rounded-\\[20px\\],
                 .rounded-\\[36px\\],
@@ -873,11 +1016,11 @@
                 }
 
                 /* canvas */
-                main .text-black\\!,
+                section.popover .text-black\\!,
                 #prosemirror-context-children > div,
-                main .shadow-xl:not([role="toolbar"]),
-                main .shadow-lg:not([role="toolbar"]),
-                main div.border-token-border-default.z-70 {
+                section.popover .shadow-xl:not([role="toolbar"]),
+                section.popover .shadow-lg:not([role="toolbar"]),
+                section.popover div.border-token-border-default.z-70 {
                     border-radius: 0 !important;
                     right: -1px !important;
                     bottom: -1px !important;
@@ -886,7 +1029,8 @@
 
                 .speed-btn,
                 .speed-display,
-                .composer-btn:enabled {
+                .composer-btn:enabled,
+                button.__composer-pill {
                     border: 1px solid var(--border-default);
                 }
 
@@ -907,6 +1051,10 @@
                 main div:has(.loading-shimmer) a>span.rounded-se-full {
                     border-start-end-radius: 2px;
                     border-end-end-radius: 2px;
+                }
+
+                main form div.\\[grid-area\\:footer\\].\\[scrollbar-width\\:none\\] > div {
+                    gap: 8px;
                 }
             `
         },
@@ -966,6 +1114,7 @@
                     max-height: 25dvh;
                     overflow:auto;
                     padding-right:15px;
+                    overscroll-behavior: contain;
                 }
 
                 div[data-message-author-role="user"] div.relative {
@@ -1053,7 +1202,7 @@
         },
         hideViewPlans: {
             label: "Hide 'View plans' and 'Get Plus'",
-            enabled: true,
+            enabled: false,
             sheet: null,
             style: `
                 #page-header div:has(path[d^="M17.665 10C17"]),
@@ -1281,6 +1430,10 @@
                 nav > #history > aside > h2 {
                     padding:3px 10px 0 10px;
                 }
+
+                .__menu-item:not(:disabled):not([data-disabled]):not([data-no-hover-bg]).hoverable:hover {
+                    background-color: var(--menu-item-highlighted);
+                }
             `
         },
         justifyText: {
@@ -1314,7 +1467,19 @@
             `
         },
         jumpToChatActive: {
-            label: "Add Message Navigation Arrows (default: yes)",
+            label: "Add Message Navigation Arrows",
+            enabled: true,
+            sheet: null,
+            style: ``
+        },
+        modelSelector: {
+            label: "Add Quick Model Selector Buttons",
+            enabled: true,
+            sheet: null,
+            style: ``
+        },
+        readAloudBtn: {
+            label: "Add Button to Read Aloud Last Message",
             enabled: true,
             sheet: null,
             style: ``
@@ -1864,6 +2029,153 @@
         return () => document.removeEventListener('keydown', handleKeyDown, true);
     }
 
+    // select GPT model (default 4o)
+    let modelObserver, timeout;
+    const selectModel = (modelType) => {
+        modelObserver?.disconnect();
+        let subMenu = true;
+
+        // model configurations
+        const legacySubmenu = '[data-testid="Legacy models-submenu"]';
+        const modelConfigs = {
+            // current
+            'gpt-5': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5"]' },
+            'instant': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-instant"]' },
+            'thinking-mini': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-t-mini"]' },
+            'gpt-5-thinking': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-thinking"]' },
+
+            // legacy models (submenu)
+            'gpt-4o': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4o"]' },
+            'gpt-4.1': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4-1"]' },
+            'gpt-o3': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o3"]' },
+            'gpt-o4-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o4-mini"]' }
+        };
+
+        const config = modelConfigs[modelType];
+        if (!config) return;
+
+        const cleanup = () => {
+            modelObserver?.disconnect();
+            if (timeout) clearTimeout(timeout);
+        };
+
+        const simulateClick = (element) => {
+            const rect = element.getBoundingClientRect();
+            const centerX = Math.floor(rect.left + rect.width / 2);
+            const centerY = Math.floor(rect.top + rect.height / 2);
+            const eventOptions = {
+                bubbles: true,
+                cancelable: true,
+                clientX: centerX,
+                clientY: centerY,
+                composed: true
+            };
+
+            if (window.PointerEvent) element.dispatchEvent(new PointerEvent('pointerdown', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, buttons: 1 }));
+            element.dispatchEvent(new MouseEvent('mousedown', { ...eventOptions, button: 0, buttons: 1 }));
+            if (window.PointerEvent) element.dispatchEvent(new PointerEvent('pointerup', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, buttons: 0 }));
+            element.dispatchEvent(new MouseEvent('mouseup', { ...eventOptions, button: 0, buttons: 0 }));
+
+            element.click();
+        };
+
+        const check = () => {
+            const submenuPanel = '[role="menu"][data-state="open"]:not([hidden])';
+
+            if (config.needsSubmenu) { // legacy models
+                if (subMenu) {
+                    const submenuTrigger = document.querySelector(`${submenuPanel} ${legacySubmenu}`);
+                    if (submenuTrigger) {
+                        simulateClick(submenuTrigger);
+                        subMenu = false;
+                    }
+                } else if (!subMenu) {
+                    const modelButton = document.querySelector(`${submenuPanel} ${config.buttonSelector}`);
+                    if (modelButton) {
+                        simulateClick(modelButton);
+                        cleanup();
+                    }
+                }
+            } else { // current models
+                const modelButton = document.querySelector(`${submenuPanel} ${config.buttonSelector}`);
+                if (modelButton) {
+                    simulateClick(modelButton);
+                    cleanup();
+                }
+            }
+        };
+
+        // open menu selector panel
+        const headerButton = document.querySelector('main header button[data-testid="model-switcher-dropdown-button"]');
+        if (!headerButton) return;
+        simulateClick(headerButton);
+
+        // model observer
+        modelObserver = new MutationObserver(check);
+        modelObserver.observe(document.body, { childList: true, subtree: true });
+        timeout = setTimeout(cleanup, 10000);
+        check();
+    };
+
+    const addModelButtons = () => {
+        if (document.getElementById("CentAnni-gpt-model-quickbar")) return;
+        const bar = document.createElement("div");
+        bar.id = "CentAnni-gpt-model-quickbar";
+        const mkBtn = (label, clickHandler) => {
+            const b = document.createElement("button");
+            b.textContent = label;
+            b.className = 'CentAnni-gpt-model-btn';
+            b.onclick = clickHandler;
+            b.onmouseenter = () => b.style.background = "rgba(255,255,255,.16)";
+            b.onmouseleave = () => b.style.background = "rgba(255,255,255,.08)";
+            return b;
+        };
+
+        bar.appendChild(mkBtn("GPT-4o", () => selectModel("gpt-4o")));
+        bar.appendChild(mkBtn("Auto", () => selectModel("gpt-5")));
+        bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-5-thinking")));
+
+        bar.appendChild(mkBtn("Instant", () => selectModel("instant")));
+        bar.appendChild(mkBtn("Thinking mini", () => selectModel("thinking-mini")));
+
+        bar.appendChild(mkBtn("GPT-4.1", () => selectModel("gpt-4.1")));
+        bar.appendChild(mkBtn("o3", () => selectModel("gpt-o3")));
+        bar.appendChild(mkBtn("o4-mini", () => selectModel("gpt-o4-mini")));
+
+        document.body.appendChild(bar);
+    };
+
+    const readAloud = () => {
+        const buttons = document.querySelectorAll('button[aria-label="More actions"]');
+        const button = buttons[buttons.length - 1];
+        button.focus();
+        button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
+        button.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
+        setTimeout(() => { document.querySelector('[aria-label="Read aloud"]').click(); }, 500);
+    };
+
+    const svgPath = (() => {
+        const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
+        path.setAttribute('d', 'M9.75122 4.09203C9.75122 3.61482 9.21964 3.35044 8.84399 3.60277L8.77173 3.66039L6.55396 5.69262C6.05931 6.14604 5.43173 6.42255 4.7688 6.48461L4.48267 6.49828C3.52474 6.49851 2.74829 7.27565 2.74829 8.23363V11.7668C2.74829 12.7248 3.52474 13.501 4.48267 13.5012C5.24935 13.5012 5.98874 13.7889 6.55396 14.3069L8.77173 16.3401L8.84399 16.3967C9.21966 16.6493 9.75122 16.3858 9.75122 15.9084V4.09203ZM17.2483 10.0002C17.2483 8.67623 16.9128 7.43233 16.3235 6.34691L17.4924 5.71215C18.1849 6.9875 18.5784 8.4491 18.5784 10.0002C18.5783 11.5143 18.2033 12.9429 17.5413 14.1965C17.3697 14.5212 16.9675 14.6453 16.6428 14.4739C16.3182 14.3023 16.194 13.9001 16.3655 13.5754C16.9288 12.5086 17.2483 11.2927 17.2483 10.0002ZM13.9182 10.0002C13.9182 9.1174 13.6268 8.30445 13.135 7.64965L14.1985 6.85082C14.8574 7.72804 15.2483 8.81952 15.2483 10.0002L15.2336 10.3938C15.166 11.3044 14.8657 12.1515 14.3918 12.8743L14.3069 12.9797C14.0889 13.199 13.7396 13.2418 13.4709 13.0657C13.164 12.8643 13.0784 12.4528 13.2795 12.1457L13.4231 11.9084C13.6935 11.4246 13.8643 10.8776 13.9075 10.2942L13.9182 10.0002ZM13.2678 6.71801C13.5615 6.49772 13.978 6.55727 14.1985 6.85082L13.135 7.64965C12.9144 7.35599 12.9742 6.93858 13.2678 6.71801ZM16.5911 5.44555C16.9138 5.27033 17.3171 5.38949 17.4924 5.71215L16.3235 6.34691C16.1483 6.02419 16.2684 5.62081 16.5911 5.44555ZM11.0813 15.9084C11.0813 17.5226 9.22237 18.3912 7.9895 17.4202L7.87231 17.3205L5.65552 15.2873C5.33557 14.9941 4.91667 14.8313 4.48267 14.8313C2.7902 14.8311 1.41821 13.4594 1.41821 11.7668V8.23363C1.41821 6.54111 2.7902 5.16843 4.48267 5.1682L4.64478 5.16039C5.02003 5.12526 5.37552 4.96881 5.65552 4.71215L7.87231 2.67992L7.9895 2.58031C9.22237 1.60902 11.0813 2.47773 11.0813 4.09203V15.9084Z');
+        return path;
+    })();
+
+    const addReadAloudBtn = () => {
+        const speakBtn = document.createElement('button');
+        const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
+        svg.setAttribute('width', '20');
+        svg.setAttribute('height', '20');
+        svg.setAttribute('viewBox', '0 0 20 20');
+        svg.setAttribute('fill', 'currentColor');
+        svg.appendChild(svgPath.cloneNode(true));
+        speakBtn.appendChild(svg);
+        speakBtn.onclick = readAloud;
+        speakBtn.id = 'CentAnni-speak-btn';
+        speakBtn.title = 'Read Aloud Last Message';
+        document.querySelector('#thread-bottom')?.appendChild(speakBtn);
+    };
+
+
     // initialization after DOM has loaded
     function init() {
         requestIdleCallback(initializeAvatar, { timeout: 1000 });
@@ -1883,13 +2195,18 @@
                 navCleanup?.();
                 navCleanup = navBtns();
             }
+            if (features.readAloudBtn.enabled && !document.querySelector('#CentAnni-speak-btn')) addReadAloudBtn();
         });
 
         if (document.body) {
             observer.observe(document.body, { childList: true, subtree: true });
             requestIdleCallback(initializeSpeed, { timeout: 1000 });
             requestIdleCallback(createControlButtons, { timeout: 1000 });
-            cssSettingsReady.then(() => { if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 }); });
+            cssSettingsReady.then(() => {
+                if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
+                if (features.modelSelector.enabled) setTimeout(() => requestIdleCallback(addModelButtons, { timeout: 2000 }), 700);
+                if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 700);
+            });
         }
     }
 
