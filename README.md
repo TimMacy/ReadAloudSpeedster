@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-5.1.2-white.svg" alt="Version: 5.1.2"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-5.2.5-white.svg" alt="Version: 5.2.5"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
 
@@ -11,7 +11,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **Color-Coded Icons**: Copy, thumbs up/down, read aloud/stop, and edit buttons are assigned specific colors.
 - **Highlight Color**: Green in dark mode and violet in light mode.
 - **Customizable**: Clicking the speed display opens a settings menu for saving a default speed and toggling various interface options.
-   - Square Design, Darker Background for Header and Chat Window, Keep Icons Visible, No Icon Animation, Hide Plus/Pro Avatar icon, Hide "View Plans" and "Get Plus", Hide "Get Pro" Button, Hide "Dictate" Button, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" Text, Codex/Sora and "New project"/"See more" Buttons Next to Each Other, Compact Search and Library Buttons, Compact Sidebar with Separators, Justify Text, Remove Focus Outlines, Navigate Between Messages, User Message Height Limiter, Send Message with Shift+Enter instead of Enter, and Custom Avatar.
+   - Square Design, Darker Background for Header and Chat Window, Keep Icons Visible, No Icon Animation, Hide Plus/Pro Avatar icon, Hide "View Plans" and "Get Plus", Hide "Get Pro" Button, Hide "Dictate" Button, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" Text, Codex/Sora and "New project"/"See more" Buttons Next to Each Other, Compact Search and Library Buttons, Compact Sidebar with Separators, Justify Text, Remove Focus Outlines, Navigate Between Messages, User Message Height Limiter, Send Message with Shift+Enter instead of Enter, Quick Model Selector Buttons, and Custom Avatar.
 
 <p align="center"><img width="100%" alt="Read Aloud Speedster by Tim Macy" src="https://github.com/user-attachments/assets/b51bb846-2829-484a-91aa-bd4ead3d94f1" /></p> 
 
@@ -29,6 +29,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **5.2.5**: bug fixes and adjustments for the latest changes; new features: Quick Model Selector Buttons, Button to Read Aloud Last Message
 - **5.1.2**: fixed input field padding
 - **5.1.1**: fixed input field padding in projects
 - **5.1**: bug fixes, improvements, and adjustments for the latest changes
