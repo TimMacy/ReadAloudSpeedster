@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.2.5
+// @version      5.3
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.2.5 - Read Aloud Speedster              *
+*                    Version: 5.3 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -269,11 +269,15 @@
             padding: 0;
         }
 
+        #thread-bottom-container {
+            margin-bottom: 0;
+        }
+
         :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #thread-bottom-container #thread-bottom {
             margin: 0 1dvw;
         }
 
-        #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
+        :root:has(h1.text-page-header) #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
             margin: 0 12.525%;
         }
 
@@ -931,6 +935,15 @@
         div[data-radix-popper-content-wrapper][style*="--radix-popper-transform-origin: 0% 86px"] > div {
             display: flex;
             flex-direction: column-reverse;
+        }
+
+        main #thread-bottom form div.\\[grid-area\:header\\] {
+            transform: translate(0, 10px);
+        }
+
+        #thread-bottom form div.no-scrollbar.horizontal-scroll-fade-mask {
+            margin: 10px 0 -10px 0;
+            padding-bottom: unset;
         }
     `;
 
@@ -1963,11 +1976,33 @@
             startObserver();
         };
 
+        // observer for new messages
+        let stopButtonPresent;
+        const targetSelector = '#thread-bottom-container form div.flex.items-center.gap-2 > div';
+        const stopBtnSelectors = 'button[data-testid="stop-button"],#composer-submit-button[aria-label="Stop streaming"]';
+        document.querySelector(stopBtnSelectors) ? stopButtonPresent = true : stopButtonPresent = false;
+
+        const buttonObserver = new MutationObserver((mutations) => {
+            const stopButton = document.querySelector(stopBtnSelectors);
+
+            if (stopButton && !stopButtonPresent) stopButtonPresent = true;
+            else if (!stopButton && stopButtonPresent) {
+                stopButtonPresent = false;
+                requestAnimationFrame(() => {
+                    checkForNewBelow();
+                    update();
+                });
+            }
+        });
+
+        const targetNode = document.querySelector(targetSelector);
+        if (targetNode) buttonObserver.observe(targetNode, { childList: true, subtree: true });
+
         const startObserver = () => {
             if (chatObserver || !targetChat) return;
             if (queryMessages().length) {
                 populateCache();
-                update();
+                requestAnimationFrame(() => update());
                 return;
             }
 
@@ -1975,7 +2010,7 @@
                 if (queryMessages().length) {
                     populateCache();
                     stopObserver();
-                    setTimeout(update, 250);
+                    requestAnimationFrame(() => update());
                 }
             });
             chatObserver.observe(targetChat, { childList: true });
@@ -1995,6 +2030,7 @@
             messageCache = [];
             upBtn.remove();
             downBtn.remove();
+            buttonObserver?.disconnect();
         };
     }
 
@@ -2006,6 +2042,7 @@
                 if (!isPromptTextarea) return;
                 event.preventDefault();
                 event.stopPropagation();
+                event.stopImmediatePropagation();
 
                 const newEvent = new KeyboardEvent('keydown', {
                     key: 'Enter',
@@ -2022,14 +2059,14 @@
 
                 document.removeEventListener('keydown', handleKeyDown, true);
                 event.target.dispatchEvent(newEvent);
-                setTimeout(() => { document.addEventListener('keydown', handleKeyDown, true); }, 0);
+                setTimeout(() => { document.addEventListener('keydown', handleKeyDown, true); }, 10);
             }
         }
         document.addEventListener('keydown', handleKeyDown, true);
         return () => document.removeEventListener('keydown', handleKeyDown, true);
     }
 
-    // select GPT model (default 4o)
+    // select GPT model
     let modelObserver, timeout;
     const selectModel = (modelType) => {
         modelObserver?.disconnect();
