@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.3
+// @version      5.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.3 - Read Aloud Speedster                *
+*                    Version: 5.4 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -413,6 +413,10 @@
             margin: unset;
         }
 
+        :where(#thread-bottom form div[class*="_prosemirror-parent"]) {
+            max-height: 300px;
+        }
+
         /**************************************
                     Read Aloud Speedster
         **************************************/
@@ -470,19 +474,21 @@
         }
 
         .speed-btn.plus::before {
-            right: 0;
+            position: relative;
+            left: 22px;
         }
 
         .speed-btn.minus::before {
-            left: 0;
+            position: relative;
+            right: 15px;
         }
 
         .speed-display::after {
-            transform: translateX(18px);
+            transform: translateX(26px);
         }
 
         .speed-display::before {
-            transform: translateX(-18px);
+            transform: translateX(-26px);
         }
 
         .speed-btn:hover,
@@ -1069,6 +1075,10 @@
                 main form div.\\[grid-area\\:footer\\].\\[scrollbar-width\\:none\\] > div {
                     gap: 8px;
                 }
+
+                ul {
+                    list-style-type: square;
+                }
             `
         },
         darkerMode: {
@@ -1460,6 +1470,22 @@
 
                 .markdown h1 {
                     text-align: left;
+                }
+            `
+        },
+        listDashes: {
+            label: "Replace Bullets with Dashes in Lists",
+            enabled: false,
+            sheet: null,
+            style: `
+                ul {
+                    list-style-type: none;
+                }
+
+                ul li::before {
+                    position: absolute;
+                    content: "– ";
+                    margin-left: -25px;
                 }
             `
         },
