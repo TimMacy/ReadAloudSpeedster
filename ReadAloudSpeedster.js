@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.4
+// @version      5.5
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.4 - Read Aloud Speedster                *
+*                    Version: 5.5 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -38,7 +38,7 @@
         **************************************/
 
         :root {
-            --user-chat-width: 100%; // original 70%
+            --user-chat-width: 100%; /* original 70% */
             --sidebar-width: 260px;
             --sidebar-section-margin-top: 1.25rem;
             --sidebar-section-first-margin-top: .5rem;
@@ -73,7 +73,7 @@
         }
 
         /* chatbox - reduced vertical margin */
-        .$ {escapedClassName} {
+        .${escapedClassName} {
             margin-top: .5rem !important;
             margin-bottom: var(--spacing) !important;
         }
@@ -355,9 +355,6 @@
         }
 
         :root:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
-            position: fixed;
-            bottom: 125px;
-            height: calc(100dvh - 177px);
             width: -webkit-fill-available;
             width: -moz-available;
             width: fill-available;
@@ -404,8 +401,14 @@
             grid-template-areas: "header header header" "primary primary primary" "leading footer trailing" !important;
         }
 
-        #thread-bottom-container form div.cursor-text {
+        #thread-bottom-container form div.cursor-text,
+        form div.cursor-text:not(#thread-bottom-container) {
             padding-top: unset;
+        }
+
+        div.content-fade:not(#thread-bottom-container),
+        div.content-fade:not(#thread-bottom-container) form {
+            padding: unset;
         }
 
         main > #thread form div.group-data-expanded\\/composer\\:mb-0 {
@@ -453,12 +456,12 @@
 
         .speed-btn.minus {
             border-radius: 50%;
-            border-right: none;
+            border-right: none !important;
         }
 
         .speed-btn.plus {
             border-radius: 50%;
-            border-left: none;
+            border-left: none !important;
         }
 
         .speed-btn.plus::before,
@@ -664,6 +667,18 @@
             margin-right: 10px;
         }
 
+        .speed-control-config-popup input[type="number"] {
+            -webkit-appearance: none;
+            -moz-appearance: textfield !important;
+            appearance: none;
+        }
+
+        .speed-control-config-popup input[type="number"]::-webkit-outer-spin-button,
+        .speed-control-config-popup input[type="number"]::-webkit-inner-spin-button {
+            -webkit-appearance: none;
+            margin: 0;
+        }
+
         .speed-control-config-popup input[type="url"] {
             flex: 1;
             color: var(--text-primary);
@@ -756,6 +771,7 @@
             opacity: 1;
             z-index: 30;
             box-shadow: none;
+            background-color: transparent;
         }
 
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
@@ -786,6 +802,7 @@
 
         :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #page-header,
         :root:has(section [data-testid="bar-search-sources-header"]) #page-header,
+        :root:has(#stage-sidebar-tiny-bar.opacity-100) main > div > header,
         :root:has(#stage-sidebar-tiny-bar.opacity-100) #page-header {
             padding: calc(var(--spacing)*2);
         }
@@ -816,7 +833,7 @@
             gap: 8px;
             padding: 8px;
             border-radius: 5px;
-            background: rgba(20, 20, 20, 1);
+            background: transparent;
             text-wrap: nowrap;
             width: clamp(200px, 27dvw, 400px);
             overflow: hidden;
@@ -845,7 +862,10 @@
             border-color: rgba(255, 255, 255, .5);
         }
 
-        :root:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar { display: none; }
+        :root:has(main header div.gap-4.ps-4) #CentAnni-gpt-model-quickbar,
+        :root:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar {
+            display: none;
+        }
 
         :root { --quickbar-shift-x: calc(-50% - -120px) 0; }
         :root:has(#stage-sidebar-tiny-bar.opacity-100) { --quickbar-shift-x: calc(-50% - -30px) 0; }
@@ -869,7 +889,6 @@
             top: 3.5px;
             translate: var(--quickbar-shift-x);
             width: clamp(250px, 46dvw, 585px);
-            background: color(srgb 0.0941 0.0941 0.0941);
         }
 
         :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar {
@@ -998,9 +1017,9 @@
 
                 /* general radii */
                 .rounded-md,
-                .__menu-item,
                 .rounded-xl,
                 .rounded-3xl,
+                .__menu-item,
                 .rounded-b-3xl,
                 .rounded-t-3xl,
                 .__composer-pill,
@@ -1021,9 +1040,10 @@
                 }
 
                 /* popup radii and overlay */
+                .rounded-lg,
+                .rounded-2xl,
                 .rounded-t-2xl,
-                .rounded-\\[10px\\],
-                .rounded-lg, .rounded-2xl {
+                .rounded-\\[10px\\] {
                     border-radius: 2px !important;
                 }
 
@@ -1076,8 +1096,15 @@
                     gap: 8px;
                 }
 
-                ul {
+                article ul {
                     list-style-type: square;
+                }
+
+                .speed-display::after,
+                .speed-display::before,
+                .speed-btn.plus::before,
+                .speed-btn.minus::before {
+                    display: none;
                 }
             `
         },
@@ -1175,7 +1202,7 @@
             enabled: true,
             sheet: null,
             style: `
-                main [class*="[mask-image"] {
+                main [class*="mask-image"] {
                     mask-image: none !important;
                     -webkit-mask-image: none !important;
                 }
@@ -1228,8 +1255,8 @@
             enabled: false,
             sheet: null,
             style: `
-                #page-header div:has(path[d^="M17.665 10C17"]),
-                div.__menu-item:has(svg path[d^="M8.44824"]) {
+                div.__menu-item:has(svg path[d^="M8.44824"]),
+                #page-header div:has(path[d^="M17.665 10C17"]) {
                     display: none !important;
                 }
             `
@@ -1270,7 +1297,7 @@
             enabled: false,
             sheet: null,
             style: `
-                div.text-token-text-secondary[class*="md:px-"] {
+                div.text-token-text-secondary[class*="md\\:px-"] {
                     display: none;
                 }
 
@@ -1299,20 +1326,6 @@
                 }
             `
         },
-        hideCodexSora: {
-            label: "Hide Codex/Sora Buttons and Show 'Apps' Button Instead",
-            enabled: false,
-            sheet: null,
-            style: `
-                #sidebar-header button:has(svg path[d^="M7.94556"]) {
-                    display:flex;
-                }
-
-                nav > aside > a.group.__menu-item#sora, nav > aside > a.group.__menu-item[href="/codex"] {
-                    display:none;
-                }
-            `
-        },
         projectNxtMore: {
             label: "'New project' and 'See more' Buttons Next to Each Other",
             enabled: true,
@@ -1323,8 +1336,8 @@
                     flex-direction:column;
                 }
 
-                nav > #snorlax-heading > div:first-child,
-                nav > #snorlax-heading > div:last-child {
+                nav > #snorlax-heading > div:last-child,
+                nav > #snorlax-heading > div:first-child {
                     width:calc(50% - 6px);
                 }
 
@@ -1344,8 +1357,8 @@
             style: `
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
-                nav > aside > div:has(svg path[d^="M14.0857"]) div.text-token-text-tertiary,
-                nav > aside > a:has(svg path[d^="M9.38759"]) div.text-token-text-tertiary {
+                nav > aside > a:has(svg path[d^="M9.38759"]) div.text-token-text-tertiary,
+                nav > aside > div:has(svg path[d^="M14.0857"]) div.text-token-text-tertiary {
                     display: none;
                 }
 
@@ -1373,10 +1386,10 @@
                     width: 92px;
                 }
 
-                nav > aside > div:has(svg path[d^="M14.0857"]):hover,
+                nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > aside > a:has(svg path[d^="M9.38759"]):hover,
-                nav button:has(svg path[d^="M6.83496"]):hover {
-                    color:var(--text-primary);
+                nav > aside > div:has(svg path[d^="M14.0857"]):hover {
+                    color: var(--text-primary);
                 }
 
                 #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
@@ -1390,8 +1403,8 @@
             enabled: true,
             sheet: null,
             style: `
-                nav .__menu-item:not(:has(svg path[d^="M14.0857"])):not(:has(svg path[d^="M9.38759"])),
-                nav .__menu-item-trailing-btn {
+                nav .__menu-item-trailing-btn,
+                nav .__menu-item:not(:has(svg path[d^="M14.0857"])):not(:has(svg path[d^="M9.38759"])) {
                     min-height: calc(var(--spacing)*8);
                     max-height:32px;
                 }
@@ -1409,18 +1422,18 @@
                     background: rgba(1, 1, 1, .1);
                 }
 
-                nav .mt-\\(--sidebar-section-first-margin-top\\),
-                nav .pt-\\(--sidebar-section-first-margin-top\\),
                 nav .mt-\\(--sidebar-section-margin-top\\),
-                nav .pt-\\(--sidebar-section-margin-top\\) {
+                nav .pt-\\(--sidebar-section-margin-top\\),
+                nav .mt-\\(--sidebar-section-first-margin-top\\),
+                nav .pt-\\(--sidebar-section-first-margin-top\\) {
                     margin-top: 10px!important;
                     padding: 0!important;
                 }
 
-                nav .mt-\\(--sidebar-section-first-margin-top\\)::before,
-                nav .pt-\\(--sidebar-section-first-margin-top\\)::before,
                 nav .mt-\\(--sidebar-section-margin-top\\)::before,
-                nav .pt-\\(--sidebar-section-margin-top\\)::before {
+                nav .pt-\\(--sidebar-section-margin-top\\)::before,
+                nav .mt-\\(--sidebar-section-first-margin-top\\)::before,
+                nav .pt-\\(--sidebar-section-first-margin-top\\)::before {
                     content: '';
                     position: absolute;
                     width: 100%;
@@ -1430,10 +1443,10 @@
                     transform: translateY(-5px);
                 }
 
-                nav .light .mt-\\(--sidebar-section-first-margin-top\\)::before,
-                nav .light .pt-\\(--sidebar-section-first-margin-top\\)::before,
                 nav .light .mt-\\(--sidebar-section-margin-top\\)::before,
-                nav .light .pt-\\(--sidebar-section-margin-top\\)::before {
+                nav .light .pt-\\(--sidebar-section-margin-top\\)::before,
+                nav .light .mt-\\(--sidebar-section-first-margin-top\\)::before,
+                nav .light .pt-\\(--sidebar-section-first-margin-top\\)::before {
                     background-color: color(srgb 0 0 0 / 0.17);
                 }
 
@@ -1478,11 +1491,11 @@
             enabled: false,
             sheet: null,
             style: `
-                ul {
+                article ul {
                     list-style-type: none;
                 }
 
-                ul li::before {
+                article ul li::before {
                     position: absolute;
                     content: "– ";
                     margin-left: -25px;
@@ -2085,7 +2098,7 @@
 
                 document.removeEventListener('keydown', handleKeyDown, true);
                 event.target.dispatchEvent(newEvent);
-                setTimeout(() => { document.addEventListener('keydown', handleKeyDown, true); }, 10);
+                setTimeout(() => { document.addEventListener('keydown', handleKeyDown, true); }, 0);
             }
         }
         document.addEventListener('keydown', handleKeyDown, true);
@@ -2238,7 +2251,6 @@
         document.querySelector('#thread-bottom')?.appendChild(speakBtn);
     };
 
-
     // initialization after DOM has loaded
     function init() {
         requestIdleCallback(initializeAvatar, { timeout: 1000 });
@@ -2263,12 +2275,12 @@
 
         if (document.body) {
             observer.observe(document.body, { childList: true, subtree: true });
-            requestIdleCallback(initializeSpeed, { timeout: 1000 });
-            requestIdleCallback(createControlButtons, { timeout: 1000 });
             cssSettingsReady.then(() => {
+                requestIdleCallback(initializeSpeed, { timeout: 2000 });
+                setTimeout(() => requestIdleCallback(() => createControlButtons(), { timeout: 2000 }), 800);
                 if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
-                if (features.modelSelector.enabled) setTimeout(() => requestIdleCallback(addModelButtons, { timeout: 2000 }), 700);
-                if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 700);
+                if (features.modelSelector.enabled) setTimeout(() => requestIdleCallback(() => addModelButtons(), { timeout: 2000 }), 800);
+                if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 800);
             });
         }
     }
