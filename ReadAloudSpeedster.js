@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.6
+// @version      5.7
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.6 - Read Aloud Speedster                *
+*                    Version: 5.7 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1278,40 +1278,24 @@
                 }
             `
         },
-        codexNxtSora: {
-            label: "Codex and Sora Buttons Next to Each Other",
-            enabled: true,
-            sheet: null,
-            style: `
-                nav > aside > a.group.__menu-item#sora,
-                nav > aside > a.group.__menu-item[href="/codex"] {
-                    width:calc(50% - 6px);
-                }
-
-                nav > aside > a.group.__menu-item#sora {
-                    transform:translate(100%,-100%);
-                    margin-bottom:-32px;
-                }
-            `
-        },
         projectNxtMore: {
             label: "'New project' and 'See more' Buttons Next to Each Other",
             enabled: true,
             sheet: null,
             style: `
-                nav #snorlax-heading {
+                nav div.group\\/sidebar-expando-section:has(svg path[d^="M15.2041"]) {
                     display:flex;
                     flex-direction:column;
                 }
 
-                nav > #snorlax-heading > div:last-child,
-                nav > #snorlax-heading > div:first-child {
+                nav div.hoverable:has(svg path[d^="M15.498"]),
+                nav div.hoverable:has(svg path[d^="M15.2041"]) {
                     width:calc(50% - 6px);
                 }
 
-                nav > #snorlax-heading > div:last-child {
+                nav div.hoverable:has(svg path[d^="M15.498"]) {
                     position: absolute;
-                    transform:translateX(100%);
+                    transform:translate(100%,36px);
                     flex-direction:row-reverse;
                     padding:8px 10px 8px 20px;
                     order:-1;
@@ -1324,6 +1308,8 @@
             sheet: null,
             style: `
                 nav > aside > a:has(svg path[d^="M2.6687"]),
+                nav div.trailing:has(svg path[d^="M11.3349"]),
+                nav > div:has(svg path[d^="M16.585"]) > a div.grow,
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > aside > a:has(svg path[d^="M9.38759"]) div.text-token-text-tertiary,
                 nav > aside > div:has(svg path[d^="M14.0857"]) div.text-token-text-tertiary {
@@ -1334,9 +1320,10 @@
                 nav > aside.last\\:mb-5.mt-\\(--sidebar-section-first-margin-top\\) {
                     height: 0;
                     padding:0;
-                    margin-bottom: -8px;
+                    margin-bottom: -41px;
                 }
 
+                nav > div:has(svg path[d^="M16.585"]),
                 nav > aside > a:has(svg path[d^="M9.38759"]),
                 nav > aside > div:has(svg path[d^="M14.0857"]) {
                     margin: 0;
@@ -1345,24 +1332,42 @@
                 }
 
                 nav > aside > div:has(svg path[d^="M14.0857"]) {
-                    transform: translate(45.5px, -44px);
+                    transform: translate(46px, -44px);
                     width: 40px;
                 }
 
                 nav > aside > a:has(svg path[d^="M9.38759"]) {
-                    transform: translate(86.5px, -80px);
+                    transform: translate(86px, -80px);
                     width: 92px;
                 }
 
+                nav > div:has(svg path[d^="M16.585"]) {
+                    transform: translate(178px, -3px);
+                    width: 36px;
+                    padding: 0;
+                }
+
+                nav > div:has(svg path[d^="M16.585"]) > a {
+                    padding: 0;
+                    margin: 0;
+                    min-width: 36px;
+                }
+
+                nav > div:has(svg path[d^="M16.585"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > aside > a:has(svg path[d^="M9.38759"]):hover,
                 nav > aside > div:has(svg path[d^="M14.0857"]):hover {
                     color: var(--text-primary);
                 }
 
+                nav > div:has(svg path[d^="M16.585"]),
                 #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
                 #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
                     z-index:17;
+                }
+
+                nav > div:has(svg path[d^="M16.585"]) > a > div.items-center {
+                    padding-left: 7.5px;
                 }
             `
         },
@@ -1398,6 +1403,11 @@
                     padding: 0!important;
                 }
 
+                nav div.group\\/sidebar-expando-section {
+                    margin: 10px 0 0 0;
+                }
+
+                nav div.group\\/sidebar-expando-section::before,
                 nav .mt-\\(--sidebar-section-margin-top\\)::before,
                 nav .pt-\\(--sidebar-section-margin-top\\)::before,
                 nav .mt-\\(--sidebar-section-first-margin-top\\)::before,
@@ -1419,16 +1429,11 @@
                 }
 
                 nav .tall\\:top-header-height {
-                    margin-top:0!important;
+                    margin-top: 0!important;
                 }
 
                 nav .tall\\:top-header-height::before {
-                    background-color:transparent;
-                }
-
-                .tall\\:top-header-height,
-                nav > aside.last\\:mb-5.mt-\\(--sidebar-section-first-margin-top\\) {
-                    margin-bottom: -10px!important;
+                    background-color: transparent;
                 }
 
                 nav > #history > aside > h2 {
@@ -1437,6 +1442,21 @@
 
                 .__menu-item:not(:disabled):not([data-disabled]):not([data-no-hover-bg]).hoverable:hover {
                     background-color: var(--menu-item-highlighted);
+                }
+
+                nav div[aria-label="Expand section"],
+                nav div[aria-label="Collapse section"] {
+                    padding: 0px 10px;
+                     min-height: unset !important;
+                }
+
+                nav > div:has(svg path[d^="M16.585"]) > a {
+                    max-height: unset!important;
+                    height: 36px;
+                }
+
+                nav div.hoverable:has(svg path[d^="M15.498"]) {
+                    transform:translate(100%,19px);
                 }
             `
         },
