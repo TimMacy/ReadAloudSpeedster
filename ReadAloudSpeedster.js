@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.7
+// @version      5.8
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.7 - Read Aloud Speedster                *
+*                    Version: 5.8 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -226,6 +226,17 @@
         /* highlight color - light mode */
         .light .markdown strong {
             color: darkviolet !important;
+        }
+
+        /* scheduled separator line */
+        :root:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
+            border-top: 1px solid springgreen;
+            margin-top: 10px;
+            padding-top: 10px;
+        }
+
+        :root[style*="color-scheme: light"]:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
+            border-color: darkviolet;
         }
 
         /* red delete color */
@@ -752,6 +763,14 @@
             padding-right: 130.5px;
         }
 
+        #page-header.sticky {
+            position: sticky;
+        }
+
+        main #thread div.thread-xl\\:pt-\\(--header-height\\) {
+            padding-top: 0;
+        }
+
         .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
             margin-right: 125px;
         }
@@ -840,7 +859,7 @@
         }
 
         div.\\[grid-area\\:footer\\] {
-            width: fit-content;
+            width: max-content;
             margin-right: 5px;
         }
 
@@ -866,17 +885,32 @@
             background: rgba(255, 255, 255, .08);
             color: #fff;
             cursor: pointer;
-            transition: background-color .5s ease;
+            transition: background-color .5s ease, border-color .5s ease;
         }
 
         .CentAnni-gpt-model-btn:hover {
-            background: rgba(255, 255, 255, .16);
+            background: rgba(255, 255, 255, .12) !important;
             border-color: rgba(255, 255, 255, .25);
         }
 
         .CentAnni-gpt-model-btn:active {
-            background: rgba(255, 255, 255, .2);
+            background: rgba(255, 255, 255, .2) !important;
             border-color: rgba(255, 255, 255, .5);
+        }
+
+        html.light .CentAnni-gpt-model-btn {
+            border: 1px solid rgba(0, 0, 0, .1);
+            color: black;
+        }
+
+        html.light .CentAnni-gpt-model-btn:hover {
+            background: rgb(250, 250, 250) !important;
+            border-color: rgba(0, 0, 0, .2);
+        }
+
+        html.light .CentAnni-gpt-model-btn:active {
+            background: rgb(245, 245, 245) !important;
+            border-color: rgba(0, 0, 0, .5);
         }
 
         :root:has(main header div.gap-4.ps-4) #CentAnni-gpt-model-quickbar,
@@ -1293,6 +1327,10 @@
                     width:calc(50% - 6px);
                 }
 
+                nav div.hoverable:has(svg path[d^="M15.2041"]) div.truncate {
+                    text-overflow: unset;
+                }
+
                 nav div.hoverable:has(svg path[d^="M15.498"]) {
                     position: absolute;
                     transform:translate(100%,36px);
@@ -1429,7 +1467,7 @@
                 }
 
                 nav .tall\\:top-header-height {
-                    margin-top: 0!important;
+                    margin-top: 0 !important;
                 }
 
                 nav .tall\\:top-header-height::before {
@@ -1578,29 +1616,31 @@
         }
     };
 
-    let speedDisplayElement = null;
-    let playingAudio = new Set();
-    let playListener = null;
-    let rateListener = null;
-    let controlsContainer = null;
-    let configPopup = null;
-    let docListenerActive = false;
-    let observer = null;
-    let playbackSpeed = 1;
-    let ignoreRateChange = false;
-    let lastUserRate = playbackSpeed;
     let savedSpeed;
     let savedAvatarURL;
+    let observer = null;
+    let playbackSpeed = 1;
+    let configPopup = null;
+    let playListener = null;
+    let rateListener = null;
+    let hasLegacyModels = false;
+    let playingAudio = new Set();
+    let controlsContainer = null;
+    let ignoreRateChange = false;
+    let docListenerActive = false;
+    let speedDisplayElement = null;
+    let lastUserRate = playbackSpeed;
 
     const MIN_SPEED = 1;
     const MAX_SPEED = 17;
     const DELTA = 0.25;
 
     async function initializeAvatar() {
-        savedAvatarURL = await storage.get('avatarURL', '');
+        savedAvatarURL = await GM.getValue('avatarURL', '');
         const sanitizedURL = escapeURL(savedAvatarURL);
-        document.documentElement.style.setProperty('--avatar-url', savedAvatarURL ? `url("${sanitizedURL}")` : '');
+        features.changeAvatar.style = savedAvatarURL ? features.changeAvatar.style.replace('setAvatarURL', sanitizedURL) : features.changeAvatar.style;
         features.changeAvatar.enabled = !!savedAvatarURL;
+
         applyFeature('changeAvatar');
     }
 
@@ -2207,13 +2247,15 @@
         bar.appendChild(mkBtn("GPT-4o", () => selectModel("gpt-4o")));
         bar.appendChild(mkBtn("Auto", () => selectModel("gpt-5")));
         bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-5-thinking")));
-
         bar.appendChild(mkBtn("Instant", () => selectModel("instant")));
-        bar.appendChild(mkBtn("Thinking mini", () => selectModel("thinking-mini")));
 
-        bar.appendChild(mkBtn("GPT-4.1", () => selectModel("gpt-4.1")));
-        bar.appendChild(mkBtn("o3", () => selectModel("gpt-o3")));
-        bar.appendChild(mkBtn("o4-mini", () => selectModel("gpt-o4-mini")));
+        if (hasLegacyModels) {
+            bar.appendChild(mkBtn("Thinking mini", () => selectModel("thinking-mini")));
+
+            bar.appendChild(mkBtn("GPT-4.1", () => selectModel("gpt-4.1")));
+            bar.appendChild(mkBtn("o3", () => selectModel("gpt-o3")));
+            bar.appendChild(mkBtn("o4-mini", () => selectModel("gpt-o4-mini")));
+        }
 
         const targetContainer = document.querySelector("#thread-bottom-container div.flex.items-center.gap-2.\\[grid-area\\:trailing\\] > div");
         targetContainer?.insertBefore(bar, targetContainer.firstChild);
@@ -2249,6 +2291,19 @@
         document.querySelector('#thread-bottom')?.appendChild(speakBtn);
     };
 
+    // check account features
+    const checkAccountFeatures = () => {
+        const scripts = document.querySelectorAll('script');
+        let targetScript = '';
+
+        scripts.forEach(script => {
+            if (script.textContent.includes('window.__reactRouterContext.streamController.enqueue') && script.textContent.includes('AccountState'))
+                targetScript = script.textContent;
+        });
+
+        hasLegacyModels = targetScript.includes('legacy_models');
+    };
+
     // initialization after DOM has loaded
     function init() {
         observer = new MutationObserver(mutations => {
@@ -2273,6 +2328,7 @@
             observer.observe(document.body, { childList: true, subtree: true });
             cssSettingsReady.then(() => {
                 requestIdleCallback(initializeSpeed, { timeout: 2000 });
+                requestIdleCallback(checkAccountFeatures, { timeout: 2000 });
                 setTimeout(() => requestIdleCallback(() => createControlButtons(), { timeout: 2000 }), 50);
                 if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
                 if (features.modelSelector.enabled) setTimeout(() => requestIdleCallback(() => addModelButtons(), { timeout: 2000 }), 50);
