@@ -1,6 +1,8 @@
 # Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-5.8-white.svg" alt="Version: 5.8"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
+<a href="#"><picture><source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/d7606cb8-1f8e-43a8-b906-db6edbeab075"/><img align="left" width="120px" alt="Read Aloud Speedster Logo" src="https://github.com/user-attachments/assets/13149deb-3738-49b7-b9e3-69644f77527e"/></picture></a>
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses are color-coded, and bold text is highlighted for clarity.
+<br clear="left"/>
 
 <p align="center"><img width="50%" alt="Read Aloud Speedster by Tim Macy Overview" title="Settings Panel" src="https://github.com/user-attachments/assets/11731e93-0eaf-4a29-a948-d99c709066f1" /></p>
 
