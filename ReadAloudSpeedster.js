@@ -2293,15 +2293,8 @@
 
     // check account features
     const checkAccountFeatures = () => {
-        const scripts = document.querySelectorAll('script');
-        let targetScript = '';
-
-        scripts.forEach(script => {
-            if (script.textContent.includes('window.__reactRouterContext.streamController.enqueue') && script.textContent.includes('AccountState'))
-                targetScript = script.textContent;
-        });
-
-        hasLegacyModels = targetScript.includes('legacy_models');
+        const scripts = [...document.querySelectorAll('script')].find(s => s.textContent.trim().startsWith('window.__reactRouterContext.streamController.enqueue("P6'));
+        hasLegacyModels = scripts?.textContent.includes('legacy_models');
     };
 
     // initialization after DOM has loaded
