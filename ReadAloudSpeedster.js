@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.8.1
+// @version      5.8.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -885,7 +885,7 @@
             background: rgba(255, 255, 255, .08);
             color: #fff;
             cursor: pointer;
-            transition: background-color .5s ease, border-color .5s ease;
+            transition: background-color .4s ease, border-color .4s ease;
         }
 
         .CentAnni-gpt-model-btn:hover {
@@ -896,6 +896,7 @@
         .CentAnni-gpt-model-btn:active {
             background: rgba(255, 255, 255, .2) !important;
             border-color: rgba(255, 255, 255, .5);
+            transition: background-color .25s ease-out, border-color .1s ease-out;
         }
 
         html.light .CentAnni-gpt-model-btn {
@@ -968,13 +969,18 @@
             flex-direction: column-reverse;
         }
 
-        main #thread-bottom form div.\\[grid-area\:header\\] {
-            transform: translate(0, 10px);
-        }
-
         #thread-bottom form div.no-scrollbar.horizontal-scroll-fade-mask {
             margin: 10px 0 -10px 0;
             padding-bottom: unset;
+        }
+
+        #thread article.text-token-text-primary :where([class*="_tableWrapper_"]) div.absolute.end-0 {
+            height: unset !important;
+        }
+
+        div[aria-label="Report message"],
+        button[aria-label="Report message"] {
+            display: none;
         }
     `;
 
@@ -1568,6 +1574,7 @@
             sheet: null,
             style: `
                 main .mt-2 button .flex.select-none,
+                main button.surface-nav-element img,
                 [data-testid="profile-button"] img[alt="Profile image"],
                 [data-testid="accounts-profile-button"] img[alt="Profile image"] {
                     content: url("setAvatarURL");
@@ -2293,8 +2300,13 @@
 
     // check account features
     const checkAccountFeatures = () => {
-        const scripts = [...document.querySelectorAll('script')].find(s => s.textContent.trim().startsWith('window.__reactRouterContext.streamController.enqueue("P6'));
-        hasLegacyModels = scripts?.textContent.includes('legacy_models');
+        for (const script of document.querySelectorAll('script')) {
+            if (script.textContent.includes('legacy_models')) {
+                hasLegacyModels = true;
+                return;
+            }
+        }
+        hasLegacyModels = false;
     };
 
     // initialization after DOM has loaded
@@ -2321,11 +2333,10 @@
             observer.observe(document.body, { childList: true, subtree: true });
             cssSettingsReady.then(() => {
                 requestIdleCallback(initializeSpeed, { timeout: 2000 });
-                requestIdleCallback(checkAccountFeatures, { timeout: 2000 });
                 setTimeout(() => requestIdleCallback(() => createControlButtons(), { timeout: 2000 }), 50);
                 if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
-                if (features.modelSelector.enabled) setTimeout(() => requestIdleCallback(() => addModelButtons(), { timeout: 2000 }), 50);
                 if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 50);
+                if (features.modelSelector.enabled) requestIdleCallback(() => { checkAccountFeatures(); addModelButtons(); }, { timeout: 2000 });
             });
         }
     }
