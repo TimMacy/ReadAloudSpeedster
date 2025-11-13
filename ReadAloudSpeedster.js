@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.8.3
+// @version      5.8.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.8.3 - Read Aloud Speedster              *
+*                    Version: 5.8.4 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -2158,16 +2158,16 @@
         const legacySubmenu = '[data-testid="Legacy models-submenu"]';
         const modelConfigs = {
             // current
-            'gpt-5': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5"]' },
-            'instant': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-instant"]' },
-            'thinking-mini': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-t-mini"]' },
-            'gpt-5-thinking': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-thinking"]' },
+            'gpt-5': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1"]' },
+            'instant': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1-instant"]' },
+            'gpt-5-thinking': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1-thinking"]' },
 
             // legacy models (submenu)
             'gpt-4o': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4o"]' },
             'gpt-4.1': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4-1"]' },
             'gpt-o3': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o3"]' },
-            'gpt-o4-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o4-mini"]' }
+            'gpt-o4-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o4-mini"]' },
+            'thinking-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-5-t-mini"]' }
         };
 
         const config = modelConfigs[modelType];
@@ -2190,6 +2190,14 @@
                 composed: true
             };
 
+            if (config.needsSubmenu) {
+                if (window.PointerEvent) {
+                    element.dispatchEvent(new PointerEvent('pointerenter', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true }));
+                    element.dispatchEvent(new PointerEvent('pointermove', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true }));
+                }
+                element.dispatchEvent(new MouseEvent('mouseenter', eventOptions));
+                element.dispatchEvent(new MouseEvent('mouseover', eventOptions));
+            }
             if (window.PointerEvent) element.dispatchEvent(new PointerEvent('pointerdown', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, buttons: 1 }));
             element.dispatchEvent(new MouseEvent('mousedown', { ...eventOptions, button: 0, buttons: 1 }));
             if (window.PointerEvent) element.dispatchEvent(new PointerEvent('pointerup', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, buttons: 0 }));
