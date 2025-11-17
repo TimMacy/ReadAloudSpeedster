@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.8.4
+// @version      5.9
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.8.4 - Read Aloud Speedster              *
+*                    Version: 5.9 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1563,6 +1563,12 @@
             sheet: null,
             style: ``
         },
+        additionalModels: {
+            label: "'Show additional models' Active",
+            enabled: false,
+            sheet: null,
+            style: ``
+        },
         readAloudBtn: {
             label: "Add Button to Read Aloud Last Message",
             enabled: true,
@@ -1631,7 +1637,6 @@
     let configPopup = null;
     let playListener = null;
     let rateListener = null;
-    let hasLegacyModels = false;
     let playingAudio = new Set();
     let controlsContainer = null;
     let ignoreRateChange = false;
@@ -2260,12 +2265,13 @@
             return b;
         };
 
-        bar.appendChild(mkBtn("GPT-4o", () => selectModel("gpt-4o")));
         bar.appendChild(mkBtn("Auto", () => selectModel("gpt-5")));
         bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-5-thinking")));
         bar.appendChild(mkBtn("Instant", () => selectModel("instant")));
 
-        if (hasLegacyModels) {
+        if (features.additionalModels.enabled) {
+            bar.appendChild(mkBtn("GPT-4o", () => selectModel("gpt-4o")));
+
             bar.appendChild(mkBtn("Thinking mini", () => selectModel("thinking-mini")));
 
             bar.appendChild(mkBtn("GPT-4.1", () => selectModel("gpt-4.1")));
@@ -2307,17 +2313,6 @@
         document.querySelector('#thread-bottom')?.appendChild(speakBtn);
     };
 
-    // check account features
-    const checkAccountFeatures = () => {
-        for (const script of document.querySelectorAll('script')) {
-            if (script.textContent.includes('legacy_models')) {
-                hasLegacyModels = true;
-                return;
-            }
-        }
-        hasLegacyModels = false;
-    };
-
     // initialization after DOM has loaded
     function init() {
         observer = new MutationObserver(mutations => {
@@ -2345,7 +2340,7 @@
                 setTimeout(() => requestIdleCallback(() => createControlButtons(), { timeout: 2000 }), 50);
                 if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
                 if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 50);
-                if (features.modelSelector.enabled) requestIdleCallback(() => { checkAccountFeatures(); addModelButtons(); }, { timeout: 2000 });
+                if (features.modelSelector.enabled) requestIdleCallback(() => { addModelButtons(); }, { timeout: 2000 });
             });
         }
     }
