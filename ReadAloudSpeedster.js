@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.9
+// @version      5.10
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.9 - Read Aloud Speedster                *
+*                    Version: 5.10 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1569,6 +1569,12 @@
             sheet: null,
             style: ``
         },
+        thinkingExtended: {
+            label: "Use 'Extended Thinking' by Default",
+            enabled: false,
+            sheet: null,
+            style: ``
+        },
         readAloudBtn: {
             label: "Add Button to Read Aloud Last Message",
             enabled: true,
@@ -2153,27 +2159,28 @@
         return () => document.removeEventListener('keydown', handleKeyDown, true);
     }
 
-    // select GPT model
+    // model configurations
+    const legacySubmenu = '[data-testid="Legacy models-submenu"]';
+    const modelConfigs = {
+        // current
+        'gpt-5': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1"]' },
+        'instant': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1-instant"]' },
+        'gpt-5-thinking': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1-thinking"]' },
+
+        // legacy models (submenu)
+        'gpt-4o': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4o"]' },
+        'gpt-4.1': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4-1"]' },
+        'gpt-o3': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o3"]' },
+        'gpt-o4-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o4-mini"]' },
+        'thinking-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-5-t-mini"]' }
+    };
+
+    // select GPT model (default 4o)
     let modelObserver, timeout;
+    let handlingThinkingBtn = false;
     const selectModel = (modelType) => {
         modelObserver?.disconnect();
         let subMenu = true;
-
-        // model configurations
-        const legacySubmenu = '[data-testid="Legacy models-submenu"]';
-        const modelConfigs = {
-            // current
-            'gpt-5': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1"]' },
-            'instant': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1-instant"]' },
-            'gpt-5-thinking': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-1-thinking"]' },
-
-            // legacy models (submenu)
-            'gpt-4o': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4o"]' },
-            'gpt-4.1': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4-1"]' },
-            'gpt-o3': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o3"]' },
-            'gpt-o4-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o4-mini"]' },
-            'thinking-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-5-t-mini"]' }
-        };
 
         const config = modelConfigs[modelType];
         if (!config) return;
@@ -2235,6 +2242,25 @@
                     cleanup();
                 }
             }
+            if (modelType === 'gpt-5-thinking' && !handlingThinkingBtn && features.thinkingExtended.enabled) {
+                handlingThinkingBtn = true;
+                setTimeout(() => extendedThinking(), 50);
+            }
+        };
+
+        // pick extended thinking by default
+        const extendedThinking = () => {
+            const btn = document.querySelector('button[aria-label="Thinking, click to remove"] + button.__composer-pill');
+            if (btn) {
+                setTimeout(() => {
+                    simulateClick(btn);
+                    setTimeout(() => {
+                        const extendedThinkingBtn = document.querySelector('div[role="menuitemradio"][aria-checked="false"]');
+                        if (extendedThinkingBtn) extendedThinkingBtn.click();
+                    }, 50);
+                }, 50);
+            }
+            setTimeout(() => handlingThinkingBtn = false, 250);
         };
 
         // open menu selector panel
