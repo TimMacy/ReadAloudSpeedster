@@ -1,9 +1,9 @@
 // ==UserScript==
 // @name         Read Aloud Speedster
-// @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, choose a custom avatar by entering an image URL, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
+// @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.10
+// @version      5.11
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -84,7 +84,8 @@
             border-top-right-radius: .25em !important;
         }
 
-        #thread-bottom-container {
+        #thread-bottom-container,
+        div.mx-auto.flex-1 > div.relative.w-full:not(.text-xs.text-pretty) {
             box-shadow: 0 -20px 20px 0 var(--bg-primary);
         }
 
@@ -239,7 +240,17 @@
             border-color: darkviolet;
         }
 
+        /* group icons color */
+        button[title="Add reaction"] {
+            color: yellow !important;
+        }
+
+        button[title="Reply"] {
+            color: deepskyblue !important;
+        }
+
         /* red delete color */
+        button[title="Delete"],
         .text-token-text-destructive,
         button:has(path[d^="m10 11.5 4"]),
         [data-testid="delete-chat-menu-item"],
@@ -247,6 +258,7 @@
             color: #e02e2a !important;
         }
 
+        button[title="Delete"]:hover,
         .text-token-text-destructive:hover,
         button:has(path[d^="m10 11.5 4"]):hover,
         [data-testid="delete-chat-menu-item"]:hover,
@@ -274,8 +286,9 @@
         }
 
         /* change width of chat containers */
+        #thread-bottom-container #thread-bottom,
         div.text-base.my-auto:has(.bg-token-main-surface-tertiary),
-        #thread-bottom-container #thread-bottom {
+        div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)) {
             margin: 0 6.263%;
             padding: 0;
         }
@@ -387,7 +400,8 @@
         }
 
         #thread #prompt-textarea,
-        textarea[class*="_fallbackTextarea_"] {
+        textarea[class*="_fallbackTextarea_"],
+        .bg-token-bg-elevated-primary.w-full > div {
             padding: 0;
             margin: 0;
         }
@@ -408,12 +422,15 @@
         /* chatbox adjustments for GPT5 changes */
         #thread ol div.group.text-token-text-tertiary { text-wrap: nowrap; }
 
+        div.grid.\\[grid-template-areas\\:\\'leading_primary_trailing\\'\\],
         #thread form.group\\/composer[data-type="unified-composer"] > div > div.grid {
             grid-template-areas: "header header header" "primary primary primary" "leading footer trailing" !important;
         }
 
+        div.grid.gap-y-2,
         #thread-bottom-container form div.cursor-text,
-        form div.cursor-text:not(#thread-bottom-container) {
+        form div.cursor-text:not(#thread-bottom-container),
+        div.grid.\\[grid-template-areas\\:\\'leading_primary_trailing\\'\\] {
             padding-top: unset;
         }
 
@@ -422,13 +439,28 @@
             padding: unset;
         }
 
+        .bg-token-bg-elevated-primary.w-full,
         main > #thread form div.group-data-expanded\\/composer\\:mb-0 {
             padding: 10px;
             margin: unset;
         }
 
+        .bg-token-bg-elevated-primary.w-full,
         :where(#thread-bottom form div[class*="_prosemirror-parent"]) {
             max-height: 300px;
+        }
+
+        .group\\/message.gap-1:has(.bg-token-bg-tertiary) {
+            margin-bottom: 15px;
+        }
+
+        .-my-2\\.5 {
+            margin-block: unset;
+        }
+
+        .min-h-14,
+        .min-h-12 {
+            min-height: unset;
         }
 
         /**************************************
@@ -759,7 +791,8 @@
         }
 
         #page-header,
-        main > div > header {
+        main > div > header,
+        #calpico-page-header {
             padding-right: 130.5px;
         }
 
@@ -1008,12 +1041,16 @@
             sheet: null,
             style: `
                 /* button 'send prompt' radius */
-                button[aria-label="Send prompt"], button[aria-label="Stop streaming"], button[aria-label="Start voice mode"] {
+                .composer-submit-btn,
+                button[aria-label="Send prompt"],
+                button[aria-label="Stop streaming"],
+                button[aria-label="Start voice mode"] {
                     border-radius: 4px !important;
                 }
 
                 /* button radii */
-                .btn, .rounded-full {
+                .btn,
+                .rounded-full:not(.bg-token-bg-tertiary) {
                     border-radius: 2px !important;
                 }
 
@@ -1125,11 +1162,17 @@
             enabled: false,
             sheet: null,
             style: `
+                div.grid.gap-y-2,
                 form > div:nth-child(2) > div,
                 main form div.contain-inline-size,
-                div form > div.bg-token-bg-primary {
+                div form > div.bg-token-bg-primary,
+                div.grid.\\[grid-template-areas\\:\\'leading_primary_trailing\\'\\] {
                     background-color: #141414 !important;
                     border: 1px solid #2d2d2d;
+                }
+
+                .bg-token-bg-elevated-primary {
+                    background-color: unset;
                 }
 
                 .h-header-height,
@@ -1203,6 +1246,24 @@
                 }
             `
         },
+        compactShareAddBtn: {
+            label: "Compact 'Share' and 'Add People' Buttons",
+            enabled: false,
+            sheet: null,
+            style: `
+                button[data-testid="share-chat-button"] > div {
+                    width: 16px;
+                    overflow: hidden;
+                    justify-content: flex-start;
+                }
+
+                button[data-testid="start-group-chat-from-conversation-button"] > div {
+                    width: 17px;
+                    overflow: hidden;
+                    justify-content: flex-start;
+                }
+            `
+        },
         shiftEnterSend: {
             label: "Send Message with Shift+Enter instead of Enter",
             enabled: false,
@@ -1253,7 +1314,8 @@
                 }
 
                 #page-header,
-                main > div > header {
+                main > div > header,
+                #calpico-page-header {
                     padding-right:60px;
                 }
 
@@ -1309,11 +1371,13 @@
             enabled: false,
             sheet: null,
             style: `
-                div.text-token-text-secondary[class*="md\\:px-"] {
+                div.text-token-text-secondary[class*="md\\:px-"],
+                div.text-token-text-secondary.text-pretty.text-xs {
                     display: none;
                 }
 
-                .xl\\:px-5, main form {
+                .xl\\:px-5, main form,
+                div.flex-1.mx-auto > div.relative.w-full {
                     padding-bottom: 1rem;
                 }
             `
@@ -1581,19 +1645,6 @@
             sheet: null,
             style: ``
         },
-        changeAvatar: {
-            label: "Custom Avatar",
-            enabled: false,
-            sheet: null,
-            style: `
-                main .mt-2 button .flex.select-none,
-                main button.surface-nav-element img,
-                [data-testid="profile-button"] img[alt="Profile image"],
-                [data-testid="accounts-profile-button"] img[alt="Profile image"] {
-                    content: url("setAvatarURL");
-                }
-            `
-        },
     };
 
     let swapEnterDetach = null;
@@ -1626,7 +1677,7 @@
         for (const key in features) applyFeature(key);
 
         // fetch stored values concurrently
-        const entries = await Promise.all(Object.keys(features).filter(key => key !== 'changeAvatar').map(async key => [key, await GM.getValue(key)]));
+        const entries = await Promise.all(Object.keys(features).map(async key => [key, await GM.getValue(key)]));
 
         for (const [key, value] of entries) {
             if (value !== undefined) {
@@ -1637,7 +1688,6 @@
     };
 
     let savedSpeed;
-    let savedAvatarURL;
     let observer = null;
     let playbackSpeed = 1;
     let configPopup = null;
@@ -1654,20 +1704,8 @@
     const MAX_SPEED = 17;
     const DELTA = 0.25;
 
-    async function initializeAvatar() {
-        savedAvatarURL = await GM.getValue('avatarURL', '');
-        const sanitizedURL = escapeURL(savedAvatarURL);
-        features.changeAvatar.style = savedAvatarURL ? features.changeAvatar.style.replace('setAvatarURL', sanitizedURL) : features.changeAvatar.style;
-        features.changeAvatar.enabled = !!savedAvatarURL;
-
-        applyFeature('changeAvatar');
-    }
-
     // load CSS settings
     const cssSettingsReady = loadCSSsettings();
-    cssSettingsReady.then(() => {
-        requestIdleCallback(initializeAvatar, { timeout: 2000 });
-    });
 
     // load playback speed
     async function initializeSpeed() {
@@ -1773,7 +1811,7 @@
             return element;
         };
 
-        Object.entries(features).filter(([key]) => key !== 'changeAvatar').forEach(([key, feature]) => {
+        Object.entries(features).forEach(([key, feature]) => {
             const container = createElement('div', 'toggle-container');
             const checkbox = createElement('input', '', {
                 type: 'checkbox',
@@ -1789,18 +1827,6 @@
             toggleElements.push({ key, checkbox });
             content.appendChild(container);
         });
-
-        const avatarContainer = createElement('div', 'toggle-container');
-        const avatarLabel = createElement('span', 'speed-label', { textContent: features.changeAvatar.label });
-        const avatarInput = createElement('input', '', {
-            type: 'url',
-            placeholder: 'Image URL',
-            id: 'avatarUrlInput',
-            value: savedAvatarURL || ''
-        });
-
-        avatarContainer.append(avatarLabel, avatarInput);
-        content.appendChild(avatarContainer);
 
         // save button
         const saveButton = document.createElement('button');
@@ -1824,16 +1850,6 @@
                     if (key === 'jumpToChat') navChanged = true;
                 }
             }
-
-            const url = avatarInput.value.trim();
-            await GM.setValue('avatarURL', url);
-            savedAvatarURL = url;
-            features.changeAvatar.enabled = !!url;
-
-            const sanitizedURL = escapeURL(url);
-            url
-                ? (features.changeAvatar.style = features.changeAvatar.style.replace(/setAvatarURL|https?:[^\"]+/, sanitizedURL), features.changeAvatar.sheet ? features.changeAvatar.sheet.textContent = features.changeAvatar.style : applyFeature('changeAvatar'))
-                : applyFeature('changeAvatar');
 
             if (navChanged) {
                 navCleanup?.();
