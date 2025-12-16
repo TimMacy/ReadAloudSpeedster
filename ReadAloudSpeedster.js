@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.12.1
+// @version      5.13
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.12.1 - Read Aloud Speedster             *
+*                    Version: 5.13 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -796,6 +796,10 @@
             text-wrap: nowrap;
         }
 
+        :root:has(.CentAnni-style-nav-btn):has(#stage-sidebar-tiny-bar.opacity-100) header button[data-testid="open-sidebar-button"] {
+            display: none;
+        }
+
         .CentAnni-style-nav-btn:active  { opacity: .8;  }
         .CentAnni-style-nav-btn.enabled  { opacity: 1;  }
         .CentAnni-style-nav-btn.disabled { opacity: .5; }
@@ -882,7 +886,7 @@
 
         /* scroll position fix */
         article:has([data-message-author-role]) {
-            scroll-margin-top: 0 !important;
+            scroll-margin-top: 52px !important;
         }
 
         #sidebar-header button:has(svg path[d^="M7.94556"]) {
@@ -1319,6 +1323,7 @@
             sheet: null,
             style: `
                 header button[aria-label="Open profile menu"] span,
+                nav div[aria-label="Open profile menu"] div.min-w-0,
                 main button[aria-label="Open Profile Menu"] span span,
                 #page-header #conversation-header-actions button[aria-label="Open profile menu"] span {
                     display: none;
