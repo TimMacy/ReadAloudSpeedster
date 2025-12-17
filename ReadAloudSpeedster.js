@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.13
+// @version      5.14
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.13 - Read Aloud Speedster               *
+*                    Version: 5.14 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -379,7 +379,7 @@
             width: 100% !important;
         }
 
-        main.min-h-0 .h-full.w-full > .justify-center {
+        main.min-h-0 .h-full.w-full > .justify-center:not(span[style*="background-image"]) {
             margin: 0 5dvw !important;
         }
 
@@ -476,6 +476,10 @@
         .min-h-14,
         .min-h-12 {
             min-height: unset;
+        }
+
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg path[d^="M9.38759"]) .-my-2\.5 {
+            margin-block: calc(var(--spacing)*-2.5);
         }
 
         /**************************************
@@ -882,6 +886,14 @@
             background: color(srgb 0.0941 0.0941 0.0941);
             border-bottom: 1px solid rgba(45, 45, 45, 1);
             transform: translateY(-1px);
+        }
+
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg path[d^="M9.38759"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div {
+            background-color: #ffffff0d;
+        }
+
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg path[d^="M9.38759"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div:hover {
+            background-color: var(--menu-item-highlighted);
         }
 
         /* scroll position fix */
@@ -1440,6 +1452,7 @@
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav > div:has(svg path[d^="M16.585"]) > a div.grow,
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
+                nav > aside > a:has(svg path[d^="M9.38759"]) span.__menu-item-badge,
                 nav > aside > a:has(svg path[d^="M9.38759"]) div.text-token-text-tertiary,
                 nav > aside > div:has(svg path[d^="M14.0857"]) div.text-token-text-tertiary {
                     display: none;
@@ -1468,6 +1481,10 @@
                 nav > aside > a:has(svg path[d^="M9.38759"]) {
                     transform: translate(86px, -80px);
                     width: 92px;
+                }
+
+                nav > aside > a:has(svg path[d^="M9.38759"]) div.truncate {
+                    text-overflow: clip;
                 }
 
                 nav > div:has(svg path[d^="M16.585"]) {
@@ -1585,7 +1602,7 @@
                 }
 
                 nav div.hoverable:has(svg path[d^="M15.498"]) {
-                    transform:translate(100%,19px);
+                    transform: translate(100%, 32px);
                 }
             `
         },
