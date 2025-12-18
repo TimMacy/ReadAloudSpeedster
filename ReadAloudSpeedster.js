@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.14
+// @version      5.15
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.14 - Read Aloud Speedster               *
+*                    Version: 5.15 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -155,9 +155,11 @@
         }
 
         /* read aloud and stop icon */
+        div[aria-label="Read aloud"],
         button[aria-label="Read aloud"],
         div[role="menuitem"]:has(path[d^="M9.75122"]),
         div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
+        div[data-testid="voice-play-turn-action-button"] svg,
         button[data-testid="voice-play-turn-action-button"] svg {
             color: deepskyblue !important;
             opacity: .9;
@@ -478,7 +480,7 @@
             min-height: unset;
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg path[d^="M9.38759"]) .-my-2\.5 {
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) .-my-2\\.5 {
             margin-block: calc(var(--spacing)*-2.5);
         }
 
@@ -888,11 +890,11 @@
             transform: translateY(-1px);
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg path[d^="M9.38759"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div {
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div {
             background-color: #ffffff0d;
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg path[d^="M9.38759"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div:hover {
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div:hover {
             background-color: var(--menu-item-highlighted);
         }
 
@@ -1419,26 +1421,26 @@
             enabled: true,
             sheet: null,
             style: `
-                nav div.group\\/sidebar-expando-section:has(svg path[d^="M15.2041"]) {
-                    display:flex;
-                    flex-direction:column;
+                nav div.group\\/sidebar-expando-section:has(use[href*="#608c49"]) {
+                    display: flex;
+                    flex-direction: column;
                 }
 
-                nav div.hoverable:has(svg path[d^="M15.498"]),
-                nav div.hoverable:has(svg path[d^="M15.2041"]) {
-                    width:calc(50% - 6px);
+                nav div.hoverable:has(use[href*="#f6d0e2"]),
+                nav div.hoverable:has(use[href*="#608c49"]) {
+                    width: calc(50% - 6px);
                 }
 
-                nav div.hoverable:has(svg path[d^="M15.2041"]) div.truncate {
+                nav div.hoverable:has(use[href*="#608c49"]) div.truncate {
                     text-overflow: unset;
                 }
 
-                nav div.hoverable:has(svg path[d^="M15.498"]) {
+                nav div.hoverable:has(use[href*="#f6d0e2"]) {
                     position: absolute;
-                    transform:translate(100%,36px);
-                    flex-direction:row-reverse;
-                    padding:8px 10px 8px 20px;
-                    order:-1;
+                    transform: translate(100%, 36px);
+                    flex-direction: row-reverse;
+                    padding: 8px 10px 8px 20px;
+                    order: -1;
                 }
             `
         },
@@ -1447,14 +1449,17 @@
             enabled: true,
             sheet: null,
             style: `
+                nav a.group.__menu-item[href="/codex"],
                 nav a.group.__menu-item[href="/atlas"],
+                div.pointer-events-none.h-px.w-px.-mb-px,
+                nav > aside > a:has(use[href*="#3a5c87"]),
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
-                nav > div:has(svg path[d^="M16.585"]) > a div.grow,
+                nav > div:has(use[href*="#c8839f"]) > a div.grow,
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
-                nav > aside > a:has(svg path[d^="M9.38759"]) span.__menu-item-badge,
-                nav > aside > a:has(svg path[d^="M9.38759"]) div.text-token-text-tertiary,
-                nav > aside > div:has(svg path[d^="M14.0857"]) div.text-token-text-tertiary {
+                nav > aside > a:has(use[href*="#266724"]) span.__menu-item-badge,
+                nav > aside > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
+                nav > aside > div:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
                     display: none;
                 }
 
@@ -1465,55 +1470,59 @@
                     margin-bottom: -41px;
                 }
 
-                nav > div:has(svg path[d^="M16.585"]),
-                nav > aside > a:has(svg path[d^="M9.38759"]),
-                nav > aside > div:has(svg path[d^="M14.0857"]) {
+                nav > div:has(use[href*="#c8839f"]),
+                nav > aside > a:has(use[href*="#266724"]),
+                nav > aside > div:has(use[href*="#ac6d36"]) {
                     margin: 0;
                     z-index: 31;
                     color: var(--text-tertiary);
                 }
 
-                nav > aside > div:has(svg path[d^="M14.0857"]) {
+                nav > aside > div:has(use[href*="#ac6d36"]) {
                     transform: translate(46px, -44px);
                     width: 40px;
                 }
 
-                nav > aside > a:has(svg path[d^="M9.38759"]) {
+                nav > aside > a:has(use[href*="#266724"]) {
                     transform: translate(86px, -80px);
                     width: 92px;
                 }
 
-                nav > aside > a:has(svg path[d^="M9.38759"]) div.truncate {
+                nav > aside > a:has(use[href*="#266724"]) div.truncate {
                     text-overflow: clip;
                 }
 
-                nav > div:has(svg path[d^="M16.585"]) {
+                nav > div:has(use[href*="#c8839f"]) {
                     transform: translate(178px, -3px);
                     width: 36px;
                     padding: 0;
                 }
 
-                nav > div:has(svg path[d^="M16.585"]) > a {
+                nav > div:has(use[href*="#c8839f"]) > a {
                     padding: 0;
                     margin: 0;
                     min-width: 36px;
                 }
 
-                nav > div:has(svg path[d^="M16.585"]):hover,
+                nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
-                nav > aside > a:has(svg path[d^="M9.38759"]):hover,
-                nav > aside > div:has(svg path[d^="M14.0857"]):hover {
+                nav > aside > a:has(use[href*="#266724"]):hover,
+                nav > aside > div:has(use[href*="#ac6d36"]):hover {
                     color: var(--text-primary);
                 }
 
-                nav > div:has(svg path[d^="M16.585"]),
+                nav > div:has(use[href*="#c8839f"]),
                 #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
                 #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
                     z-index:17;
                 }
 
-                nav > div:has(svg path[d^="M16.585"]) > a > div.items-center {
-                    padding-left: 7.5px;
+                nav > div:has(use[href*="#c8839f"]) > a > div.items-center {
+                    margin-left: 8px;
+                }
+
+                nav div.group\\/sidebar-expando-section:has(use[href*="#b6a09f"]) {
+                    margin-top: 5px !important;
                 }
             `
         },
@@ -1523,7 +1532,7 @@
             sheet: null,
             style: `
                 nav .__menu-item-trailing-btn,
-                nav .__menu-item:not(:has(svg path[d^="M14.0857"])):not(:has(svg path[d^="M9.38759"])) {
+                nav .__menu-item:not(:has(use[href*="#ac6d36"])):not(:has(use[href*="#266724"])) {
                     min-height: calc(var(--spacing)*8);
                     max-height:32px;
                 }
@@ -1596,12 +1605,12 @@
                      min-height: unset !important;
                 }
 
-                nav > div:has(svg path[d^="M16.585"]) > a {
+                nav > div:has(use[href*="#c8839f"]) > a {
                     max-height: unset!important;
                     height: 36px;
                 }
 
-                nav div.hoverable:has(svg path[d^="M15.498"]) {
+                nav div.hoverable:has(use[href*="#f6d0e2"]) {
                     transform: translate(100%, 32px);
                 }
             `
