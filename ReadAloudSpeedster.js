@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.15
+// @version      5.15.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2025 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.15 - Read Aloud Speedster               *
+*                    Version: 5.15.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -102,11 +102,11 @@
         }
 
         /* copied */
-        button:has(svg path[d^="M15.483"]) {
+        button:has(svg use[href*="#fa1dbd"]) {
             color: springgreen;
         }
 
-        .light button:has(svg path[d^="M15.483"]) {
+        .light button:has(svg use[href*="#fa1dbd"]) {
             color: limegreen;
         }
 
@@ -114,6 +114,7 @@
         button .icon-md path[d^="M12.1318"],
         button svg path[d^="M10.9153"],
         button[aria-label="Good response"],
+        div.mt-3 button:has(use[href*="#51753c"]),
         div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
         button[data-testid="good-response-turn-action-button"] svg {
             color: #00ad00 !important;
@@ -121,6 +122,7 @@
         }
 
         /* thumbs down icon */
+        div.mt-3 button:has(use[href*="#2126ae"]),
         button[aria-label="Bad response"],
         button .icon-md path[d^="M11.8727"],
         button svg path[d^="M12.6687"],
@@ -158,6 +160,9 @@
         div[aria-label="Read aloud"],
         button[aria-label="Read aloud"],
         div[role="menuitem"]:has(path[d^="M9.75122"]),
+        div[role="menuitem"]:has(use[href*="#54f145"]),
+        div[role="menuitem"]:has(use[href*="#4944fe"]),
+        div[role="menuitem"]:has(use[href*="#f64f60"]),
         div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
         div[data-testid="voice-play-turn-action-button"] svg,
         button[data-testid="voice-play-turn-action-button"] svg {
@@ -165,6 +170,7 @@
             opacity: .9;
         }
 
+        div[aria-label="Stop"],
         button[aria-label="Stop"],
         div[role="menuitem"]:has(path[d^="M10 2.08496C14"]) {
             color: deepskyblue !important;
@@ -186,9 +192,11 @@
             button .icon-md path[d^="M12.1318"],
             button svg path[d^="M10.9153"],
             button[aria-label="Good response"],
+            div.mt-3 button:has(use[href*="#51753c"]),
             div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
             button[data-testid="good-response-turn-action-button"] svg,
             button[aria-label="Bad response"],
+            div.mt-3 button:has(use[href*="#2126ae"]),
             button .icon-md path[d^="M11.8727"],
             button svg path[d^="M12.6687"],
             button.surface-nav-element:has(svg path[d^="M11.868 21"]),
@@ -278,6 +286,13 @@
         #thread-bottom-container .icon-lg {
             height: calc(var(--spacing)*5);
             width: calc(var(--spacing)*5);
+        }
+
+        /* pin and unpin color */
+        div[role="menuitem"]:has(use[href*="#23d2ff"]),
+        div[role="menuitem"]:has(use[href*="#946e20"]),
+        div[role="menuitem"]:has(use[href*="#13322a"]) {
+            color: #e25507;
         }
 
         /* select color */
@@ -1374,6 +1389,7 @@
             enabled: false,
             sheet: null,
             style: `
+                div[role="menuitem"]:has(use[href*="#ac4202"]),
                 main .flex > button.btn-primary:first-child:last-child {
                     display: none;
                 }
