@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.15.8
+// @version      5.16
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.15.8 - Read Aloud Speedster             *
+*                    Version: 5.16 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1045,6 +1045,7 @@
             color: rgb(0, 251, 255);
         }
 
+        :root:has(#thread .composer-parent h1.text-page-header) #CentAnni-speak-btn,
         :root:has(main button[aria-label^="Edit the title of"]) #CentAnni-speak-btn,
         :root:has(header button[aria-label="Turn on temporary chat"]) #CentAnni-speak-btn,
         :root:has(header button[aria-label="Turn off temporary chat"]) #CentAnni-speak-btn {
@@ -1483,6 +1484,7 @@
                 nav > aside > a:has(use[href*="#3a5c87"]),
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
+                nav a.group.__menu-item[href="/deep-research"],
                 nav > div:has(use[href*="#c8839f"]) > a div.grow,
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > aside > a:has(use[href*="#266724"]) span.__menu-item-badge,
@@ -1702,12 +1704,6 @@
         modelSelector: {
             label: "Add Quick Model Selector Buttons",
             enabled: true,
-            sheet: null,
-            style: ``
-        },
-        additionalModels: {
-            label: "'Show additional models' Active",
-            enabled: false,
             sheet: null,
             style: ``
         },
@@ -2049,6 +2045,7 @@
         controlsContainer.appendChild(minusButton);
         controlsContainer.appendChild(speedDisplay);
         controlsContainer.appendChild(plusButton);
+
         document.querySelector('#thread-bottom-container div.\\[grid-area\\:leading\\]')?.insertAdjacentElement('afterend', controlsContainer);
     }
 
@@ -2254,19 +2251,10 @@
     }
 
     // model configurations
-    const legacySubmenu = '[data-testid="Legacy models-submenu"]';
     const modelConfigs = {
-        // current
-        'gpt-5': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-2"]' },
-        'instant': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-2-instant"]' },
-        'gpt-5-thinking': { needsSubmenu: false, buttonSelector: '[data-testid="model-switcher-gpt-5-2-thinking"]' },
-
-        // legacy models (submenu)
-        'gpt-4o': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4o"]' },
-        'gpt-4.1': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-4-1"]' },
-        'gpt-o3': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o3"]' },
-        'gpt-o4-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-o4-mini"]' },
-        'thinking-mini': { needsSubmenu: true, buttonSelector: '[data-testid="model-switcher-gpt-5-t-mini"]' }
+        'gpt-5': { buttonSelector: '[data-testid="model-switcher-gpt-5-2"]' },
+        'gpt-5-instant': { buttonSelector: '[data-testid="model-switcher-gpt-5-2-instant"]' },
+        'gpt-5-thinking': { buttonSelector: '[data-testid="model-switcher-gpt-5-2-thinking"]' }
     };
 
     // select GPT model (default 4o)
@@ -2274,7 +2262,6 @@
     let handlingThinkingBtn = false;
     const selectModel = (modelType) => {
         modelObserver?.disconnect();
-        let subMenu = true;
 
         const config = modelConfigs[modelType];
         if (!config) return;
@@ -2296,14 +2283,6 @@
                 composed: true
             };
 
-            if (config.needsSubmenu) {
-                if (window.PointerEvent) {
-                    element.dispatchEvent(new PointerEvent('pointerenter', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true }));
-                    element.dispatchEvent(new PointerEvent('pointermove', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true }));
-                }
-                element.dispatchEvent(new MouseEvent('mouseenter', eventOptions));
-                element.dispatchEvent(new MouseEvent('mouseover', eventOptions));
-            }
             if (window.PointerEvent) element.dispatchEvent(new PointerEvent('pointerdown', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, buttons: 1 }));
             element.dispatchEvent(new MouseEvent('mousedown', { ...eventOptions, button: 0, buttons: 1 }));
             if (window.PointerEvent) element.dispatchEvent(new PointerEvent('pointerup', { ...eventOptions, pointerId: 1, pointerType: 'mouse', isPrimary: true, button: 0, buttons: 0 }));
@@ -2313,28 +2292,10 @@
         };
 
         const check = () => {
-            const submenuPanel = '[role="menu"][data-state="open"]:not([hidden])';
-
-            if (config.needsSubmenu) { // legacy models
-                if (subMenu) {
-                    const submenuTrigger = document.querySelector(`${submenuPanel} ${legacySubmenu}`);
-                    if (submenuTrigger) {
-                        simulateClick(submenuTrigger);
-                        subMenu = false;
-                    }
-                } else if (!subMenu) {
-                    const modelButton = document.querySelector(`${submenuPanel} ${config.buttonSelector}`);
-                    if (modelButton) {
-                        simulateClick(modelButton);
-                        cleanup();
-                    }
-                }
-            } else { // current models
-                const modelButton = document.querySelector(`${submenuPanel} ${config.buttonSelector}`);
-                if (modelButton) {
-                    simulateClick(modelButton);
-                    cleanup();
-                }
+            const modelButton = document.querySelector(`${config.buttonSelector}`);
+            if (modelButton) {
+                simulateClick(modelButton);
+                cleanup();
             }
             if (modelType === 'gpt-5-thinking' && !handlingThinkingBtn && features.thinkingExtended.enabled) {
                 handlingThinkingBtn = true;
@@ -2358,7 +2319,7 @@
         };
 
         // open menu selector panel
-        const headerButton = document.querySelector('header#page-header button[data-testid="model-switcher-dropdown-button"], main header button[data-testid="model-switcher-dropdown-button"]');
+        const headerButton = document.querySelector('button[data-testid="model-switcher-dropdown-button"]');
         if (!headerButton) return;
         simulateClick(headerButton);
 
@@ -2387,17 +2348,7 @@
 
         bar.appendChild(mkBtn("Auto", () => selectModel("gpt-5")));
         bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-5-thinking")));
-        bar.appendChild(mkBtn("Instant", () => selectModel("instant")));
-
-        if (features.additionalModels.enabled) {
-            bar.appendChild(mkBtn("GPT-4o", () => selectModel("gpt-4o")));
-
-            bar.appendChild(mkBtn("Thinking mini", () => selectModel("thinking-mini")));
-
-            bar.appendChild(mkBtn("GPT-4.1", () => selectModel("gpt-4.1")));
-            bar.appendChild(mkBtn("o3", () => selectModel("gpt-o3")));
-            bar.appendChild(mkBtn("o4-mini", () => selectModel("gpt-o4-mini")));
-        }
+        bar.appendChild(mkBtn("Instant", () => selectModel("gpt-5-instant")));
 
         const targetContainer = document.querySelector("main form div.cursor-text:not(#thread-bottom-container) div.flex.items-center.gap-2.\\[grid-area\\:trailing\\]");
         targetContainer?.insertBefore(bar, targetContainer.firstChild);
