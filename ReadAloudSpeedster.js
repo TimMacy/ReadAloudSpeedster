@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.16
+// @version      5.16.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.16 - Read Aloud Speedster               *
+*                    Version: 5.16.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -2083,7 +2083,8 @@
 
     let navCleanup = null;
     function navBtns() {
-        const targetChat = document.querySelector('main > #thread div.flex.basis-auto.flex-col.grow');
+        const targetChatSelector = 'main > #thread div.flex.basis-auto.flex-col.grow';
+        let targetChat = document.querySelector(targetChatSelector);
         const actions = document.querySelector('#conversation-header-actions');
         const shareBtn = actions?.querySelector('button[aria-label="Share"]');
         if (!shareBtn || !actions || !targetChat) return () => {};
@@ -2092,7 +2093,12 @@
         let messageCache = [];
 
         const role = features.jumpToChat?.enabled ? 'user' : 'assistant';
-        const queryMessages = () => Array.from(targetChat.querySelectorAll(`article:has([data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"]))`));
+        const messageSelector = `article:has([data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"]))`;
+        const queryMessages = () => {
+            if (!targetChat || !targetChat.isConnected) targetChat = document.querySelector(targetChatSelector);
+            if (!targetChat) return [];
+            return Array.from(targetChat.querySelectorAll(messageSelector));
+        };
         const populateCache = () => { messageCache = queryMessages(); };
 
         const getNextMessage = () => {
@@ -2118,6 +2124,7 @@
 
         const checkForNewBelow = () => {
             const msgs = queryMessages();
+            if (messageCache.length && messageCache.some(msg => !msg.isConnected)) messageCache = [];
             if (msgs.length > messageCache.length) {
                 const newMsgs = msgs.slice(messageCache.length);
                 messageCache.push(...newMsgs);
@@ -2166,7 +2173,7 @@
         const stopBtnSelectors = 'button[data-testid="stop-button"],#composer-submit-button[aria-label="Stop streaming"]';
         document.querySelector(stopBtnSelectors) ? stopButtonPresent = true : stopButtonPresent = false;
 
-        const buttonObserver = new MutationObserver((mutations) => {
+        const buttonObserver = new MutationObserver(() => {
             const stopButton = document.querySelector(stopBtnSelectors);
 
             if (stopButton && !stopButtonPresent) stopButtonPresent = true;
