@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.16.1
+// @version      5.17
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.16.1 - Read Aloud Speedster             *
+*                    Version: 5.17 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -2259,9 +2259,9 @@
 
     // model configurations
     const modelConfigs = {
-        'gpt-5': { buttonSelector: '[data-testid="model-switcher-gpt-5-2"]' },
-        'gpt-5-instant': { buttonSelector: '[data-testid="model-switcher-gpt-5-2-instant"]' },
-        'gpt-5-thinking': { buttonSelector: '[data-testid="model-switcher-gpt-5-2-thinking"]' }
+        'gpt-auto': { buttonSelector: '[data-testid^="model-switcher-gpt"]:not([data-testid*="instant"]):not([data-testid*="thinking"])' },
+        'gpt-instant': { buttonSelector: '[data-testid^="model-switcher-gpt"][data-testid*="instant"]' },
+        'gpt-thinking': { buttonSelector: '[data-testid^="model-switcher-gpt"][data-testid*="thinking"]' }
     };
 
     // select GPT model (default 4o)
@@ -2304,7 +2304,7 @@
                 simulateClick(modelButton);
                 cleanup();
             }
-            if (modelType === 'gpt-5-thinking' && !handlingThinkingBtn && features.thinkingExtended.enabled) {
+            if (modelType === 'gpt-thinking' && !handlingThinkingBtn && features.thinkingExtended.enabled) {
                 handlingThinkingBtn = true;
                 setTimeout(() => extendedThinking(), 50);
             }
@@ -2353,9 +2353,9 @@
             return b;
         };
 
-        bar.appendChild(mkBtn("Auto", () => selectModel("gpt-5")));
-        bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-5-thinking")));
-        bar.appendChild(mkBtn("Instant", () => selectModel("gpt-5-instant")));
+        bar.appendChild(mkBtn("Auto", () => selectModel("gpt-auto")));
+        bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-thinking")));
+        bar.appendChild(mkBtn("Instant", () => selectModel("gpt-instant")));
 
         const targetContainer = document.querySelector("main form div.cursor-text:not(#thread-bottom-container) div.flex.items-center.gap-2.\\[grid-area\\:trailing\\]");
         targetContainer?.insertBefore(bar, targetContainer.firstChild);
