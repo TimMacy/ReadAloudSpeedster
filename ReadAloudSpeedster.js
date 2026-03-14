@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.17.1
+// @version      5.17.5
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.17.1 - Read Aloud Speedster             *
+*                    Version: 5.17.5 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -94,7 +94,9 @@
 
         /* copy icon */
         button[aria-label="Copy"],
+        button:has(use[href*="#ce3544"]),
         div[role="menuitem"]:has(path[d^="M12 7.1a"]),
+        button[data-testid="copy-turn-action-button"],
         header button:has(path[d^="M12.668 10.667C12"]),
         button.surface-nav-element:has(svg path[d^="M12 7.1a"]) {
             color: darkorange;
@@ -133,6 +135,7 @@
         }
 
         /* edit in canvas icon */
+        button:has(use[href*="#6d87e1"]),
         button[aria-label="Edit message"],
         button[aria-label="Edit in canvas"],
         button:has(svg path[d^="M12.0303 4.11328"]) {
@@ -209,6 +212,9 @@
             .light button:has(svg path[d^="M12.0303 4.11328"]),
             button[aria-label="Read aloud"],
             div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
+            button:has(use[href*="#6d87e1"]),
+            button:has(use[href*="#ce3544"]),
+            button[data-testid="copy-turn-action-button"],
             button[data-testid="voice-play-turn-action-button"] svg,
             article button[aria-label="Share"]
             ):hover {opacity: 1;
@@ -1139,6 +1145,7 @@
                 .rounded-\\[28px\\],
                 .rounded-\\[24px\\],
                 .rounded-\\[22px\\],
+                .rounded-\\[30px\\],
                 .composer-btn:enabled,
                 .composer-btn::before,
                 .surface-popover:before,
@@ -1364,10 +1371,10 @@
             enabled: false,
             sheet: null,
             style: `
-                header button[aria-label="Open profile menu"] span,
-                nav div[aria-label="Open profile menu"] div.min-w-0,
-                main button[aria-label="Open Profile Menu"] span span,
-                #page-header #conversation-header-actions button[aria-label="Open profile menu"] span {
+                header button[aria-label$="open profile menu"] span,
+                nav div[aria-label$="open profile menu"] div.min-w-0,
+                main button[aria-label$="open profile menu"] span span,
+                #page-header #conversation-header-actions button[aria-label$="open profile menu"] span {
                     display: none;
                 }
 
@@ -1442,7 +1449,7 @@
 
                 .xl\\:px-5, main form,
                 div.flex-1.mx-auto > div.relative.w-full {
-                    padding-bottom: 1rem;
+                    padding-bottom: 0;
                 }
             `
         },
@@ -1482,27 +1489,27 @@
                 nav a.group.__menu-item[href="/codex"],
                 nav a.group.__menu-item[href="/atlas"],
                 div.pointer-events-none.h-px.w-px.-mb-px,
+                nav > aside .-bottom-\\(--sticky-spacer\\),
                 nav > aside > a:has(use[href*="#3a5c87"]),
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href="/deep-research"],
                 nav > div:has(use[href*="#c8839f"]) > a div.grow,
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
-                nav > aside > a:has(use[href*="#266724"]) span.__menu-item-badge,
-                nav > aside > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
+                nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
+                nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
                 nav > aside > div:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
                     display: none;
                 }
 
-                .tall\\:top-header-height,
-                nav > aside.last\\:mb-5.mt-\\(--sidebar-section-first-margin-top\\) {
+                .tall\\:top-header-height {
                     height: 0;
                     padding:0;
-                    margin-bottom: -41px;
+                    margin-bottom: -10px;
                 }
 
                 nav > div:has(use[href*="#c8839f"]),
-                nav > aside > a:has(use[href*="#266724"]),
+                nav > a:has(use[href*="#266724"]),
                 nav > aside > div:has(use[href*="#ac6d36"]) {
                     margin: 0;
                     z-index: 31;
@@ -1510,23 +1517,27 @@
                 }
 
                 nav > aside > div:has(use[href*="#ac6d36"]) {
-                    transform: translate(46px, -44px);
+                    position: fixed;
                     width: 40px;
+                    top: 0;
+                    transform: translate(46px, 8px);
                 }
 
-                nav > aside > a:has(use[href*="#266724"]) {
-                    transform: translate(86px, -80px);
+                nav > a:has(use[href*="#266724"]) {
+                    position: fixed;
                     width: 92px;
+                    transform: translate(86px, 8px);
                 }
 
-                nav > aside > a:has(use[href*="#266724"]) div.truncate {
+                nav > a:has(use[href*="#266724"]) div.truncate {
                     text-overflow: clip;
                 }
 
                 nav > div:has(use[href*="#c8839f"]) {
-                    transform: translate(178px, -3px);
-                    width: 36px;
+                    position: fixed;
                     padding: 0;
+                    width: 36px;
+                    transform: translate(178px, 8px);
                 }
 
                 nav > div:has(use[href*="#c8839f"]) > a {
@@ -1537,7 +1548,7 @@
 
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
-                nav > aside > a:has(use[href*="#266724"]):hover,
+                nav > a:has(use[href*="#266724"]):hover,
                 nav > aside > div:has(use[href*="#ac6d36"]):hover {
                     color: var(--text-primary);
                 }
@@ -1550,10 +1561,6 @@
 
                 nav > div:has(use[href*="#c8839f"]) > a > div.items-center {
                     margin-left: 8px;
-                }
-
-                nav div.group\\/sidebar-expando-section:has(use[href*="#b6a09f"]) {
-                    margin-top: 5px !important;
                 }
             `
         },
