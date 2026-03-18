@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.17.5
+// @version      5.18
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.17.5 - Read Aloud Speedster             *
+*                    Version: 5.18 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -180,6 +180,7 @@
         }
 
         /* share icon */
+        section button[aria-label="Share"],
         article button[aria-label="Share"] {
             opacity: .8;
         }
@@ -216,7 +217,8 @@
             button:has(use[href*="#ce3544"]),
             button[data-testid="copy-turn-action-button"],
             button[data-testid="voice-play-turn-action-button"] svg,
-            article button[aria-label="Share"]
+            article button[aria-label="Share"],
+            section button[aria-label="Share"]
             ):hover {opacity: 1;
         }
 
@@ -245,12 +247,14 @@
         }
 
         /* scheduled separator line */
+        :root:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"],
         :root:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
             border-top: 1px solid springgreen;
             margin-top: 10px;
             padding-top: 10px;
         }
 
+        :root[style*="color-scheme: light"]:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"],
         :root[style*="color-scheme: light"]:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
             border-color: darkviolet;
         }
@@ -416,6 +420,7 @@
             padding-bottom: 25dvh !important;
         }
 
+        #thread section[data-turn-id*="request-WEB"],
         #thread article[data-turn-id*="request-WEB"] {
             min-height: 10dvh;
         }
@@ -426,6 +431,7 @@
             width: fill-available;
         }
 
+        main #thread section div.mt-3.w-full.empty\\:hidden,
         main #thread article div.mt-3.w-full.empty\\:hidden {
             margin-bottom: 20px;
         }
@@ -937,8 +943,9 @@
         }
 
         /* scroll position fix */
+        section:has([data-message-author-role]),
         article:has([data-message-author-role]) {
-            scroll-margin-top: 0 !important;
+            scroll-margin-top: 52px !important;
         }
 
         #sidebar-header button:has(svg path[d^="M7.94556"]) {
@@ -1068,6 +1075,7 @@
             padding-bottom: unset;
         }
 
+        #thread section.text-token-text-primary :where([class*="_tableWrapper_"]) div.absolute.end-0,
         #thread article.text-token-text-primary :where([class*="_tableWrapper_"]) div.absolute.end-0 {
             height: unset !important;
         }
@@ -1213,6 +1221,7 @@
                     gap: 8px;
                 }
 
+                section ul,
                 article ul {
                     list-style-type: square;
                 }
@@ -1309,6 +1318,7 @@
             enabled: false,
             sheet: null,
             style: `
+                section button[aria-label="Share"],
                 article button[aria-label="Share"] {
                     display: none;
                 }
@@ -1676,10 +1686,12 @@
             enabled: false,
             sheet: null,
             style: `
+                section ul,
                 article ul {
                     list-style-type: none;
                 }
 
+                section ul li::before,
                 article ul li::before {
                     position: absolute;
                     content: "– ";
@@ -1712,12 +1724,6 @@
         modelSelector: {
             label: "Add Quick Model Selector Buttons",
             enabled: true,
-            sheet: null,
-            style: ``
-        },
-        thinkingExtended: {
-            label: "Use 'Extended Thinking' by Default",
-            enabled: false,
             sheet: null,
             style: ``
         },
@@ -2101,7 +2107,7 @@
         let messageCache = [];
 
         const role = features.jumpToChat?.enabled ? 'user' : 'assistant';
-        const messageSelector = `article:has([data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"]))`;
+        const messageSelector = `:is(article, section):has([data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"]))`;
         const queryMessages = () => {
             if (!targetChat || !targetChat.isConnected) targetChat = document.querySelector(targetChatSelector);
             if (!targetChat) return [];
@@ -2267,14 +2273,12 @@
 
     // model configurations
     const modelConfigs = {
-        'gpt-auto': { buttonSelector: '[data-testid^="model-switcher-gpt"]:not([data-testid*="instant"]):not([data-testid*="thinking"])' },
-        'gpt-instant': { buttonSelector: '[data-testid^="model-switcher-gpt"][data-testid*="instant"]' },
+        'gpt-instant': { buttonSelector: '[data-testid^="model-switcher-gpt"]:not([data-testid*="instant"]):not([data-testid*="thinking"])' },
         'gpt-thinking': { buttonSelector: '[data-testid^="model-switcher-gpt"][data-testid*="thinking"]' }
     };
 
-    // select GPT model (default 4o)
+    // select GPT model
     let modelObserver, timeout;
-    let handlingThinkingBtn = false;
     const selectModel = (modelType) => {
         modelObserver?.disconnect();
 
@@ -2312,25 +2316,6 @@
                 simulateClick(modelButton);
                 cleanup();
             }
-            if (modelType === 'gpt-thinking' && !handlingThinkingBtn && features.thinkingExtended.enabled) {
-                handlingThinkingBtn = true;
-                setTimeout(() => extendedThinking(), 50);
-            }
-        };
-
-        // pick extended thinking by default
-        const extendedThinking = () => {
-            const btn = document.querySelector('button[aria-label="Thinking, click to remove"] + button.__composer-pill');
-            if (btn) {
-                setTimeout(() => {
-                    simulateClick(btn);
-                    setTimeout(() => {
-                        const extendedThinkingBtn = document.querySelector('div[role="menuitemradio"][aria-checked="false"]');
-                        if (extendedThinkingBtn) extendedThinkingBtn.click();
-                    }, 50);
-                }, 50);
-            }
-            setTimeout(() => handlingThinkingBtn = false, 250);
         };
 
         // open menu selector panel
@@ -2361,9 +2346,8 @@
             return b;
         };
 
-        bar.appendChild(mkBtn("Auto", () => selectModel("gpt-auto")));
-        bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-thinking")));
         bar.appendChild(mkBtn("Instant", () => selectModel("gpt-instant")));
+        bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-thinking")));
 
         const targetContainer = document.querySelector("main form div.cursor-text:not(#thread-bottom-container) div.flex.items-center.gap-2.\\[grid-area\\:trailing\\]");
         targetContainer?.insertBefore(bar, targetContainer.firstChild);
