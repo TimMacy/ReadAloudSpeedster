@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.18
+// @version      5.19.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.18 - Read Aloud Speedster               *
+*                    Version: 5.19.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -299,6 +299,7 @@
         }
 
         /* pin and unpin color */
+        svg:has(use[href*="#a8c6bd"]),
         div[role="menuitem"]:has(use[href*="#23d2ff"]),
         div[role="menuitem"]:has(use[href*="#946e20"]),
         div[role="menuitem"]:has(use[href*="#13322a"]) {
@@ -945,7 +946,7 @@
         /* scroll position fix */
         section:has([data-message-author-role]),
         article:has([data-message-author-role]) {
-            scroll-margin-top: 52px !important;
+            scroll-margin-top: 0 !important;
         }
 
         #sidebar-header button:has(svg path[d^="M7.94556"]) {
@@ -1508,7 +1509,7 @@
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
                 nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
-                nav > aside > div:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
+                nav > aside > button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
                     display: none;
                 }
 
@@ -1520,13 +1521,14 @@
 
                 nav > div:has(use[href*="#c8839f"]),
                 nav > a:has(use[href*="#266724"]),
-                nav > aside > div:has(use[href*="#ac6d36"]) {
+                nav > div:has(use[href*="#c8839f"]) > a,
+                nav > aside > button:has(use[href*="#ac6d36"]) {
                     margin: 0;
                     z-index: 31;
                     color: var(--text-tertiary);
                 }
 
-                nav > aside > div:has(use[href*="#ac6d36"]) {
+                nav > aside > button:has(use[href*="#ac6d36"]) {
                     position: fixed;
                     width: 40px;
                     top: 0;
@@ -1556,10 +1558,11 @@
                     min-width: 36px;
                 }
 
+                nav > a:has(use[href*="#266724"]):hover,
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
-                nav > a:has(use[href*="#266724"]):hover,
-                nav > aside > div:has(use[href*="#ac6d36"]):hover {
+                nav > div:has(use[href*="#c8839f"]) > a:hover,
+                nav > aside > button:has(use[href*="#ac6d36"]):hover {
                     color: var(--text-primary);
                 }
 
@@ -2116,20 +2119,20 @@
         const populateCache = () => { messageCache = queryMessages(); };
 
         const getNextMessage = () => {
-            const current = window.scrollY + HEADER_OFFSET;
+            const current = HEADER_OFFSET;
             for (const msg of messageCache) {
-                const top = msg.getBoundingClientRect().top + window.scrollY;
+                const top = msg.getBoundingClientRect().top;
                 if (top > current + 1) return msg;
             }
             return null;
         };
 
         const getPrevMessage = () => {
-            const current = window.scrollY + HEADER_OFFSET - 1;
+            const current = HEADER_OFFSET - 1;
             for (let i = messageCache.length - 1; i >= 0; i--) {
                 const rect = messageCache[i].getBoundingClientRect();
-                const top = rect.top + window.scrollY;
-                const bottom = rect.bottom + window.scrollY;
+                const top = rect.top;
+                const bottom = rect.bottom;
                 if (top < current && bottom > current) return messageCache[i];
                 if (bottom < current - 1) return messageCache[i];
             }
@@ -2142,9 +2145,9 @@
             if (msgs.length > messageCache.length) {
                 const newMsgs = msgs.slice(messageCache.length);
                 messageCache.push(...newMsgs);
-                const current = window.scrollY + HEADER_OFFSET;
+                const current = HEADER_OFFSET;
                 for (const msg of newMsgs) {
-                    const top = msg.getBoundingClientRect().top + window.scrollY;
+                    const top = msg.getBoundingClientRect().top;
                     if (top > current + 1) return msg;
                 }
             }
@@ -2161,10 +2164,27 @@
             setState(downBtn, !!getNextMessage());
         };
 
+        const getScroller = () => {
+            let node = targetChat;
+            while (node) {
+                const style = getComputedStyle(node);
+                if ((style.overflowY === 'auto' || style.overflowY === 'scroll') && node.scrollHeight > node.clientHeight) return node;
+                node = node.parentElement;
+            }
+            return document.scrollingElement;
+        };
+
+        const scrollToMessage = (msg) => {
+            const scroller = getScroller();
+            const scrollerTop = scroller === document.scrollingElement ? 0 : scroller.getBoundingClientRect().top;
+            const top = scroller.scrollTop + msg.getBoundingClientRect().top - scrollerTop - HEADER_OFFSET;
+            scroller.scrollTo({ top, behavior: 'auto' });
+        };
+
         const jump = (prev) => {
             let target = prev ? getPrevMessage() : getNextMessage();
             if (!prev && !target) target = checkForNewBelow();
-            if (target) target.scrollIntoView({ behavior: 'auto', block: 'start' });
+            if (target) scrollToMessage(target);
             update();
         };
 
