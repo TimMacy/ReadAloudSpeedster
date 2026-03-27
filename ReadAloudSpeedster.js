@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.19.1
+// @version      5.19.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.19.1 - Read Aloud Speedster             *
+*                    Version: 5.19.4 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -315,7 +315,8 @@
         /* change width of chat containers */
         #thread-bottom-container #thread-bottom,
         div.text-base.my-auto:has(.bg-token-main-surface-tertiary),
-        div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)) {
+        div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)),
+        html:not(:has(#thread-bottom-container #thread-bottom)) #thread-bottom-container div.text-base.mx-auto {
             margin: 0 6.263%;
             padding: 0;
         }
@@ -1469,26 +1470,29 @@
             enabled: true,
             sheet: null,
             style: `
-                nav div.group\\/sidebar-expando-section:has(use[href*="#608c49"]) {
+                nav div.group\\/sidebar-expando-section:has(use[href*="#608c49"]) ul {
                     display: flex;
                     flex-direction: column;
                 }
 
                 nav div.hoverable:has(use[href*="#f6d0e2"]),
-                nav div.hoverable:has(use[href*="#608c49"]) {
+                nav button.hoverable:has(use[href*="#608c49"]) {
                     width: calc(50% - 6px);
                 }
 
-                nav div.hoverable:has(use[href*="#608c49"]) div.truncate {
+                nav button.hoverable:has(use[href*="#608c49"]) div.truncate {
                     text-overflow: unset;
                 }
 
-                nav div.hoverable:has(use[href*="#f6d0e2"]) {
+                nav li:has(div.hoverable use[href*="#f6d0e2"]) {
+                    order: -1;
+                }
+
+                nav li:has(div.hoverable use[href*="#f6d0e2"]) > div {
                     position: absolute;
-                    transform: translate(100%, 36px);
+                    transform: translate(100%, 0);
                     flex-direction: row-reverse;
                     padding: 8px 10px 8px 20px;
-                    order: -1;
                 }
             `
         },
@@ -1497,11 +1501,11 @@
             enabled: true,
             sheet: null,
             style: `
-                nav a.group.__menu-item[href="/codex"],
+nav a.group.__menu-item[href="/codex"],
                 nav a.group.__menu-item[href="/atlas"],
+                nav > aside a:has(use[href*="#3a5c87"]),
                 div.pointer-events-none.h-px.w-px.-mb-px,
                 nav > aside .-bottom-\\(--sticky-spacer\\),
-                nav > aside > a:has(use[href*="#3a5c87"]),
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href="/deep-research"],
@@ -1509,7 +1513,7 @@
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
                 nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
-                nav > aside > button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
+                nav > aside button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
                     display: none;
                 }
 
@@ -1522,13 +1526,13 @@
                 nav > div:has(use[href*="#c8839f"]),
                 nav > a:has(use[href*="#266724"]),
                 nav > div:has(use[href*="#c8839f"]) > a,
-                nav > aside > button:has(use[href*="#ac6d36"]) {
+                nav > aside button:has(use[href*="#ac6d36"]) {
                     margin: 0;
                     z-index: 31;
                     color: var(--text-tertiary);
                 }
 
-                nav > aside > button:has(use[href*="#ac6d36"]) {
+                nav > aside button:has(use[href*="#ac6d36"]) {
                     position: fixed;
                     width: 40px;
                     top: 0;
@@ -1562,7 +1566,7 @@
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(use[href*="#c8839f"]) > a:hover,
-                nav > aside > button:has(use[href*="#ac6d36"]):hover {
+                nav > aside button:has(use[href*="#ac6d36"]):hover {
                     color: var(--text-primary);
                 }
 
@@ -1659,10 +1663,6 @@
                 nav > div:has(use[href*="#c8839f"]) > a {
                     max-height: unset!important;
                     height: 36px;
-                }
-
-                nav div.hoverable:has(use[href*="#f6d0e2"]) {
-                    transform: translate(100%, 32px);
                 }
 
                 #stage-slideover-sidebar nav div.overflow-hidden > h2 {
