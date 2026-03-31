@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.19.4
+// @version      5.20
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.19.4 - Read Aloud Speedster             *
+*                    Version: 5.20 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -856,7 +856,8 @@
 
         #page-header,
         main > div > header,
-        #calpico-page-header {
+        #calpico-page-header,
+        main div.hidden.sm\\:justify-end {
             padding-right: 130.5px;
         }
 
@@ -1155,6 +1156,7 @@
                 .rounded-\\[28px\\],
                 .rounded-\\[24px\\],
                 .rounded-\\[22px\\],
+                .rounded-\\[26px\\],
                 .rounded-\\[30px\\],
                 .composer-btn:enabled,
                 .composer-btn::before,
@@ -1162,6 +1164,7 @@
                 .__menu-item-trailing-btn,
                 form > div:nth-child(2) > div,
                 main form div.contain-inline-size,
+                .before\\:rounded-\\[16px\\]::before,
                 #wham-message-modal-footer div.cursor-text.shadow-short {
                     border-radius: 2px !important;
                 }
@@ -1396,7 +1399,8 @@
 
                 #page-header,
                 main > div > header,
-                #calpico-page-header {
+                #calpico-page-header,
+                main div.hidden.sm\\:justify-end {
                     padding-right:60px;
                 }
 
@@ -1432,7 +1436,8 @@
             enabled: false,
             sheet: null,
             style: `
-                button[aria-label="Dictate button"] {
+                button[aria-label="Dictate button"],
+                button[aria-label="Start dictation"] {
                     display: none;
                 }
             `
@@ -1501,11 +1506,13 @@
             enabled: true,
             sheet: null,
             style: `
-nav a.group.__menu-item[href="/codex"],
+                nav a.group.__menu-item[href="/codex"],
                 nav a.group.__menu-item[href="/atlas"],
                 nav > aside a:has(use[href*="#3a5c87"]),
-                div.pointer-events-none.h-px.w-px.-mb-px,
                 nav > aside .-bottom-\\(--sticky-spacer\\),
+                div.pointer-events-none.h-px.w-px.-mb-px,
+                nav > a:has(use[href*="#266724"]) div.grow,
+                nav > a:has(use[href*="#4a730f"]) div.grow,
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href="/deep-research"],
@@ -1519,12 +1526,13 @@ nav a.group.__menu-item[href="/codex"],
 
                 .tall\\:top-header-height {
                     height: 0;
-                    padding:0;
+                    padding: 0;
                     margin-bottom: -10px;
                 }
 
-                nav > div:has(use[href*="#c8839f"]),
                 nav > a:has(use[href*="#266724"]),
+                nav > a:has(use[href*="#4a730f"]),
+                nav > div:has(use[href*="#c8839f"]),
                 nav > div:has(use[href*="#c8839f"]) > a,
                 nav > aside button:has(use[href*="#ac6d36"]) {
                     margin: 0;
@@ -1536,24 +1544,30 @@ nav a.group.__menu-item[href="/codex"],
                     position: fixed;
                     width: 40px;
                     top: 0;
-                    transform: translate(46px, 8px);
+                    transform: translate(53px, 8px);
                 }
 
                 nav > a:has(use[href*="#266724"]) {
                     position: fixed;
-                    width: 92px;
-                    transform: translate(86px, 8px);
+                    transform: translate(93px, 8px);
                 }
 
                 nav > a:has(use[href*="#266724"]) div.truncate {
                     text-overflow: clip;
                 }
 
+                nav > a:has(use[href*="#4a730f"]) {
+                    position: fixed;
+                    transform: translate(133px, 8px);
+                    min-height: 36px !important;
+                    margin: 0;
+                }
+
                 nav > div:has(use[href*="#c8839f"]) {
                     position: fixed;
                     padding: 0;
                     width: 36px;
-                    transform: translate(178px, 8px);
+                    transform: translate(173px, 8px);
                 }
 
                 nav > div:has(use[href*="#c8839f"]) > a {
@@ -1563,6 +1577,7 @@ nav a.group.__menu-item[href="/codex"],
                 }
 
                 nav > a:has(use[href*="#266724"]):hover,
+                nav > a:has(use[href*="#4a730f"]):hover,
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(use[href*="#c8839f"]) > a:hover,
@@ -1573,7 +1588,7 @@ nav a.group.__menu-item[href="/codex"],
                 nav > div:has(use[href*="#c8839f"]),
                 #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
                 #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
-                    z-index:17;
+                    z-index: 17;
                 }
 
                 nav > div:has(use[href*="#c8839f"]) > a > div.items-center {
