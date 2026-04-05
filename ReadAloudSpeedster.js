@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.20
+// @version      5.21
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.20 - Read Aloud Speedster               *
+*                    Version: 5.21 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1165,6 +1165,7 @@
                 form > div:nth-child(2) > div,
                 main form div.contain-inline-size,
                 .before\\:rounded-\\[16px\\]::before,
+                :where(.puik-root [data-theme]) > div,
                 #wham-message-modal-footer div.cursor-text.shadow-short {
                     border-radius: 2px !important;
                 }
@@ -1318,14 +1319,16 @@
                 }
             `
         },
-        hideShareIcon: {
-            label: "Hide Share Icon",
+        resizeHandle: {
+            label: "Allow for Resizing the Text Field Vertically",
             enabled: false,
             sheet: null,
             style: `
-                section button[aria-label="Share"],
-                article button[aria-label="Share"] {
-                    display: none;
+                :where(form div[class*="_prosemirror-parent"]) {
+                    resize: vertical !important;
+                    max-height: 80svh !important;
+                    overflow: auto !important;
+                    padding-right: 7px;
                 }
             `
         },
@@ -1352,6 +1355,17 @@
             enabled: false,
             sheet: null,
             style: ``
+        },
+        hideShareIcon: {
+            label: "Hide Share Icon",
+            enabled: false,
+            sheet: null,
+            style: `
+                section button[aria-label="Share"],
+                article button[aria-label="Share"] {
+                    display: none;
+                }
+            `
         },
         keepIconsVisible: {
             label: "Keep Icons Visible",
@@ -1451,6 +1465,11 @@
                 button[aria-label="Start voice mode"] {
                     pointer-events: none;
                     opacity: 0.5;
+                }
+
+                div:has(> button[aria-label="Start Voice"]),
+                div:has(> button[aria-label="Start voice mode"]) {
+                    cursor: default;
                 }
             `
         },
