@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.21
+// @version      5.21.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.21 - Read Aloud Speedster               *
+*                    Version: 5.21.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -891,6 +891,10 @@
             background-color: transparent;
         }
 
+        div.sticky:has([data-testid="accounts-profile-button"]) > div:not(:has(*)) {
+            display: none;
+        }
+
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
             min-height: 36px;
         }
@@ -1468,8 +1472,14 @@
                 }
 
                 div:has(> button[aria-label="Start Voice"]),
+                span:has(> button[aria-label="Start Voice"]),
                 div:has(> button[aria-label="Start voice mode"]) {
                     cursor: default;
+                }
+
+                [data-radix-popper-content-wrapper]:has(kbd[aria-label="Control"]),
+                [data-radix-popper-content-wrapper]:has(.bg-token-bg-tooltip):not(:has(.touch\\:hidden)) {
+                    display: none;
                 }
             `
         },
@@ -1525,8 +1535,8 @@
             enabled: true,
             sheet: null,
             style: `
-                nav a.group.__menu-item[href="/codex"],
-                nav a.group.__menu-item[href="/atlas"],
+                nav a.group.__menu-item[href^="/codex"],
+                nav a.group.__menu-item[href^="/atlas"],
                 nav > aside a:has(use[href*="#3a5c87"]),
                 nav > aside .-bottom-\\(--sticky-spacer\\),
                 div.pointer-events-none.h-px.w-px.-mb-px,
@@ -1534,7 +1544,7 @@
                 nav > a:has(use[href*="#4a730f"]) div.grow,
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
-                nav a.group.__menu-item[href="/deep-research"],
+                nav a.group.__menu-item[href^="/deep-research"],
                 nav > div:has(use[href*="#c8839f"]) > a div.grow,
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
