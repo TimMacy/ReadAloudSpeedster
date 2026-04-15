@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.21.1
+// @version      5.22
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.21.1 - Read Aloud Speedster             *
+*                    Version: 5.22 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1563,7 +1563,9 @@
                 nav > a:has(use[href*="#4a730f"]),
                 nav > div:has(use[href*="#c8839f"]),
                 nav > div:has(use[href*="#c8839f"]) > a,
-                nav > aside button:has(use[href*="#ac6d36"]) {
+                nav > aside button:has(use[href*="#ac6d36"]),
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)),
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
                     margin: 0;
                     z-index: 31;
                     color: var(--text-tertiary);
@@ -1610,7 +1612,8 @@
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(use[href*="#c8839f"]) > a:hover,
-                nav > aside button:has(use[href*="#ac6d36"]):hover {
+                nav > aside button:has(use[href*="#ac6d36"]):hover,
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div:hover {
                     color: var(--text-primary);
                 }
 
@@ -1622,6 +1625,18 @@
 
                 nav > div:has(use[href*="#c8839f"]) > a > div.items-center {
                     margin-left: 8px;
+                }
+
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) {
+                    position: fixed;
+                    transform: translate(103px, 8px);
+                    padding: 0;
+                }
+
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
+                    padding: 0 20px 0 10px;
+                    width: fit-content !important;
+                    min-height: 36px !important;
                 }
             `
         },
