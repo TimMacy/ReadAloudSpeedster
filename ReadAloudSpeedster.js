@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.22
+// @version      5.22.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.22 - Read Aloud Speedster               *
+*                    Version: 5.22.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -850,7 +850,7 @@
         .CentAnni-style-nav-btn.disabled { opacity: .5; }
 
         /* avatar position */
-        #stage-slideover-sidebar .opacity-100 {
+        #stage-slideover-sidebar .h-full > .opacity-100 {
             padding-bottom: 10px;
         }
 
@@ -1165,6 +1165,7 @@
                 .composer-btn:enabled,
                 .composer-btn::before,
                 .surface-popover:before,
+                .rounded-\\[1\\.75rem\\],
                 .__menu-item-trailing-btn,
                 form > div:nth-child(2) > div,
                 main form div.contain-inline-size,
@@ -1546,10 +1547,11 @@
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href^="/deep-research"],
                 nav > div:has(use[href*="#c8839f"]) > a div.grow,
+                nav li:has(a[data-testid="create-new-chat-button"]),
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
                 nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
-                nav > aside button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
+                nav button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
                     display: none;
                 }
 
@@ -1563,7 +1565,7 @@
                 nav > a:has(use[href*="#4a730f"]),
                 nav > div:has(use[href*="#c8839f"]),
                 nav > div:has(use[href*="#c8839f"]) > a,
-                nav > aside button:has(use[href*="#ac6d36"]),
+                nav button:has(use[href*="#ac6d36"]),
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)),
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
                     margin: 0;
@@ -1571,7 +1573,7 @@
                     color: var(--text-tertiary);
                 }
 
-                nav > aside button:has(use[href*="#ac6d36"]) {
+                nav button:has(use[href*="#ac6d36"]) {
                     position: fixed;
                     width: 40px;
                     top: 0;
@@ -1612,7 +1614,7 @@
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(use[href*="#c8839f"]) > a:hover,
-                nav > aside button:has(use[href*="#ac6d36"]):hover,
+                nav button:has(use[href*="#ac6d36"]):hover,
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div:hover {
                     color: var(--text-primary);
                 }
