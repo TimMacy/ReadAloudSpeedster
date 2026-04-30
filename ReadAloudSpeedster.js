@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.22.1
+// @version      5.23
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.22.1 - Read Aloud Speedster             *
+*                    Version: 5.23 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -877,9 +877,9 @@
             margin: unset !important;
         }
 
-        div.sticky:has([data-testid="accounts-profile-button"]) {
+        div.relative.z-30:has([data-testid="accounts-profile-button"]) {
             position: fixed;
-            top: 8px;
+            top: 0;
             right: 3px;
             height: fit-content;
             padding: 0;
@@ -891,7 +891,7 @@
             background-color: transparent;
         }
 
-        div.sticky:has([data-testid="accounts-profile-button"]) > div:not(:has(*)) {
+        div.relative.z-30:has([data-testid="accounts-profile-button"]) > div:not(:has(*)) {
             display: none;
         }
 
@@ -903,9 +903,9 @@
             padding-right: 0;
         }
 
-        :root:has(div.z-1.shrink-0.overflow-x-hidden) div.sticky:has([data-testid="accounts-profile-button"]),
-        :root:has(section [data-testid="bar-search-sources-header"]) div.sticky:has([data-testid="accounts-profile-button"]),
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.sticky:has([data-testid="accounts-profile-button"]) {
+        :root:has(div.z-1.shrink-0.overflow-x-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]),
+        :root:has(section [data-testid="bar-search-sources-header"]) div.relative.z-30:has([data-testid="accounts-profile-button"]),
+        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]) {
             opacity: 0;
             z-index: -1;
             pointer-events: none;
@@ -937,11 +937,11 @@
             transform: translateY(-1px);
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div {
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div {
             background-color: #ffffff0d;
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.sticky:has([data-testid="accounts-profile-button"]) > div > div:hover {
+        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div:hover {
             background-color: var(--menu-item-highlighted);
         }
 
@@ -964,11 +964,25 @@
             position: relative;
             display: flex;
             gap: 8px;
+            order: 2;
             background: transparent;
             text-wrap: nowrap;
             overflow-y: hidden;
             overflow-x: auto;
             scrollbar-width: none;
+        }
+
+        div.ms-1:has(span[class*="data-collapse-labels"]) {
+            order: 1;
+            margin-right: 8px;
+        }
+
+        span > button:has(span[class*="data-collapse-labels"]) {
+            max-height: 29px;
+        }
+
+        div.ms-auto.flex.items-center.gap-1\\.5 {
+            order: 3;
         }
 
         :root:has(#CentAnni-gpt-model-quickbar) [class*="\\[grid-area\\:trailing\\]"],
@@ -1355,12 +1369,6 @@
                 }
             `
         },
-        shiftEnterSend: {
-            label: "Send Message with Shift+Enter instead of Enter",
-            enabled: false,
-            sheet: null,
-            style: ``
-        },
         hideShareIcon: {
             label: "Hide Share Icon",
             enabled: false,
@@ -1408,11 +1416,13 @@
                 header button[aria-label$="open profile menu"] span,
                 nav div[aria-label$="open profile menu"] div.min-w-0,
                 main button[aria-label$="open profile menu"] span span,
+                div.relative.z-30:has([data-testid="accounts-profile-button"]) .min-w-0,
                 #page-header #conversation-header-actions button[aria-label$="open profile menu"] span {
                     display: none;
                 }
 
-                div.sticky:has([data-testid="accounts-profile-button"]) {
+                div.relative.z-30:has([data-testid="accounts-profile-button"]) {
+                    top: 8px;
                     width:52px;
                 }
 
@@ -1478,8 +1488,9 @@
                     cursor: default;
                 }
 
-                [data-radix-popper-content-wrapper]:has(kbd[aria-label="Control"]),
-                [data-radix-popper-content-wrapper]:has(.bg-token-bg-tooltip):not(:has(.touch\\:hidden)) {
+                div[popover="hint"]:has(span[aria-label*=", Enter"]),
+                div[popover="hint"]:has([aria-label="Use Voice, Control, V"]),
+                [data-radix-popper-content-wrapper]:has(.bg-token-bg-tooltip):not(:has(.touch\\:hidden)){
                     display: none;
                 }
             `
@@ -1570,6 +1581,7 @@
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
                     margin: 0;
                     z-index: 31;
+                    height: 37px;
                     color: var(--text-tertiary);
                 }
 
@@ -1577,7 +1589,7 @@
                     position: fixed;
                     width: 40px;
                     top: 0;
-                    transform: translate(53px, 8px);
+                    transform: translate(103px, 8px);
                 }
 
                 nav > a:has(use[href*="#266724"]) {
@@ -1631,14 +1643,14 @@
 
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) {
                     position: fixed;
-                    transform: translate(103px, 8px);
+                    transform: translate(143px, 8px);
                     padding: 0;
                 }
 
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
-                    padding: 0 20px 0 10px;
+                    padding: 0 7px 0 7px;
                     width: fit-content !important;
-                    min-height: 36px !important;
+                    max-height: unset !important;
                 }
             `
         },
@@ -1712,7 +1724,7 @@
                 }
 
                 .__menu-item:not(:disabled):not([data-disabled]):not([data-no-hover-bg]).hoverable:hover {
-                    background-color: var(--menu-item-highlighted);
+                    background-color: var(--surface-hover);
                 }
 
                 nav div[aria-label="Expand section"],
@@ -1728,6 +1740,10 @@
 
                 #stage-slideover-sidebar nav div.overflow-hidden > h2 {
                     display: none;
+                }
+
+                nav h2.__menu-label {
+                    font-size: .75rem;
                 }
             `
         },
@@ -1799,18 +1815,9 @@
         },
     };
 
-    let swapEnterDetach = null;
     function applyFeature(key) {
         const feature = features[key];
         if (!feature) return;
-        if (key === 'shiftEnterSend') {
-            if (feature.enabled && !swapEnterDetach) swapEnterDetach = swapEnterBehavior();
-            else if (!feature.enabled && swapEnterDetach) {
-                swapEnterDetach();
-                swapEnterDetach = null;
-            }
-            return;
-        }
         if (feature.enabled) {
             if (feature.style && !feature.sheet) {
                 feature.sheet = document.createElement('style');
@@ -2320,38 +2327,6 @@
         };
     }
 
-    // swap ENTER and SHIFT+ENTER
-    function swapEnterBehavior() {
-        function handleKeyDown(event) {
-            if (event.key === 'Enter') {
-                const isPromptTextarea = event.target.matches('#prompt-textarea') || event.target.closest('.ProseMirror') || event.target.matches('[name="prompt-textarea"]');
-                if (!isPromptTextarea) return;
-                event.preventDefault();
-                event.stopPropagation();
-                event.stopImmediatePropagation();
-
-                const newEvent = new KeyboardEvent('keydown', {
-                    key: 'Enter',
-                    code: 'Enter',
-                    keyCode: 13,
-                    which: 13,
-                    shiftKey: !event.shiftKey,
-                    ctrlKey: event.ctrlKey,
-                    altKey: event.altKey,
-                    metaKey: event.metaKey,
-                    bubbles: true,
-                    cancelable: true
-                });
-
-                document.removeEventListener('keydown', handleKeyDown, true);
-                event.target.dispatchEvent(newEvent);
-                setTimeout(() => { document.addEventListener('keydown', handleKeyDown, true); }, 0);
-            }
-        }
-        document.addEventListener('keydown', handleKeyDown, true);
-        return () => document.removeEventListener('keydown', handleKeyDown, true);
-    }
-
     // model configurations
     const modelConfigs = {
         'gpt-instant': { buttonSelector: '[data-testid^="model-switcher-gpt"]:not([data-testid*="instant"]):not([data-testid*="thinking"])' },
@@ -2400,7 +2375,7 @@
         };
 
         // open menu selector panel
-        const headerButton = document.querySelector('button[data-testid="model-switcher-dropdown-button"]');
+        const headerButton = document.querySelector('span > button:has(span[class*="data-collapse-labels"])');
         if (!headerButton) return;
         simulateClick(headerButton);
 
@@ -2430,7 +2405,7 @@
         bar.appendChild(mkBtn("Instant", () => selectModel("gpt-instant")));
         bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-thinking")));
 
-        const targetContainer = document.querySelector("main form div.cursor-text:not(#thread-bottom-container) div.flex.items-center.gap-2.\\[grid-area\\:trailing\\]");
+        const targetContainer = document.querySelector("main form div:not(#thread-bottom-container) div.\\[grid-area\\:trailing\\]");
         targetContainer?.insertBefore(bar, targetContainer.firstChild);
     };
 
