@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.23
+// @version      5.24
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.23 - Read Aloud Speedster               *
+*                    Version: 5.24 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -219,7 +219,7 @@
             button[data-testid="voice-play-turn-action-button"] svg,
             article button[aria-label="Share"],
             section button[aria-label="Share"]
-            ):hover {opacity: 1;
+            ):hover { opacity: 1;
         }
 
         header button[aria-label="Turn on temporary chat"] {
@@ -1005,6 +1005,11 @@
             margin-right: unset;
         }
 
+        div.flex.items-center.gap-2:not(:has(.CentAnni-extended)) button.CentAnni-gpt-model-btn:first-child,
+        div.flex.items-center.gap-2:has(.CentAnni-extended) button.CentAnni-gpt-model-btn:last-child {
+            border-color: rgb(1, 105, 204);
+        }
+
         .CentAnni-gpt-model-btn {
             font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
             padding: 6px 10px;
@@ -1490,7 +1495,7 @@
 
                 div[popover="hint"]:has(span[aria-label*=", Enter"]),
                 div[popover="hint"]:has([aria-label="Use Voice, Control, V"]),
-                [data-radix-popper-content-wrapper]:has(.bg-token-bg-tooltip):not(:has(.touch\\:hidden)){
+                [data-radix-popper-content-wrapper]:has(.bg-token-bg-tooltip):not(:has(.touch\\:hidden)) {
                     display: none;
                 }
             `
@@ -1806,6 +1811,21 @@
             enabled: true,
             sheet: null,
             style: ``
+        },
+        hideModelSelector: {
+            label: "Hide Model Selector Unless Hovered",
+            enabled: false,
+            sheet: null,
+            style: `
+                span > button:has(span[class*="data-collapse-labels"]) {
+                    opacity: 0;
+                }
+
+                span > button:has(span[class*="data-collapse-labels"]):hover,
+                html:has([data-model-picker-thinking-effort-row="true"]) span > button:has(span[class*="data-collapse-labels"]) {
+                    opacity: 1;
+                }
+            `
         },
         readAloudBtn: {
             label: "Add Button to Read Aloud Last Message",
@@ -2386,6 +2406,7 @@
         check();
     };
 
+    let modelBtnObserver;
     const addModelButtons = () => {
         if (document.getElementById("CentAnni-gpt-model-quickbar")) return;
         const bar = document.createElement("div");
@@ -2407,6 +2428,21 @@
 
         const targetContainer = document.querySelector("main form div:not(#thread-bottom-container) div.\\[grid-area\\:trailing\\]");
         targetContainer?.insertBefore(bar, targetContainer.firstChild);
+
+        // color code model button
+        requestIdleCallback(() => {
+            modelBtnObserver?.disconnect();
+
+            const div = document.querySelector('.relative.ms-1 .-me-2'); if (!div) return;
+            const markExtendedButton = () => {
+                const btn = div.querySelector('button');
+                if (['Extended', 'Thinking'].includes(btn?.textContent?.trim())) btn.classList.add('CentAnni-extended');
+            };
+
+            markExtendedButton();
+            modelBtnObserver = new MutationObserver(markExtendedButton);
+            modelBtnObserver.observe(div, { childList: true, characterData: true, subtree: true });
+        });
     };
 
     const readAloud = () => {
