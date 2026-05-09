@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.24.2
+// @version      5.25
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.24.2 - Read Aloud Speedster             *
+*                    Version: 5.25 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -875,7 +875,7 @@
             height: fit-content;
             padding: 0;
             margin: 0;
-            width: 125px;
+            width: 125px !important;
             opacity: 1;
             z-index: 30;
             box-shadow: none;
@@ -1099,12 +1099,16 @@
 
         /* move 'More actions' menu */
         [data-radix-popper-content-wrapper]:has([aria-label="Branch in new chat"]) {
-            margin: 120px 0 0 40px;
+            margin: 80px 0 0 40px;
         }
 
-        [data-radix-popper-content-wrapper]:has([aria-label="Branch in new chat"]) > div {
-            display: flex;
+        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]) {
+            margin: 160px 0 0 40px;
+        }
+
+        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]) > div {
             flex-direction: column-reverse;
+            display: flex;
         }
     `;
 
@@ -1326,6 +1330,10 @@
                 .content-fade::after {
                     background: #212121;
                 }
+
+                #page-header {
+                    pointer-events: all;
+                }
             `
         },
         jumpToChat: {
@@ -1445,7 +1453,7 @@
 
                 div.relative.z-30:has([data-testid="accounts-profile-button"]) {
                     top: 8px;
-                    width:52px;
+                    width: 52px !important;
                 }
 
                 #page-header,
@@ -2468,7 +2476,23 @@
         button.focus();
         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
         button.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
-        setTimeout(() => { document.querySelector('[aria-label="Read aloud"]').click(); }, 500);
+        setTimeout(() => {
+            const wrapper = document.querySelector('[data-radix-popper-content-wrapper]');
+            const readAloud = wrapper?.querySelector('[aria-label="Read aloud"]');
+
+            if (readAloud) readAloud.click();
+            else {
+                const observer = new MutationObserver(() => {
+                    const btn = wrapper.querySelector('[aria-label="Read aloud"]');
+                    if (!btn) return;
+                    clearTimeout(observer.timer);
+                    observer.disconnect();
+                    btn.click();
+                });
+                observer.timer = setTimeout(() => observer.disconnect(), 1000);
+                observer.observe(wrapper, { childList: true, subtree: true });
+            }
+        }, 100);
     };
 
     const svgPath = (() => {
