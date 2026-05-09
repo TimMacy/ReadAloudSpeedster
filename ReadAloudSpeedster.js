@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.24
+// @version      5.24.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.24 - Read Aloud Speedster               *
+*                    Version: 5.24.2 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -81,15 +81,6 @@
         main form {
             border-top-left-radius: .25em !important;
             border-top-right-radius: .25em !important;
-        }
-
-        #thread-bottom-container,
-        div.mx-auto.flex-1 > div.relative.w-full:not(.text-xs.text-pretty) {
-            box-shadow: 0 -20px 20px 0 var(--bg-primary);
-        }
-
-        .content-fade::after {
-            background: var(--bg-primary);
         }
 
         /* copy icon */
@@ -1308,7 +1299,33 @@
                     background-color: var(--main-surface-secondary)!important;
                 }
 
-                body > picture { display: none; }
+                body > picture {
+                    display: none;
+                }
+
+                body,
+                .content-fade::after,
+                div[role="dialog"].bg-token-bg-primary {
+                    background-color: #212121;
+                }
+
+                .h-header-height,
+                .bg-token-main-surface-primary,
+                .bg-token-bg-elevated-secondary,
+                .bg-token-bg-elevated-secondary\/20,
+                #stage-slideover-sidebar nav div.sticky.top-0,
+                #stage-slideover-sidebar > div > div.opacity-100.h-full {
+                    background: #181818 !important;
+                }
+
+                #thread-bottom-container,
+                div.mx-auto.flex-1 > div.relative.w-full:not(.text-xs.text-pretty) {
+                    box-shadow: 0 -20px 20px 0 #212121;
+                }
+
+                .content-fade::after {
+                    background: #212121;
+                }
             `
         },
         jumpToChat: {
@@ -1567,7 +1584,7 @@
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
                 nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
-                nav button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
                     display: none;
                 }
 
@@ -1581,16 +1598,16 @@
                 nav > a:has(use[href*="#4a730f"]),
                 nav > div:has(use[href*="#c8839f"]),
                 nav > div:has(use[href*="#c8839f"]) > a,
-                nav button:has(use[href*="#ac6d36"]),
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)),
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div,
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
                     margin: 0;
                     z-index: 31;
                     height: 37px;
                     color: var(--text-tertiary);
                 }
 
-                nav button:has(use[href*="#ac6d36"]) {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
                     position: fixed;
                     width: 40px;
                     top: 0;
@@ -1631,8 +1648,8 @@
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(use[href*="#c8839f"]) > a:hover,
-                nav button:has(use[href*="#ac6d36"]):hover,
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div:hover {
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div:hover,
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]):hover {
                     color: var(--text-primary);
                 }
 
