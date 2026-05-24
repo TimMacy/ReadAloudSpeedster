@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.25
+// @version      5.26
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.25 - Read Aloud Speedster             *
+*                    Version: 5.26 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -875,19 +875,21 @@
             height: fit-content;
             padding: 0;
             margin: 0;
-            width: 125px !important;
+            width: 125px;
             opacity: 1;
             z-index: 30;
             box-shadow: none;
             background-color: transparent;
         }
 
+        div.relative.z-30:has([data-testid="accounts-profile-button"]) .trailing,
         div.relative.z-30:has([data-testid="accounts-profile-button"]) > div:not(:has(*)) {
             display: none;
         }
 
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
             min-height: 36px;
+            padding: 6px 7px;
         }
 
         .bg-token-sidebar-surface-primary .p-1\\.5 {
@@ -996,8 +998,8 @@
             margin-right: unset;
         }
 
-        div.flex.items-center.gap-2:not(:has(.CentAnni-extended)) button.CentAnni-gpt-model-btn:first-child,
-        div.flex.items-center.gap-2:has(.CentAnni-extended) button.CentAnni-gpt-model-btn:last-child {
+        form [class*="\\[grid-area\\:trailing\\]"]:not(:has(.CentAnni-extended)) button.CentAnni-gpt-model-btn:first-child,
+        form [class*="\\[grid-area\\:trailing\\]"]:has(.CentAnni-extended) button.CentAnni-gpt-model-btn:last-child {
             border-color: rgb(1, 105, 204);
         }
 
@@ -1098,15 +1100,18 @@
         }
 
         /* move 'More actions' menu */
+        [data-radix-popper-content-wrapper]:has(use[href*="#03583c"]),
         [data-radix-popper-content-wrapper]:has([aria-label="Branch in new chat"]) {
-            margin: 80px 0 0 40px;
+            translate: 45px calc(20px + 50%);
         }
 
-        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]) {
-            margin: 160px 0 0 40px;
+        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]),
+        [data-radix-popper-content-wrapper]:has(use[href*="#f64f60"]) {
+            translate: 45px calc(3px + 100%);
         }
 
-        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]) > div {
+        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]) > div,
+        [data-radix-popper-content-wrapper]:has(use[href*="#f64f60"]) > div{
             flex-direction: column-reverse;
             display: flex;
         }
@@ -1135,18 +1140,60 @@
             enabled: false,
             sheet: null,
             style: `
-                /* button 'send prompt' radius */
+                .rounded-b-lg,
+                div.z-100.w-80,
+                .rounded-2xl\\!,
+                .rounded-\\[14px\\],
+                .rounded-t-\\[20px\\],
+                div.relative.z-30:has([data-testid="accounts-profile-button"]) .rounded-full.select-none {
+                    border-radius: 0 !important;
+                }
+
+                [role="presentation"] rect {
+                    rx: 0;
+                    ry: 0;
+                }
+
+                .btn,
+                .rounded-lg,
+                .rounded-md,
+                .rounded-xl,
+                .rounded-2xl,
+                .rounded-3xl,
+                .__menu-item,
+                .rounded-t-2xl,
+                .rounded-b-3xl,
+                .rounded-t-3xl,
+                .__composer-pill,
+                .rounded-\\[10px\\],
+                form > div > div,
+                .rounded-\\[18px\\],
+                .rounded-\\[20px\\],
+                .rounded-\\[36px\\],
+                .rounded-\\[28px\\],
+                .rounded-\\[24px\\],
+                .rounded-\\[22px\\],
+                .rounded-\\[26px\\],
+                .rounded-\\[30px\\],
+                .rounded-\\[1\\.75rem\\],
+                .composer-btn:enabled,
+                .composer-btn::before,
+                .surface-popover:before,
+                .__menu-item-trailing-btn,
+                form > div:nth-child(2) > div,
+                main form div.contain-inline-size,
+                .before\\:rounded-\\[16px\\]::before,
+                :where(.puik-root [data-theme]) > div,
+                .rounded-full:not(.bg-token-bg-tertiary),
+                #wham-message-modal-footer div.cursor-text.shadow-short {
+                    border-radius: 2px !important;
+                }
+
                 .composer-submit-btn,
                 button[aria-label="Send prompt"],
                 button[aria-label="Stop streaming"],
                 button[aria-label="Start voice mode"] {
                     border-radius: 4px !important;
-                }
-
-                /* button radii */
-                .btn,
-                .rounded-full:not(.bg-token-bg-tertiary) {
-                    border-radius: 2px !important;
                 }
 
                 /* button minus radius */
@@ -1157,51 +1204,6 @@
                 /* button plus radius */
                 .speed-btn.plus {
                     border-radius: 0 2px 2px 0;
-                }
-
-                /* general radii */
-                .rounded-md,
-                .rounded-xl,
-                .rounded-3xl,
-                .__menu-item,
-                .rounded-b-3xl,
-                .rounded-t-3xl,
-                .__composer-pill,
-                form > div > div,
-                .rounded-\\[18px\\],
-                .rounded-\\[20px\\],
-                .rounded-\\[36px\\],
-                .rounded-\\[28px\\],
-                .rounded-\\[24px\\],
-                .rounded-\\[22px\\],
-                .rounded-\\[26px\\],
-                .rounded-\\[30px\\],
-                .composer-btn:enabled,
-                .composer-btn::before,
-                .surface-popover:before,
-                .rounded-\\[1\\.75rem\\],
-                .__menu-item-trailing-btn,
-                form > div:nth-child(2) > div,
-                main form div.contain-inline-size,
-                .before\\:rounded-\\[16px\\]::before,
-                :where(.puik-root [data-theme]) > div,
-                #wham-message-modal-footer div.cursor-text.shadow-short {
-                    border-radius: 2px !important;
-                }
-
-                /* popup radii and overlay */
-                .rounded-lg,
-                .rounded-2xl,
-                .rounded-t-2xl,
-                .rounded-\\[10px\\] {
-                    border-radius: 2px !important;
-                }
-
-                /* reply radii */
-                .rounded-b-lg,
-                .rounded-\\[14px\\],
-                .rounded-t-\\[20px\\] {
-                    border-radius: 0 !important;
                 }
 
                 /* canvas */
@@ -1236,8 +1238,8 @@
                     margin-left: 8px;
                 }
 
-                main div:has(.loading-shimmer) a>span.rounded-ee-full,
-                main div:has(.loading-shimmer) a>span.rounded-se-full {
+                main div:has(.loading-shimmer) a > span.rounded-ee-full,
+                main div:has(.loading-shimmer) a > span.rounded-se-full {
                     border-start-end-radius: 2px;
                     border-end-end-radius: 2px;
                 }
@@ -1246,8 +1248,7 @@
                     gap: 8px;
                 }
 
-                section ul,
-                article ul {
+                section ul {
                     list-style-type: square;
                 }
 
@@ -1273,7 +1274,8 @@
                     border: 1px solid #2d2d2d;
                 }
 
-                .bg-token-bg-elevated-primary {
+                .bg-token-bg-elevated-primary,
+                div[data-testid="artifacts-surface-top-controls"].bg-surface-primary {
                     background-color: unset;
                 }
 
@@ -1295,12 +1297,14 @@
                     box-shadow:unset;
                 }
 
+                main .btn-secondary:not(:disabled):not([data-disabled]):hover,
                 .dark\\:hover\\:bg-token-main-surface-tertiary:is(.dark *):hover {
-                    background-color: var(--main-surface-tertiary)!important;
+                    background-color: var(--main-surface-tertiary, #2f2f2f) !important;
                 }
 
-                .hover\\:bg-token-main-surface-secondary:hover {
-                    background-color: var(--main-surface-secondary)!important;
+                .hover\\:bg-token-main-surface-secondary:hover,
+                div[data-radix-popper-content-wrapper] .__menu-item:not(:disabled):not([data-disabled]):not(:hover)[data-active] {
+                    background-color: var(--main-surface-secondary, #424242) !important;
                 }
 
                 body > picture {
@@ -1327,12 +1331,17 @@
                     box-shadow: 0 -20px 20px 0 #212121;
                 }
 
-                .content-fade::after {
-                    background: #212121;
+                .content-fade-top::after {
+                    --content-fade-surface: #212121;
                 }
 
                 #page-header {
                     pointer-events: all;
+                }
+
+                .sm\\:bg-gray-200\\/50 {
+                    background-color: color-mix(in oklab, #0f0f0f 50%, transparent);
+                    filter: blur(2px);
                 }
             `
         },
@@ -1365,6 +1374,19 @@
                 main .bg-token-main-surface-tertiary .justify-end,
                 main .bg-token-main-surface-tertiary>div.overflow-auto {
                     padding-right:12px;
+                }
+            `
+        },
+        blurChats: {
+            label: `Blur chats that don't include "⏿"`,
+            enabled: false,
+            sheet: null,
+            style: `
+                [data-radix-popper-content-wrapper]:has([data-testid="project-folder-icon"]),
+                nav .group\\/sidebar-expando-section a:not(:has([aria-label*="⏿"])) div:has(>span),
+                #thread:has(button[aria-label^="Edit the title of"]:not([aria-label*="⏿"])) :is(ol, .justify-between > .gap-1\\.5),
+                nav .group\\/sidebar-expando-section:has(use[href*="#608c49"]) a:not(:has(button[aria-label*="⏿"])) .gap-1\\.5 > div {
+                    filter: blur(5px);
                 }
             `
         },
@@ -1446,14 +1468,14 @@
                 header button[aria-label$="open profile menu"] span,
                 nav div[aria-label$="open profile menu"] div.min-w-0,
                 main button[aria-label$="open profile menu"] span span,
-                div.relative.z-30:has([data-testid="accounts-profile-button"]) .min-w-0,
+                div.relative.z-30:has([data-testid="accounts-profile-button"]) [class="min-w-0"],
                 #page-header #conversation-header-actions button[aria-label$="open profile menu"] span {
                     display: none;
                 }
 
                 div.relative.z-30:has([data-testid="accounts-profile-button"]) {
                     top: 8px;
-                    width: 52px !important;
+                    width: 52px;
                 }
 
                 #page-header,
@@ -1486,17 +1508,6 @@
             style: `
                 div[role="menuitem"]:has(use[href*="#ac4202"]),
                 main .flex > button.btn-primary:first-child:last-child {
-                    display: none;
-                }
-            `
-        },
-        hideDictateBtn: {
-            label: "Hide 'Dictate' Button",
-            enabled: false,
-            sheet: null,
-            style: `
-                button[aria-label="Dictate button"],
-                button[aria-label="Start dictation"] {
                     display: none;
                 }
             `
@@ -1582,6 +1593,7 @@
                 nav > aside a:has(use[href*="#3a5c87"]),
                 nav > aside .-bottom-\\(--sticky-spacer\\),
                 div.pointer-events-none.h-px.w-px.-mb-px,
+                nav > a:has(use[href*="#c8839f"]) .min-w-0,
                 nav > a:has(use[href*="#266724"]) div.grow,
                 nav > a:has(use[href*="#4a730f"]) div.grow,
                 nav > aside > a:has(svg path[d^="M2.6687"]),
@@ -1592,7 +1604,8 @@
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
                 nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) div.text-token-text-tertiary {
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) div.min-w-0,
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) > div:last-of-type {
                     display: none;
                 }
 
@@ -1602,6 +1615,7 @@
                     margin-bottom: -10px;
                 }
 
+                nav > a:has(use[href*="#c8839f"]),
                 nav > a:has(use[href*="#266724"]),
                 nav > a:has(use[href*="#4a730f"]),
                 nav > div:has(use[href*="#c8839f"]),
@@ -1612,14 +1626,26 @@
                     margin: 0;
                     z-index: 31;
                     height: 37px;
+                    width: 36px;
+                    max-height: unset !important;
                     color: var(--text-tertiary);
+                }
+
+                nav > a:has(use[href*="#4a730f"]),
+                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div,
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
+                    border: none;
                 }
 
                 nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
                     position: fixed;
-                    width: 40px;
                     top: 0;
+                    justify-content: center;
                     transform: translate(103px, 8px);
+                }
+
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) > .flex {
+                    min-width: 20px;
                 }
 
                 nav > a:has(use[href*="#266724"]) {
@@ -1633,22 +1659,35 @@
 
                 nav > a:has(use[href*="#4a730f"]) {
                     position: fixed;
-                    transform: translate(133px, 8px);
-                    min-height: 36px !important;
                     margin: 0;
+                    transform: translate(139px, 8px);
+                    min-height: 36px !important;
+                    justify-content: center;
                 }
 
                 nav > div:has(use[href*="#c8839f"]) {
                     position: fixed;
                     padding: 0;
-                    width: 36px;
                     transform: translate(173px, 8px);
+                }
+
+                nav > a:has(use[href*="#c8839f"]) {
+                    display: none;
+                    position: fixed;
+                    padding: 0;
+                    width: 36px;
+                    transform: translate(174px, 44px);
+                    justify-content: center;
+                }
+
+                nav:has(div[class*="sidebar-section-margin-top"]:hover use[href*="#f6d0e2"]) > a:has(use[href*="#c8839f"]),
+                nav > a:has(use[href*="#c8839f"]):hover {
+                    display: flex;
                 }
 
                 nav > div:has(use[href*="#c8839f"]) > a {
                     padding: 0;
                     margin: 0;
-                    min-width: 36px;
                 }
 
                 nav > a:has(use[href*="#266724"]):hover,
@@ -1673,13 +1712,13 @@
 
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) {
                     position: fixed;
-                    transform: translate(143px, 8px);
+                    transform: translate(175px, 8px);
                     padding: 0;
                 }
 
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
                     padding: 0 7px 0 7px;
-                    width: fit-content !important;
+                    width: 36px !important;
                     max-height: unset !important;
                 }
             `
@@ -2457,8 +2496,7 @@
         // color code model button
         requestIdleCallback(() => {
             modelBtnObserver?.disconnect();
-
-            const div = document.querySelector('.relative.ms-1 .-me-2'); if (!div) return;
+            const div = targetContainer?.querySelector('div.relative'); if (!div) return;
             const markExtendedButton = () => {
                 const btn = div.querySelector('button');
                 if (['Extended', 'Thinking'].includes(btn?.textContent?.trim())) btn.classList.add('CentAnni-extended');
@@ -2478,19 +2516,19 @@
         button.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
         setTimeout(() => {
             const wrapper = document.querySelector('[data-radix-popper-content-wrapper]');
-            const readAloud = wrapper?.querySelector('[aria-label="Read aloud"]');
+            const readAloud = wrapper?.querySelector('[aria-label="Read aloud"], [data-testid="voice-play-turn-action-button"]');
 
             if (readAloud) readAloud.click();
             else {
                 const observer = new MutationObserver(() => {
-                    const btn = wrapper.querySelector('[aria-label="Read aloud"]');
+                    const btn = wrapper.querySelector('[aria-label="Read aloud"], [data-testid="voice-play-turn-action-button"]');
                     if (!btn) return;
                     clearTimeout(observer.timer);
                     observer.disconnect();
                     btn.click();
                 });
                 observer.timer = setTimeout(() => observer.disconnect(), 1000);
-                observer.observe(wrapper, { childList: true, subtree: true });
+                wrapper && observer.observe(wrapper, { childList: true, subtree: true });
             }
         }, 100);
     };
