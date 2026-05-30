@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.26
+// @version      5.27
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.26 - Read Aloud Speedster               *
+*                    Version: 5.27 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -238,8 +238,8 @@
         }
 
         /* scheduled separator line */
-        :root:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"],
-        :root:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
+        html:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"],
+        html:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
             border-top: 1px solid springgreen;
             margin-top: 10px;
             padding-top: 10px;
@@ -312,7 +312,7 @@
             padding: 0;
         }
 
-        :root:has(main button[aria-label^="Edit the title of"]) div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)) {
+        html:has(main button[aria-label^="Edit the title of"]) div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)) {
             margin: 0;
         }
 
@@ -321,11 +321,11 @@
             margin-bottom: 0;
         }
 
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #thread-bottom-container #thread-bottom {
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #thread-bottom-container #thread-bottom {
             margin: 0 1dvw;
         }
 
-        :root:has(h1.text-page-header) #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
+        html:has(h1.text-page-header) #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
             margin: 0 12.525%;
         }
 
@@ -367,7 +367,7 @@
             padding: 0 0 20px 0;
         }
 
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
             margin: 0 1dvw;
         }
 
@@ -418,7 +418,7 @@
             min-height: 10dvh;
         }
 
-        :root:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
+        html:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
             width: -webkit-fill-available;
             width: -moz-available;
             width: fill-available;
@@ -510,7 +510,7 @@
             min-height: unset;
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) .-my-2\\.5 {
+        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) .-my-2\\.5 {
             margin-block: calc(var(--spacing)*-2.5);
         }
 
@@ -523,11 +523,6 @@
             align-items: center;
             grid-area: leading;
             margin: 0 8px 0 44px;
-        }
-
-        :root:has(#thread-bottom-container div > div.relative.flex.w-full.flex-auto.flex-col > div:nth-child(4)[style="height: 48px;"]):has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .speed-control-container {
-            bottom: calc(var(--spacing)*2.5 + 44px);
-            inset-inline-start: calc(2.5*var(--spacing) + -8px);
         }
 
         .speed-btn {
@@ -832,7 +827,7 @@
             text-wrap: nowrap;
         }
 
-        :root:has(.CentAnni-style-nav-btn):has(#stage-sidebar-tiny-bar.opacity-100) header button[data-testid="open-sidebar-button"] {
+        html:has(.CentAnni-style-nav-btn):has(#stage-sidebar-tiny-bar.opacity-100) header button[data-testid="open-sidebar-button"] {
             display: none;
         }
 
@@ -864,14 +859,14 @@
             margin-right: 125px;
         }
 
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
             margin: unset !important;
         }
 
         div.relative.z-30:has([data-testid="accounts-profile-button"]) {
             position: fixed;
             top: 0;
-            right: 3px;
+            right: 4px;
             height: fit-content;
             padding: 0;
             margin: 0;
@@ -896,31 +891,31 @@
             padding-right: 0;
         }
 
-        :root:has(div.z-1.shrink-0.overflow-x-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]),
-        :root:has(section [data-testid="bar-search-sources-header"]) div.relative.z-30:has([data-testid="accounts-profile-button"]),
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]) {
+        html:has(div.z-1.shrink-0.overflow-x-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]),
+        html:has(section [data-testid="bar-search-sources-header"]) div.relative.z-30:has([data-testid="accounts-profile-button"]),
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]) {
             opacity: 0;
             z-index: -1;
             pointer-events: none;
         }
 
-        :root:has(section [data-testid="bar-search-sources-header"]) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
+        html:has(section [data-testid="bar-search-sources-header"]) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
             margin-inline-end: calc(var(--spacing)*3);
         }
 
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .speed-control-config-popup.show {
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .speed-control-config-popup.show {
             transform: translateX(-17%) !important;
         }
 
-        :root:has(section [data-testid="bar-search-sources-header"]) div.bg-token-sidebar-surface-primary.relative.z-1 {
+        html:has(section [data-testid="bar-search-sources-header"]) div.bg-token-sidebar-surface-primary.relative.z-1 {
             z-index: 30;
         }
 
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #page-header,
-        :root:has(section [data-testid="bar-search-sources-header"]) #page-header,
-        :root:has(#stage-sidebar-tiny-bar.opacity-100) main > div > header,
-        :root:has(#stage-sidebar-tiny-bar.opacity-100) #page-header,
-        :root:has(div.z-1.shrink-0.overflow-x-hidden) #page-header {
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #page-header,
+        html:has(section [data-testid="bar-search-sources-header"]) #page-header,
+        html:has(#stage-sidebar-tiny-bar.opacity-100) main > div > header,
+        html:has(#stage-sidebar-tiny-bar.opacity-100) #page-header,
+        html:has(div.z-1.shrink-0.overflow-x-hidden) #page-header {
             padding: calc(var(--spacing)*2);
         }
 
@@ -930,11 +925,11 @@
             transform: translateY(-1px);
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div {
+        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div {
             background-color: #ffffff0d;
         }
 
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div:hover {
+        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div:hover {
             background-color: var(--menu-item-highlighted);
         }
 
@@ -978,8 +973,8 @@
             order: 3;
         }
 
-        :root:has(#CentAnni-gpt-model-quickbar) [class*="\\[grid-area\\:trailing\\]"],
-        :root:has(#CentAnni-gpt-model-quickbar) [class*="\\[grid-area\\:trailing\\]"] > .ms-auto {
+        html:has(#CentAnni-gpt-model-quickbar) [class*="\\[grid-area\\:trailing\\]"],
+        html:has(#CentAnni-gpt-model-quickbar) [class*="\\[grid-area\\:trailing\\]"] > .ms-auto {
             min-width: 0;
         }
 
@@ -993,7 +988,7 @@
             min-height: 36px;
         }
 
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.\\[grid-area\\:footer\\] {
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.\\[grid-area\\:footer\\] {
             width: unset;
             margin-right: unset;
         }
@@ -1040,10 +1035,10 @@
             border-color: rgba(0, 0, 0, .5);
         }
 
-        :root:has(main header div.gap-4.ps-4) #CentAnni-gpt-model-quickbar,
-        :root:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar,
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar,
-        :root:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) #CentAnni-gpt-model-quickbar {
+        html:has(main header div.gap-4.ps-4) #CentAnni-gpt-model-quickbar,
+        html:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar,
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar,
+        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) #CentAnni-gpt-model-quickbar {
             display: none;
         }
 
@@ -1056,7 +1051,7 @@
         #CentAnni-speak-btn {
             position: absolute;
             display: flex;
-            bottom: 135px;
+            bottom: 137px;
             left: 20px;
             width: 32px;
             height: 32px;
@@ -1067,24 +1062,26 @@
             cursor: pointer;
             z-index: 9999;
             background: transparent;
+
+            &:hover {
+                background-color: rgba(255, 255, 255, .07);
+            }
+
+            &:active {
+                color: rgb(0, 251, 255);
+            }
         }
 
-        #CentAnni-speak-btn:hover {
-            background: rgba(255, 255, 255, 0.07);
+        html:has(#thread .composer-parent h1.text-page-header),
+        html:has(main button[aria-label^="Edit the title of"]),
+        html:has(header button[aria-label="Turn on temporary chat"]),
+        html:has(header button[aria-label="Turn off temporary chat"]) {
+            #CentAnni-speak-btn {
+                display: none;
+            }
         }
 
-        #CentAnni-speak-btn:active {
-            color: rgb(0, 251, 255);
-        }
-
-        :root:has(#thread .composer-parent h1.text-page-header) #CentAnni-speak-btn,
-        :root:has(main button[aria-label^="Edit the title of"]) #CentAnni-speak-btn,
-        :root:has(header button[aria-label="Turn on temporary chat"]) #CentAnni-speak-btn,
-        :root:has(header button[aria-label="Turn off temporary chat"]) #CentAnni-speak-btn {
-            display: none;
-        }
-
-        :root:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-speak-btn {
+        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-speak-btn {
             bottom: 115px;
             left: 0;
         }
@@ -1133,6 +1130,32 @@
             console.error("Read Aloud Speedster: Failed to find head element. Using backup to append stylesheet.");
         }
     });
+
+    const hidePlusAvatarStyle = `
+        header button[aria-label$="open profile menu"] span,
+        nav div[aria-label$="open profile menu"] div.min-w-0,
+        main button[aria-label$="open profile menu"] span span,
+        div.relative.z-30:has([data-testid="accounts-profile-button"]) [class="min-w-0"],
+        #page-header #conversation-header-actions button[aria-label$="open profile menu"] span {
+            display: none;
+        }
+
+        div.relative.z-30:has([data-testid="accounts-profile-button"]) {
+            top: 10px;
+            width: 52px;
+        }
+
+        #page-header,
+        main > div > header,
+        #calpico-page-header,
+        main div.hidden.sm\\:justify-end {
+            padding-right: 60px;
+        }
+
+        .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
+            margin-right: 55px;
+        }
+    `;
 
     const features = {
         squareDesign: {
@@ -1343,6 +1366,10 @@
                     background-color: color-mix(in oklab, #0f0f0f 50%, transparent);
                     filter: blur(2px);
                 }
+
+                :root {
+                    --CentAnni-header-bg: #212121;
+                }
             `
         },
         jumpToChat: {
@@ -1464,31 +1491,7 @@
             label: "Hide Plus/Pro Icon in Avatar",
             enabled: false,
             sheet: null,
-            style: `
-                header button[aria-label$="open profile menu"] span,
-                nav div[aria-label$="open profile menu"] div.min-w-0,
-                main button[aria-label$="open profile menu"] span span,
-                div.relative.z-30:has([data-testid="accounts-profile-button"]) [class="min-w-0"],
-                #page-header #conversation-header-actions button[aria-label$="open profile menu"] span {
-                    display: none;
-                }
-
-                div.relative.z-30:has([data-testid="accounts-profile-button"]) {
-                    top: 8px;
-                    width: 52px;
-                }
-
-                #page-header,
-                main > div > header,
-                #calpico-page-header,
-                main div.hidden.sm\\:justify-end {
-                    padding-right:60px;
-                }
-
-                .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
-                    margin-right:55px;
-                }
-            `
+            style: hidePlusAvatarStyle
         },
         hideViewPlans: {
             label: "Hide 'View plans' and 'Get Plus'",
@@ -1862,6 +1865,77 @@
                     --tw-ring-shadow: 0 0 #0000;
                     --tw-ring-offset-shadow: 0 0 #0000;
                 }
+            `
+        },
+        transparentHeader: {
+            label: "Transparent Header",
+            enabled: true,
+            sheet: null,
+            style: `
+                header#page-header {
+                    background: linear-gradient(to top, transparent, var(--CentAnni-header-bg, black) 51px) !important;
+                    box-shadow: none;
+                }
+
+                #conversation-header-actions {
+                    flex-direction: column;
+                }
+
+                #page-header .gap-3:not(:has(button[aria-label*="temporary chat"])) {
+                    position: absolute;
+                    right: 10px;
+                    top: 50px;
+                }
+
+                html:has(#stage-sidebar-tiny-bar.opacity-100) #page-header .gap-3:not(:has(button[aria-label*="temporary chat"])) {
+                    top: 10px;
+                }
+
+                #CentAnni-nav-btn-up {
+                    position: absolute;
+                    left: 10px;
+                    top: 10px
+                }
+
+                #CentAnni-nav-btn-down {
+                    position: absolute;
+                    left: 10px;
+                    top: 46px;
+                }
+
+                /* share btn */
+                button[aria-label="Share"],
+                button[data-testid="share-chat-button"],
+                button[aria-label="Show project details"],
+                button[aria-label="Open conversation options"] {
+                    padding: 0;
+                    margin: 0;
+                    width: 38px;
+                    height: 38px;
+                    font-size: 0;
+                }
+
+                button[aria-label="Share"] span,
+                button[data-testid="share-chat-button"] span,
+                button[aria-label="Open conversation options"] span {
+                    display: none;
+                }
+
+                button[data-testid="share-chat-button"] > div {
+                    justify-content: flex-start;
+                    width: 18px !important;
+                }
+
+                #page-header {
+                    pointer-events: none;
+                }
+
+                a[aria-label*="Open"][aria-label*="project"] {
+                    background-color: var(--bg-tertiary);
+                }
+
+                /* hide plus */
+                ${hidePlusAvatarStyle}
             `
         },
         jumpToChatActive: {
@@ -2239,24 +2313,29 @@
         return wrapper;
     };
 
-    const createNavButton = (pathData, label) => {
+    const createNavButton = (pathData, label, direction) => {
         const btn = document.createElement('button');
         btn.className = 'CentAnni-style-nav-btn btn relative btn-ghost text-token-text-primary';
+        btn.id = 'CentAnni-nav-btn-' + direction;
         btn.setAttribute('aria-label', label);
         btn.appendChild(createIcon(pathData));
         return btn;
     };
 
-    const upBtn = createNavButton(UP_ARROW_PATH, 'Jump to previous message');
-    const downBtn = createNavButton(DOWN_ARROW_PATH, 'Jump to next message');
+    const upBtn = createNavButton(UP_ARROW_PATH, 'Jump to previous message', 'up');
+    const downBtn = createNavButton(DOWN_ARROW_PATH, 'Jump to next message', 'down');
 
     let navCleanup = null;
     function navBtns() {
+        let targetChatBox, actions, shareBtn;
         const targetChatSelector = 'main > #thread div.flex.basis-auto.flex-col.grow';
         let targetChat = document.querySelector(targetChatSelector);
-        const actions = document.querySelector('#conversation-header-actions');
-        const shareBtn = actions?.querySelector('button[aria-label="Share"]');
-        if (!shareBtn || !actions || !targetChat) return () => {};
+        if (features.transparentHeader.enabled) targetChatBox = document.querySelector("#thread-bottom, #thread-bottom-container");
+        else {
+            actions = document.getElementById('conversation-header-actions');
+            shareBtn = actions?.querySelector('button[aria-label="Share"]');
+        }
+        if (!(targetChatBox || (actions && shareBtn)) || !targetChat) return () => {};
 
         let chatObserver = null;
         let messageCache = [];
@@ -2346,8 +2425,11 @@
             upBtn.onclick = () => jump(true);
             downBtn.onclick = () => jump(false);
 
-            actions.insertBefore(downBtn, shareBtn);
-            actions.insertBefore(upBtn, downBtn);
+            if (features.transparentHeader.enabled) targetChatBox.append(upBtn, downBtn);
+            else {
+                actions.insertBefore(downBtn, shareBtn);
+                actions.insertBefore(upBtn, downBtn);
+            }
 
             populateCache();
             startObserver();
@@ -2568,12 +2650,12 @@
             // handle UI updates and audio playback speed
             if (audioFound) setPlaybackSpeed();
             if (!document.body.contains(controlsContainer)) createControlButtons();
-            if (features.jumpToChatActive.enabled && !document.querySelector('#conversation-header-actions button[aria-label="Jump to next message"]')) {
+            if (features.jumpToChatActive.enabled && !document.getElementById('CentAnni-nav-btn-up')) {
                 navCleanup?.();
                 navCleanup = navBtns();
             }
-            if (features.readAloudBtn.enabled && !document.querySelector('#CentAnni-speak-btn')) addReadAloudBtn();
-            if (features.modelSelector.enabled && !document.querySelector('#CentAnni-gpt-model-quickbar')) addModelButtons();
+            if (features.readAloudBtn.enabled && !document.getElementById('CentAnni-speak-btn')) addReadAloudBtn();
+            if (features.modelSelector.enabled && !document.getElementById('CentAnni-gpt-model-quickbar')) addModelButtons();
         });
 
         if (document.body) {
