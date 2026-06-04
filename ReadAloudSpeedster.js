@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.27
+// @version      5.27.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.27 - Read Aloud Speedster               *
+*                    Version: 5.27.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -495,6 +495,7 @@
         .bg-token-bg-elevated-primary.w-full,
         :where(#thread-bottom form div[class*="_prosemirror-parent"]) {
             max-height: 300px;
+            mask: none;
         }
 
         .group\\/message.gap-1:has(.bg-token-bg-tertiary) {
@@ -1051,7 +1052,7 @@
         #CentAnni-speak-btn {
             position: absolute;
             display: flex;
-            bottom: 137px;
+            top: -61px;
             left: 20px;
             width: 32px;
             height: 32px;
@@ -1198,6 +1199,7 @@
                 .rounded-\\[22px\\],
                 .rounded-\\[26px\\],
                 .rounded-\\[30px\\],
+                #CentAnni-speak-btn,
                 .rounded-\\[1\\.75rem\\],
                 .composer-btn:enabled,
                 .composer-btn::before,
@@ -1409,10 +1411,9 @@
             enabled: false,
             sheet: null,
             style: `
-                [data-radix-popper-content-wrapper]:has([data-testid="project-folder-icon"]),
-                nav .group\\/sidebar-expando-section a:not(:has([aria-label*="⏿"])) div:has(>span),
-                #thread:has(button[aria-label^="Edit the title of"]:not([aria-label*="⏿"])) :is(ol, .justify-between > .gap-1\\.5),
-                nav .group\\/sidebar-expando-section:has(use[href*="#608c49"]) a:not(:has(button[aria-label*="⏿"])) .gap-1\\.5 > div {
+                li.list-none div.group\\/project-unfurl-row > div:first-child,
+                li.list-none a > div:not(:has([aria-label*="⏿"])):first-child,
+                #thread:has(button[aria-label^="Edit the title of"]:not([aria-label*="⏿"])) :is(ol, .justify-between > .gap-1\\.5) {
                     filter: blur(5px);
                 }
             `
@@ -1724,6 +1725,10 @@
                     width: 36px !important;
                     max-height: unset !important;
                 }
+
+                nav a[href="/projects"] {
+                    margin-top: 10px;
+                }
             `
         },
         sidebarSections: {
@@ -1932,6 +1937,14 @@
 
                 a[aria-label*="Open"][aria-label*="project"] {
                     background-color: var(--bg-tertiary);
+                }
+
+                .top-\\(--sticky-padding-top\\) {
+                    top: 0;
+                }
+
+                div.pointer-events-none.sticky.z-40 {
+                    top: 45px !important;
                 }
 
                 /* hide plus */
@@ -2572,7 +2585,7 @@
         bar.appendChild(mkBtn("Instant", () => selectModel("gpt-instant")));
         bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-thinking")));
 
-        const targetContainer = document.querySelector("main form div:not(#thread-bottom-container) div.\\[grid-area\\:trailing\\]");
+        const targetContainer = document.querySelector("main div.\\[grid-area\\:trailing\\]");
         targetContainer?.insertBefore(bar, targetContainer.firstChild);
 
         // color code model button
