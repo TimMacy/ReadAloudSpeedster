@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.27.1
+// @version      5.27.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.27.1 - Read Aloud Speedster             *
+*                    Version: 5.27.4 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -994,8 +994,7 @@
             margin-right: unset;
         }
 
-        form [class*="\\[grid-area\\:trailing\\]"]:not(:has(.CentAnni-extended)) button.CentAnni-gpt-model-btn:first-child,
-        form [class*="\\[grid-area\\:trailing\\]"]:has(.CentAnni-extended) button.CentAnni-gpt-model-btn:last-child {
+        .CentAnni-gpt-model-btn.CentAnni-active {
             border-color: rgb(1, 105, 204);
         }
 
@@ -1963,6 +1962,12 @@
             sheet: null,
             style: ``
         },
+        modelSelectorMedium: {
+            label: 'Also Include "Medium" Button',
+            enabled: false,
+            sheet: null,
+            style: ``
+        },
         hideModelSelector: {
             label: "Hide Model Selector Unless Hovered",
             enabled: false,
@@ -1993,7 +1998,7 @@
             if (feature.style && !feature.sheet) {
                 feature.sheet = document.createElement('style');
                 feature.sheet.textContent = feature.style;
-                document.head.appendChild(feature.sheet);
+                (document.head || document.documentElement).appendChild(feature.sheet);
             }
         } else if (feature.sheet) {
             feature.sheet.remove();
@@ -2167,6 +2172,7 @@
             if (newSpeed >= MIN_SPEED && newSpeed <= MAX_SPEED) {
                 await GM.setValue('defaultSpeed', newSpeed);
                 playbackSpeed = newSpeed;
+                lastUserRate = newSpeed;
                 updateSpeedDisplay();
                 setPlaybackSpeed();
             }
@@ -2236,6 +2242,8 @@
     // create controls
     function createControlButtons() {
         if (controlsContainer && document.body.contains(controlsContainer)) return;
+        const target = document.querySelector('#thread-bottom-container div.\\[grid-area\\:leading\\]');
+        if (!target) return;
 
         controlsContainer = document.createElement('div');
         controlsContainer.classList.add('speed-control-container');
@@ -2243,6 +2251,7 @@
         controlsContainer.setAttribute('suppressHydrationWarning', 'true');
 
         const minusButton = document.createElement('button');
+        minusButton.type = 'button';
         minusButton.textContent = '-';
         minusButton.classList.add('speed-btn', 'minus');
 
@@ -2252,6 +2261,7 @@
         speedDisplayElement = speedDisplay;
 
         const plusButton = document.createElement('button');
+        plusButton.type = 'button';
         plusButton.textContent = '+';
         plusButton.classList.add('speed-btn', 'plus');
 
@@ -2302,7 +2312,7 @@
         controlsContainer.appendChild(speedDisplay);
         controlsContainer.appendChild(plusButton);
 
-        document.querySelector('#thread-bottom-container div.\\[grid-area\\:leading\\]')?.insertAdjacentElement('afterend', controlsContainer);
+        target.insertAdjacentElement('afterend', controlsContainer);
     }
 
     // message navigation button section
@@ -2508,14 +2518,19 @@
 
     // model configurations
     const modelConfigs = {
-        'gpt-instant': { buttonSelector: '[data-testid^="model-switcher-gpt"]:not([data-testid*="instant"]):not([data-testid*="thinking"])' },
-        'gpt-thinking': { buttonSelector: '[data-testid^="model-switcher-gpt"][data-testid*="thinking"]' }
+        'gpt-instant': { label: 'Instant' },
+        'gpt-medium': { label: 'Medium' },
+        'gpt-high': { label: 'High' }
+    };
+    const getIntelligenceButton = (config) => {
+        return [...document.querySelectorAll('[data-testid="composer-intelligence-picker-content"] [role="menuitemradio"]')].find(el => el.querySelector('span.truncate')?.textContent.trim() === config.label);
     };
 
     // select GPT model
     let modelObserver, timeout;
     const selectModel = (modelType) => {
         modelObserver?.disconnect();
+        if (timeout) clearTimeout(timeout);
 
         const config = modelConfigs[modelType];
         if (!config) return;
@@ -2546,17 +2561,18 @@
         };
 
         const check = () => {
-            const modelButton = document.querySelector(`${config.buttonSelector}`);
-            if (modelButton) {
-                simulateClick(modelButton);
-                cleanup();
-            }
+            const modelButton = getIntelligenceButton(config);
+            if (!modelButton) return false;
+            simulateClick(modelButton);
+            cleanup();
+            return true;
         };
 
         // open menu selector panel
         const headerButton = document.querySelector('span > button:has(span[class*="data-collapse-labels"])');
         if (!headerButton) return;
         simulateClick(headerButton);
+        if (check()) return;
 
         // model observer
         modelObserver = new MutationObserver(check);
@@ -2568,12 +2584,16 @@
     let modelBtnObserver;
     const addModelButtons = () => {
         if (document.getElementById("CentAnni-gpt-model-quickbar")) return;
+        const targetContainer = document.querySelector("main div.\\[grid-area\\:trailing\\]");
+        if (!targetContainer) return;
+
         const bar = document.createElement("div");
         bar.id = "CentAnni-gpt-model-quickbar";
-        const mkBtn = (label, clickHandler) => {
+        const mkBtn = (label, model, clickHandler) => {
             const b = document.createElement("button");
             b.textContent = label;
             b.className = 'CentAnni-gpt-model-btn';
+            b.dataset.model = model;
             b.onclick = e => { e.preventDefault(); e.stopPropagation(); clickHandler(); return false; };
             b.onpointerdown = e => { e.preventDefault(); e.stopPropagation(); };
             b.setAttribute('form', 'nope');
@@ -2582,19 +2602,24 @@
             return b;
         };
 
-        bar.appendChild(mkBtn("Instant", () => selectModel("gpt-instant")));
-        bar.appendChild(mkBtn("Thinking", () => selectModel("gpt-thinking")));
+        bar.appendChild(mkBtn("Instant", "instant", () => selectModel("gpt-instant")));
+        if (features.modelSelectorMedium.enabled) {
+            bar.appendChild(mkBtn("Medium", "medium", () => selectModel("gpt-medium")));
+            bar.appendChild(mkBtn("High", "high", () => selectModel("gpt-high")));
+        } else bar.appendChild(mkBtn("Thinking", "high", () => selectModel("gpt-high")));
 
-        const targetContainer = document.querySelector("main div.\\[grid-area\\:trailing\\]");
-        targetContainer?.insertBefore(bar, targetContainer.firstChild);
+        targetContainer.insertBefore(bar, targetContainer.firstChild);
 
         // color code model button
         requestIdleCallback(() => {
             modelBtnObserver?.disconnect();
+
             const div = targetContainer?.querySelector('div.relative'); if (!div) return;
             const markExtendedButton = () => {
-                const btn = div.querySelector('button');
-                if (['Extended', 'Thinking'].includes(btn?.textContent?.trim())) btn.classList.add('CentAnni-extended');
+                const selectedModel = div.querySelector('button')?.textContent?.trim().toLowerCase();
+                bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
+                    button.classList.toggle('CentAnni-active', button.dataset.model === selectedModel);
+                });
             };
 
             markExtendedButton();
@@ -2606,6 +2631,8 @@
     const readAloud = () => {
         const buttons = document.querySelectorAll('button[aria-label="More actions"]');
         const button = buttons[buttons.length - 1];
+        if (!button) return;
+
         button.focus();
         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
         button.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
@@ -2637,6 +2664,8 @@
     const addReadAloudBtn = () => {
         const oldspeakBtn = document.getElementById("CentAnni-speak-btn");
         const speakBtnLoc = document.querySelector("#thread-bottom, #thread-bottom-container");
+        if (!oldspeakBtn && !speakBtnLoc) return;
+
         const speakBtn = document.createElement('button');
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
         svg.setAttribute('width', '20');
