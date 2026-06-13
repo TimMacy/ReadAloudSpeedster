@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.27.4
+// @version      5.27.5
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.27.4 - Read Aloud Speedster             *
+*                    Version: 5.27.5 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -84,59 +84,39 @@
         }
 
         /* copy icon */
-        button[aria-label="Copy"],
-        button:has(use[href*="#ce3544"]),
-        div[role="menuitem"]:has(path[d^="M12 7.1a"]),
-        button[data-testid="copy-turn-action-button"],
-        header button:has(path[d^="M12.668 10.667C12"]),
-        button.surface-nav-element:has(svg path[d^="M12 7.1a"]) {
+        use[href$="#ce3544"] {
             color: darkorange;
             opacity: .9;
         }
 
         /* copied */
-        button:has(svg use[href*="#fa1dbd"]) {
+        use[href$="#fa1dbd"] {
             color: springgreen;
         }
 
-        .light button:has(svg use[href*="#fa1dbd"]) {
+        .light use[href$="#fa1dbd"] {
             color: limegreen;
         }
 
         /* thumbs up icon */
-        button .icon-md path[d^="M12.1318"],
-        button svg path[d^="M10.9153"],
-        button[aria-label="Good response"],
-        div.mt-3 button:has(use[href*="#51753c"]),
-        div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
-        button[data-testid="good-response-turn-action-button"] svg {
+        use[href$="#51753c"] {
             color: #00ad00 !important;
             opacity: .9;
         }
 
         /* thumbs down icon */
-        div.mt-3 button:has(use[href*="#2126ae"]),
-        button[aria-label="Bad response"],
-        button .icon-md path[d^="M11.8727"],
-        button svg path[d^="M12.6687"],
-        button.surface-nav-element:has(svg path[d^="M11.868 21"]),
-        button[data-testid="bad-response-turn-action-button"] svg {
+        use[href$="#2126ae"] {
             color: crimson !important;
             opacity: .9;
         }
 
         /* edit in canvas icon */
-        button:has(use[href*="#6d87e1"]),
-        button[aria-label="Edit message"],
-        button[aria-label="Edit in canvas"],
-        button:has(svg path[d^="M12.0303 4.11328"]) {
+        use[href$="#6d87e1"] {
             color: yellow !important;
             opacity: .8;
         }
 
-        .light button[aria-label="Edit message"],
-        .light button[aria-label="Edit in canvas"],
-        .light button:has(svg path[d^="M12.0303 4.11328"]) {
+        .light use[href$="#6d87e1"] {
             color: indigo !important;
             opacity: .8;
         }
@@ -151,80 +131,39 @@
         }
 
         /* read aloud and stop icon */
-        div[aria-label="Read aloud"],
-        button[aria-label="Read aloud"],
-        div[role="menuitem"]:has(path[d^="M9.75122"]),
-        div[role="menuitem"]:has(use[href*="#54f145"]),
-        div[role="menuitem"]:has(use[href*="#4944fe"]),
-        div[role="menuitem"]:has(use[href*="#f64f60"]),
-        div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
-        div[data-testid="voice-play-turn-action-button"] svg,
-        button[data-testid="voice-play-turn-action-button"] svg {
+        use[href$="#54f145"],
+        use[href$="#4944fe"],
+        use[href$="#f64f60"] {
             color: deepskyblue !important;
             opacity: .9;
         }
 
-        div[aria-label="Stop"],
-        button[aria-label="Stop"],
-        div[role="menuitem"]:has(path[d^="M10 2.08496C14"]) {
+        use[href$="#f64f60"] {
             color: deepskyblue !important;
         }
 
         /* share icon */
-        section button[aria-label="Share"],
-        article button[aria-label="Share"] {
+        section button[aria-label="Share"] {
             opacity: .8;
         }
 
         /* hover opacity icons */
-        :is(
-            header button[aria-label="Turn on temporary chat"],
-            button[aria-label="Copy"],
-            div[role="menuitem"]:has(path[d^="M12 7.1a"]),
-            header button:has(path[d^="M12.668 10.667C12"]),
-            button[data-testid="copy-turn-action-button"] svg,
-            button.surface-nav-element:has(svg path[d^="M12 7.1a"]),
-            button .icon-md path[d^="M12.1318"],
-            button svg path[d^="M10.9153"],
-            button[aria-label="Good response"],
-            div.mt-3 button:has(use[href*="#51753c"]),
-            div[role="menuitem"]:has(path[d^="m4.5 4.944"]),
-            button[data-testid="good-response-turn-action-button"] svg,
-            button[aria-label="Bad response"],
-            div.mt-3 button:has(use[href*="#2126ae"]),
-            button .icon-md path[d^="M11.8727"],
-            button svg path[d^="M12.6687"],
-            button.surface-nav-element:has(svg path[d^="M11.868 21"]),
-            button[data-testid="bad-response-turn-action-button"] svg,
-            button[aria-label="Edit message"],
-            button[aria-label="Edit in canvas"],
-            button:has(svg path[d^="M12.0303 4.11328"]),
-            .light button[aria-label="Edit message"],
-            .light button[aria-label="Edit in canvas"],
-            .light button:has(svg path[d^="M12.0303 4.11328"]),
-            button[aria-label="Read aloud"],
-            div[role="menuitem"]:has(path[d^="M9 6.25v5.5"]),
-            button:has(use[href*="#6d87e1"]),
-            button:has(use[href*="#ce3544"]),
-            button[data-testid="copy-turn-action-button"],
-            button[data-testid="voice-play-turn-action-button"] svg,
-            article button[aria-label="Share"],
-            section button[aria-label="Share"]
-            ):hover { opacity: 1;
+        :is(header button[aria-label="Turn on temporary chat"],
+            use[href$="#ce3544"],
+            use[href$="#fa1dbd"],
+            use[href$="#51753c"],
+            use[href$="#2126ae"],
+            use[href$="#6d87e1"],
+            use[href$="#54f145"],
+            use[href$="#4944fe"],
+            use[href$="#f64f60"],
+            use[href$="#f64f60"],
+            section button[aria-label="Share"]):hover {
+            opacity: 1;
         }
 
         header button[aria-label="Turn on temporary chat"] {
             opacity: .7;
-        }
-
-        /* sora star icon */
-        a:has(svg path[d^="M9.822 2.077c"]),
-        div.pointer-events-none path[d^="M10.258"],
-        button.surface-nav-element path[d^="M10.258"],
-        div[role="menuitem"]:has(path[d^="M9.822 2.077c"]),
-        button.surface-nav-element path[d^="M9.822 2.077c"],
-        div[role="menuitem"]:has(path[d^="M10.258 1.555c"]) {
-            color: gold;
         }
 
         /* highlight color - dark mode */
@@ -238,15 +177,13 @@
         }
 
         /* scheduled separator line */
-        html:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"],
-        html:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
+        html:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\[360px\]) div[data-message-author-role="assistant"] {
             border-top: 1px solid springgreen;
             margin-top: 10px;
             padding-top: 10px;
         }
 
-        :root[style*="color-scheme: light"]:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"],
-        :root[style*="color-scheme: light"]:has(#thread article div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
+        html[style*="color-scheme: light"]:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\[360px\]) div[data-message-author-role="assistant"] {
             border-color: darkviolet;
         }
 
@@ -260,27 +197,13 @@
         }
 
         /* red delete color */
-        button[title="Delete"],
-        .text-token-text-destructive,
-        button:has(path[d^="m10 11.5 4"]),
-        [data-testid="delete-chat-menu-item"],
-        div[role="menuitem"]:has(path[d^="M10.556 4a1 1 0"]) {
+        div[data-testid="delete-chat-menu-item"] {
             color: #e02e2a !important;
         }
 
-        button[title="Delete"]:hover,
-        .text-token-text-destructive:hover,
-        button:has(path[d^="m10 11.5 4"]):hover,
-        [data-testid="delete-chat-menu-item"]:hover,
-        div[role="menuitem"]:has(path[d^="M10.556 4a1 1 0"]):hover {
+        div[data-testid="delete-chat-menu-item"]:hover {
             color: white !important;
             background: rgba(255, 0, 0, .5) !important;
-        }
-
-        /* sore green restore color */
-        div[role="menuitem"]:has(path[d^="m4.5 4.944"]):hover {
-            color: white !important;
-            background: rgba(0, 255, 0, .5) !important;
         }
 
         /* stop icon size inner */
@@ -954,6 +877,7 @@
             display: flex;
             gap: 8px;
             order: 2;
+            margin-right: 5px;
             background: transparent;
             text-wrap: nowrap;
             overflow-y: hidden;
@@ -966,7 +890,7 @@
             margin-right: 8px;
         }
 
-        span > button:has(span[class*="data-collapse-labels"]) {
+        [class~="[grid-area:trailing]"] button.__composer-pill {
             max-height: 29px;
         }
 
@@ -1469,7 +1393,7 @@
                     -webkit-mask-image: none !important;
                 }
 
-                .group\\/turn-messages .pointer-events-none.opacity-0 {
+                .group\\/turn-messages .pointer-events-none.opacity-0.select-none {
                     opacity: 1 !important;
                     pointer-events: auto !important;
                 }
@@ -1532,9 +1456,11 @@
                     cursor: default;
                 }
 
-                div[popover="hint"]:has(span[aria-label*=", Enter"]),
-                div[popover="hint"]:has([aria-label="Use Voice, Control, V"]),
-                [data-radix-popper-content-wrapper]:has(.bg-token-bg-tooltip):not(:has(.touch\\:hidden)) {
+                div[popover="tooltip"]:has(span[aria-label*=", Enter"]),
+                div[popover="tooltip"]:has([aria-label="Dictate, Control, D"]),
+                div[popover="tooltip"]:has([aria-label="Use Voice, Control, V"]),
+                div[role="tooltip"]:has(span[aria-label="Select model, Control, Shift, M"]),
+                div[data-radix-popper-content-wrapper]:has(div[data-side="bottom"] span[role="tooltip"]) {
                     display: none;
                 }
             `
@@ -1973,12 +1899,12 @@
             enabled: false,
             sheet: null,
             style: `
-                span > button:has(span[class*="data-collapse-labels"]) {
+                :is(#thread-bottom, #thread-bottom-container) [class~="[grid-area:trailing]"] button.__composer-pill {
                     opacity: 0;
                 }
 
-                span > button:has(span[class*="data-collapse-labels"]):hover,
-                html:has([data-model-picker-thinking-effort-row="true"]) span > button:has(span[class*="data-collapse-labels"]) {
+                :is(#thread-bottom, #thread-bottom-container) [class~="[grid-area:trailing]"] button.__composer-pill:hover,
+                :is(#thread-bottom, #thread-bottom-container) [class~="[grid-area:trailing]"] button.__composer-pill[data-state="open"] {
                     opacity: 1;
                 }
             `
@@ -2569,7 +2495,7 @@
         };
 
         // open menu selector panel
-        const headerButton = document.querySelector('span > button:has(span[class*="data-collapse-labels"])');
+        const headerButton = document.querySelector('[class~="[grid-area:trailing]"] button.__composer-pill');
         if (!headerButton) return;
         simulateClick(headerButton);
         if (check()) return;
