@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.27.5
+// @version      5.27.6
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.27.5 - Read Aloud Speedster             *
+*                    Version: 5.27.6 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1456,11 +1456,7 @@
                     cursor: default;
                 }
 
-                div[popover="tooltip"]:has(span[aria-label*=", Enter"]),
-                div[popover="tooltip"]:has([aria-label="Dictate, Control, D"]),
-                div[popover="tooltip"]:has([aria-label="Use Voice, Control, V"]),
-                div[role="tooltip"]:has(span[aria-label="Select model, Control, Shift, M"]),
-                div[data-radix-popper-content-wrapper]:has(div[data-side="bottom"] span[role="tooltip"]) {
+                div[role="tooltip"][popover="hint"].fixed {
                     display: none;
                 }
             `
@@ -1899,12 +1895,12 @@
             enabled: false,
             sheet: null,
             style: `
-                :is(#thread-bottom, #thread-bottom-container) [class~="[grid-area:trailing]"] button.__composer-pill {
+                [class~="[grid-area:trailing]"] button.__composer-pill {
                     opacity: 0;
                 }
 
-                :is(#thread-bottom, #thread-bottom-container) [class~="[grid-area:trailing]"] button.__composer-pill:hover,
-                :is(#thread-bottom, #thread-bottom-container) [class~="[grid-area:trailing]"] button.__composer-pill[data-state="open"] {
+                [class~="[grid-area:trailing]"] button.__composer-pill:hover,
+                [class~="[grid-area:trailing]"] button.__composer-pill[data-state="open"] {
                     opacity: 1;
                 }
             `
