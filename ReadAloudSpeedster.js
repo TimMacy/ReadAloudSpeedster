@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.27.6
+// @version      5.30.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.27.6 - Read Aloud Speedster             *
+*                    Version: 5.30.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -861,12 +861,6 @@
             display: none;
         }
 
-        /* scroll position fix */
-        section:has([data-message-author-role]),
-        article:has([data-message-author-role]) {
-            scroll-margin-top: 0 !important;
-        }
-
         #sidebar-header button:has(svg path[d^="M7.94556"]) {
             display: none;
         }
@@ -885,7 +879,7 @@
             scrollbar-width: none;
         }
 
-        div.ms-1:has(span[class*="data-collapse-labels"]) {
+        [class~="[grid-area:trailing]"] > div.relative {
             order: 1;
             margin-right: 8px;
         }
@@ -894,7 +888,7 @@
             max-height: 29px;
         }
 
-        div.ms-auto.flex.items-center.gap-1\\.5 {
+        [class~="[grid-area:trailing]"] > div.ms-auto {
             order: 3;
         }
 
@@ -920,6 +914,10 @@
 
         .CentAnni-gpt-model-btn.CentAnni-active {
             border-color: rgb(1, 105, 204);
+
+            &:hover {
+                border-color: rgb(0, 111, 222);
+            }
         }
 
         .CentAnni-gpt-model-btn {
@@ -1466,14 +1464,12 @@
             enabled: false,
             sheet: null,
             style: `
-                div.text-token-text-secondary[class*="md\\:px-"],
-                div.text-token-text-secondary.text-pretty.text-xs {
+                #thread-bottom-container div.w-full.text-center.text-xs {
                     display: none;
                 }
 
-                .xl\\:px-5, main form,
-                div.flex-1.mx-auto > div.relative.w-full {
-                    padding-bottom: 0;
+                .mb-\\[var\\(--thread-component-gap\\,1rem\\)\\] {
+                    margin-bottom: 10px;
                 }
             `
         },
@@ -1942,6 +1938,8 @@
                 applyFeature(key);
             }
         }
+
+        headerOffset = features.transparentHeader.enabled ? 26 : 52;
     };
 
     let savedSpeed;
@@ -1950,7 +1948,8 @@
     let configPopup = null;
     let playListener = null;
     let rateListener = null;
-    let playingAudio = new Set();
+    const playingAudio = new Set();
+    const trackedAudio = new WeakSet();
     let controlsContainer = null;
     let ignoreRateChange = false;
     let docListenerActive = false;
@@ -1960,6 +1959,7 @@
     const MIN_SPEED = 1;
     const MAX_SPEED = 17;
     const DELTA = 0.25;
+    let headerOffset = 52;
 
     // load CSS settings
     const cssSettingsReady = loadCSSsettings();
@@ -1974,23 +1974,30 @@
         setPlaybackSpeed();
     }
 
+    const configureAudio = audio => {
+        if (audio.playbackRate !== playbackSpeed) audio.playbackRate = playbackSpeed;
+        if (audio.preservesPitch !== true) audio.preservesPitch = true;
+        if (audio.mozPreservesPitch !== true) audio.mozPreservesPitch = true;
+        if (audio.webkitPreservesPitch !== true) audio.webkitPreservesPitch = true;
+    };
+
     // set playback speed and manage listeners
     function setPlaybackSpeed() {
-        playingAudio.forEach(audio => {
-            audio.playbackRate = playbackSpeed;
-            audio.preservesPitch = audio.mozPreservesPitch = audio.webkitPreservesPitch = true;
-        });
+        playingAudio.forEach(configureAudio);
 
         if (!playListener) {
             playListener = e => {
                 const audio = e.target;
                 if (!(audio instanceof HTMLAudioElement)) return;
-                audio.playbackRate = playbackSpeed;
+                configureAudio(audio);
                 playingAudio.add(audio);
 
-                const remove = () => { playingAudio.delete(audio); };
-                audio.addEventListener('pause', remove, { once: true });
-                audio.addEventListener('ended', remove, { once: true });
+                if (!trackedAudio.has(audio)) {
+                    trackedAudio.add(audio);
+                    const remove = () => { playingAudio.delete(audio); };
+                    audio.addEventListener('pause', remove);
+                    audio.addEventListener('ended', remove);
+                }
             };
             document.addEventListener('play', playListener, true);
         }
@@ -2000,7 +2007,7 @@
                 const audio = e.target;
                 if (!(audio instanceof HTMLAudioElement)) return;
                 if (ignoreRateChange) { ignoreRateChange = false; return; }
-                audio.playbackRate = lastUserRate;
+                if (audio.playbackRate !== lastUserRate) audio.playbackRate = lastUserRate;
             };
             document.addEventListener('ratechange', rateListener, true);
         }
@@ -2105,7 +2112,8 @@
                     features[key].enabled = checkbox.checked;
                     await GM.setValue(key, features[key].enabled);
                     applyFeature(key);
-                    if (key === 'jumpToChat') navChanged = true;
+                    if (key === 'transparentHeader') headerOffset = features[key].enabled ? 26 : 52;
+                    if (key === 'jumpToChat' || key === 'transparentHeader') navChanged = true;
                 }
             }
 
@@ -2163,7 +2171,7 @@
 
     // create controls
     function createControlButtons() {
-        if (controlsContainer && document.body.contains(controlsContainer)) return;
+        if (controlsContainer?.isConnected) return;
         const target = document.querySelector('#thread-bottom-container div.\\[grid-area\\:leading\\]');
         if (!target) return;
 
@@ -2205,7 +2213,7 @@
 
         function handleSpeedClick(e) {
             e.stopPropagation();
-            if (!configPopup || !document.body.contains(configPopup)) {
+            if (!configPopup?.isConnected) {
                 configPopup = createConfigPopup();
             }
             const show = configPopup.classList.toggle('show');
@@ -2238,7 +2246,6 @@
     }
 
     // message navigation button section
-    const HEADER_OFFSET = 52;
     const UP_ARROW_PATH = 'M10 3.293l-6.354 6.353a1 1 0 001.414 1.414L9 6.414V17a1 1 0 102 0V6.414l3.939 3.939a1 1 0 001.415-1.414L10 3.293z';
     const DOWN_ARROW_PATH = 'M10 16.707l6.354-6.353a1 1 0 00-1.414-1.414L11 13.586V3a1 1 0 10-2 0v10.586L5.061 8.94a1 1 0 10-1.415 1.415L10 16.707z';
     const createIcon = (pathData) => {
@@ -2295,7 +2302,7 @@
         const populateCache = () => { messageCache = queryMessages(); };
 
         const getNextMessage = () => {
-            const current = HEADER_OFFSET;
+            const current = headerOffset;
             for (const msg of messageCache) {
                 const top = msg.getBoundingClientRect().top;
                 if (top > current + 1) return msg;
@@ -2304,7 +2311,7 @@
         };
 
         const getPrevMessage = () => {
-            const current = HEADER_OFFSET - 1;
+            const current = headerOffset - 1;
             for (let i = messageCache.length - 1; i >= 0; i--) {
                 const rect = messageCache[i].getBoundingClientRect();
                 const top = rect.top;
@@ -2321,7 +2328,7 @@
             if (msgs.length > messageCache.length) {
                 const newMsgs = msgs.slice(messageCache.length);
                 messageCache.push(...newMsgs);
-                const current = HEADER_OFFSET;
+                const current = headerOffset;
                 for (const msg of newMsgs) {
                     const top = msg.getBoundingClientRect().top;
                     if (top > current + 1) return msg;
@@ -2353,7 +2360,7 @@
         const scrollToMessage = (msg) => {
             const scroller = getScroller();
             const scrollerTop = scroller === document.scrollingElement ? 0 : scroller.getBoundingClientRect().top;
-            const top = scroller.scrollTop + msg.getBoundingClientRect().top - scrollerTop - HEADER_OFFSET;
+            const top = scroller.scrollTop + msg.getBoundingClientRect().top - scrollerTop - headerOffset;
             scroller.scrollTo({ top, behavior: 'auto' });
         };
 
@@ -2365,7 +2372,7 @@
         };
 
         const createButtons = () => {
-            if (document.body.contains(upBtn)) return;
+            if (upBtn.isConnected) return;
 
             upBtn.onclick = () => jump(true);
             downBtn.onclick = () => jump(false);
@@ -2384,7 +2391,7 @@
         let stopButtonPresent;
         const targetSelector = '#thread-bottom-container form div.flex.items-center.gap-2 > div.ms-auto';
         const stopBtnSelectors = 'button[data-testid="stop-button"],#composer-submit-button[aria-label="Stop streaming"]';
-        document.querySelector(stopBtnSelectors) ? stopButtonPresent = true : stopButtonPresent = false;
+        stopButtonPresent = !!document.querySelector(stopBtnSelectors);
 
         const buttonObserver = new MutationObserver(() => {
             const stopButton = document.querySelector(stopBtnSelectors);
@@ -2444,22 +2451,42 @@
         'gpt-medium': { label: 'Medium' },
         'gpt-high': { label: 'High' }
     };
+
     const getIntelligenceButton = (config) => {
-        return [...document.querySelectorAll('[data-testid="composer-intelligence-picker-content"] [role="menuitemradio"]')].find(el => el.querySelector('span.truncate')?.textContent.trim() === config.label);
+        for (const element of document.querySelectorAll('[data-testid="composer-intelligence-picker-content"] [role="menuitemradio"]')) {
+            if (element.querySelector('span.truncate')?.textContent.trim() === config.label) return element;
+        }
+        return null;
     };
 
     // select GPT model
-    let modelObserver, timeout;
+    let modelObserver, modelCheckFrame, timeout;
     const selectModel = (modelType) => {
         modelObserver?.disconnect();
-        if (timeout) clearTimeout(timeout);
+        modelObserver = null;
+        if (modelCheckFrame) {
+            cancelAnimationFrame(modelCheckFrame);
+            modelCheckFrame = 0;
+        }
+        if (timeout) {
+            clearTimeout(timeout);
+            timeout = 0;
+        }
 
         const config = modelConfigs[modelType];
         if (!config) return;
 
         const cleanup = () => {
             modelObserver?.disconnect();
-            if (timeout) clearTimeout(timeout);
+            modelObserver = null;
+            if (modelCheckFrame) {
+                cancelAnimationFrame(modelCheckFrame);
+                modelCheckFrame = 0;
+            }
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = 0;
+            }
         };
 
         const simulateClick = (element) => {
@@ -2497,20 +2524,31 @@
         if (check()) return;
 
         // model observer
-        modelObserver = new MutationObserver(check);
+        modelObserver = new MutationObserver(() => {
+            if (!modelCheckFrame) {
+                modelCheckFrame = requestAnimationFrame(() => {
+                    modelCheckFrame = 0;
+                    check();
+                });
+            }
+        });
         modelObserver.observe(document.body, { childList: true, subtree: true });
         timeout = setTimeout(cleanup, 10000);
         check();
     };
 
     let modelBtnObserver;
+    let modelQuickbar = null;
     const addModelButtons = () => {
-        if (document.getElementById("CentAnni-gpt-model-quickbar")) return;
+        if (modelQuickbar?.isConnected) return;
+        modelQuickbar = document.getElementById("CentAnni-gpt-model-quickbar");
+        if (modelQuickbar) return;
         const targetContainer = document.querySelector("main div.\\[grid-area\\:trailing\\]");
         if (!targetContainer) return;
 
         const bar = document.createElement("div");
         bar.id = "CentAnni-gpt-model-quickbar";
+        modelQuickbar = bar;
         const mkBtn = (label, model, clickHandler) => {
             const b = document.createElement("button");
             b.textContent = label;
@@ -2519,8 +2557,6 @@
             b.onclick = e => { e.preventDefault(); e.stopPropagation(); clickHandler(); return false; };
             b.onpointerdown = e => { e.preventDefault(); e.stopPropagation(); };
             b.setAttribute('form', 'nope');
-            b.onmouseenter = () => b.style.background = "rgba(255,255,255,.16)";
-            b.onmouseleave = () => b.style.background = "rgba(255,255,255,.08)";
             return b;
         };
 
@@ -2583,10 +2619,13 @@
         return path;
     })();
 
+    let readAloudButton = null;
     const addReadAloudBtn = () => {
-        const oldspeakBtn = document.getElementById("CentAnni-speak-btn");
+        if (readAloudButton?.isConnected) return;
+        readAloudButton = document.getElementById("CentAnni-speak-btn");
+        if (readAloudButton) return;
         const speakBtnLoc = document.querySelector("#thread-bottom, #thread-bottom-container");
-        if (!oldspeakBtn && !speakBtnLoc) return;
+        if (!speakBtnLoc) return;
 
         const speakBtn = document.createElement('button');
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -2599,27 +2638,59 @@
         speakBtn.onclick = readAloud;
         speakBtn.id = 'CentAnni-speak-btn';
         speakBtn.title = 'Read Aloud Last Message';
-        oldspeakBtn ? oldspeakBtn.replaceWith(speakBtn) : speakBtnLoc?.appendChild(speakBtn);
+        readAloudButton = speakBtn;
+        speakBtnLoc.appendChild(speakBtn);
+    };
+
+    let uiRefreshFrame = 0;
+    let audioRefreshPending = false;
+    let mainRoot = null;
+
+    const refreshUi = () => {
+        uiRefreshFrame = 0;
+
+        if (audioRefreshPending) {
+            audioRefreshPending = false;
+            setPlaybackSpeed();
+        }
+        if (!controlsContainer?.isConnected) createControlButtons();
+        if (features.jumpToChatActive.enabled && !upBtn.isConnected) {
+            navCleanup?.();
+            navCleanup = navBtns();
+        }
+        if (features.readAloudBtn.enabled && !readAloudButton?.isConnected) addReadAloudBtn();
+        if (features.modelSelector.enabled && !modelQuickbar?.isConnected) addModelButtons();
+    };
+
+    const scheduleUiRefresh = audioFound => {
+        audioRefreshPending ||= audioFound;
+        if (!uiRefreshFrame) uiRefreshFrame = requestAnimationFrame(refreshUi);
     };
 
     // initialization after DOM has loaded
     function init() {
         observer = new MutationObserver(mutations => {
-            const hasMainMutations = mutations.some(mutation => mutation.target.closest("#main"));
-            if (!hasMainMutations) return;
+            if (!mainRoot?.isConnected) mainRoot = document.getElementById('main');
 
-            // observer for new audio elements
-            const audioFound = mutations.some(mutation => Array.from(mutation.addedNodes).some(node => node.nodeName === 'AUDIO' || (node.querySelector && node.querySelector('audio'))));
+            let hasMainMutations = false;
+            let audioFound = false;
+            for (const mutation of mutations) {
+                if (!mainRoot?.contains(mutation.target)) continue;
+                hasMainMutations = true;
 
-            // handle UI updates and audio playback speed
-            if (audioFound) setPlaybackSpeed();
-            if (!document.body.contains(controlsContainer)) createControlButtons();
-            if (features.jumpToChatActive.enabled && !document.getElementById('CentAnni-nav-btn-up')) {
-                navCleanup?.();
-                navCleanup = navBtns();
+                if (!playListener) {
+                    for (const node of mutation.addedNodes) {
+                        if (node.nodeName === 'AUDIO' || (node.nodeType === Node.ELEMENT_NODE && node.querySelector('audio'))) {
+                            audioFound = true;
+                            break;
+                        }
+                    }
+                }
+                if (audioFound) break;
             }
-            if (features.readAloudBtn.enabled && !document.getElementById('CentAnni-speak-btn')) addReadAloudBtn();
-            if (features.modelSelector.enabled && !document.getElementById('CentAnni-gpt-model-quickbar')) addModelButtons();
+
+            const uiMissing = !controlsContainer?.isConnected || (features.jumpToChatActive.enabled && !upBtn.isConnected) || (features.readAloudBtn.enabled && !readAloudButton?.isConnected) || (features.modelSelector.enabled && !modelQuickbar?.isConnected);
+            if (hasMainMutations && (audioFound || uiMissing)) scheduleUiRefresh(audioFound);
         });
 
         if (document.body) {
