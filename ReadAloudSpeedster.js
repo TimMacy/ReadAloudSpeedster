@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.30.1
+// @version      5.31.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.30.1 - Read Aloud Speedster             *
+*                    Version: 5.31.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1211,6 +1211,16 @@
             enabled: false,
             sheet: null,
             style: `
+                :root {
+                    --sidebar-surface-primary: #181818 !important;
+                    --bg-secondary-surface: #181818 !important;
+                }
+
+                .bg-token-main-surface-primary,
+                .bg-token-bg-elevated-secondary {
+                    background: #181818 !important;
+                }
+
                 div.grid.gap-y-2,
                 form > div:nth-child(2) > div,
                 main form div.contain-inline-size,
@@ -1223,15 +1233,6 @@
                 .bg-token-bg-elevated-primary,
                 div[data-testid="artifacts-surface-top-controls"].bg-surface-primary {
                     background-color: unset;
-                }
-
-                .h-header-height,
-                .bg-token-main-surface-primary,
-                .bg-token-bg-elevated-secondary,
-                .bg-token-bg-elevated-secondary\\/20,
-                #stage-slideover-sidebar nav div.sticky.top-0,
-                #stage-slideover-sidebar > div > div.opacity-100.h-full {
-                    background: #181818 !important;
                 }
 
                 .border-token-border-light {
@@ -1261,15 +1262,6 @@
                 .content-fade::after,
                 div[role="dialog"].bg-token-bg-primary {
                     background-color: #212121;
-                }
-
-                .h-header-height,
-                .bg-token-main-surface-primary,
-                .bg-token-bg-elevated-secondary,
-                .bg-token-bg-elevated-secondary\/20,
-                #stage-slideover-sidebar nav div.sticky.top-0,
-                #stage-slideover-sidebar > div > div.opacity-100.h-full {
-                    background: #181818 !important;
                 }
 
                 #thread-bottom-container,
@@ -1473,37 +1465,6 @@
                 }
             `
         },
-        projectNxtMore: {
-            label: "'New project' and 'See more' Buttons Next to Each Other",
-            enabled: true,
-            sheet: null,
-            style: `
-                nav div.group\\/sidebar-expando-section:has(use[href*="#608c49"]) ul {
-                    display: flex;
-                    flex-direction: column;
-                }
-
-                nav div.hoverable:has(use[href*="#f6d0e2"]),
-                nav button.hoverable:has(use[href*="#608c49"]) {
-                    width: calc(50% - 6px);
-                }
-
-                nav button.hoverable:has(use[href*="#608c49"]) div.truncate {
-                    text-overflow: unset;
-                }
-
-                nav li:has(div.hoverable use[href*="#f6d0e2"]) {
-                    order: -1;
-                }
-
-                nav li:has(div.hoverable use[href*="#f6d0e2"]) > div {
-                    position: absolute;
-                    transform: translate(100%, 0);
-                    flex-direction: row-reverse;
-                    padding: 8px 10px 8px 20px;
-                }
-            `
-        },
         navIconsUp: {
             label: "Compact Search and Library Buttons",
             enabled: true,
@@ -1514,9 +1475,8 @@
                 nav > aside a:has(use[href*="#3a5c87"]),
                 nav > aside .-bottom-\\(--sticky-spacer\\),
                 div.pointer-events-none.h-px.w-px.-mb-px,
-                nav > a:has(use[href*="#c8839f"]) .min-w-0,
                 nav > a:has(use[href*="#266724"]) div.grow,
-                nav > a:has(use[href*="#4a730f"]) div.grow,
+                nav > a:has(use[href*="#056ca7"]) div.grow,
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href^="/deep-research"],
@@ -1536,9 +1496,10 @@
                     margin-bottom: -10px;
                 }
 
+                nav > a:has(use[href*="#974afd"]),
                 nav > a:has(use[href*="#c8839f"]),
                 nav > a:has(use[href*="#266724"]),
-                nav > a:has(use[href*="#4a730f"]),
+                nav > a:has(use[href*="#056ca7"]),
                 nav > div:has(use[href*="#c8839f"]),
                 nav > div:has(use[href*="#c8839f"]) > a,
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)),
@@ -1552,7 +1513,7 @@
                     color: var(--text-tertiary);
                 }
 
-                nav > a:has(use[href*="#4a730f"]),
+                nav > a:has(use[href*="#056ca7"]),
                 nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div,
                 nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
                     border: none;
@@ -1578,7 +1539,7 @@
                     text-overflow: clip;
                 }
 
-                nav > a:has(use[href*="#4a730f"]) {
+                nav > a:has(use[href*="#056ca7"]) {
                     position: fixed;
                     margin: 0;
                     transform: translate(139px, 8px);
@@ -1586,23 +1547,35 @@
                     justify-content: center;
                 }
 
-                nav > div:has(use[href*="#c8839f"]) {
-                    position: fixed;
-                    padding: 0;
-                    transform: translate(173px, 8px);
-                }
-
                 nav > a:has(use[href*="#c8839f"]) {
                     display: none;
                     position: fixed;
-                    padding: 0;
-                    width: 36px;
-                    transform: translate(174px, 44px);
+                    width: fit-content;
+                    transform: translate(175px, 45px);
                     justify-content: center;
+                    background-color: var(--sidebar-surface-primary);
+
+                    &:hover {
+                        background-color: #3a3a3a !important;
+                    }
                 }
 
-                nav:has(div[class*="sidebar-section-margin-top"]:hover use[href*="#f6d0e2"]) > a:has(use[href*="#c8839f"]),
-                nav > a:has(use[href*="#c8839f"]):hover {
+                nav > a:has(use[href*="#974afd"]) {
+                    display: none;
+                    position: fixed;
+                    width: fit-content;
+                    transform: translate(175px, 82px);
+                    justify-content: center;
+                    background-color: var(--sidebar-surface-primary);
+
+                    &:hover {
+                        background-color: #3a3a3a !important;
+                    }
+                }
+
+                nav > a:has(use[href*="#974afd"]):hover,
+                nav > a:has(use[href*="#c8839f"]):hover,
+                nav:has( div[class*="sidebar-section-margin-top"]:hover use[href*="#f6d0e2"], > a:hover use:is([href*="#c8839f"], [href*="#974afd"]) ) > a:has(use:is([href*="#c8839f"], [href*="#974afd"])) {
                     display: flex;
                 }
 
@@ -1611,8 +1584,10 @@
                     margin: 0;
                 }
 
+                nav > a:has(use[href*="#974afd"]):hover,
+                nav > a:has(use[href*="#c8839f"]):hover,
                 nav > a:has(use[href*="#266724"]):hover,
-                nav > a:has(use[href*="#4a730f"]):hover,
+                nav > a:has(use[href*="#056ca7"]):hover,
                 nav > div:has(use[href*="#c8839f"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(use[href*="#c8839f"]) > a:hover,
@@ -1760,16 +1735,14 @@
             enabled: false,
             sheet: null,
             style: `
-                section ul,
-                article ul {
+                #thread section ul {
                     list-style-type: none;
-                }
 
-                section ul li::before,
-                article ul li::before {
-                    position: absolute;
-                    content: "– ";
-                    margin-left: -25px;
+                    & li::before {
+                        position: absolute;
+                        content: "– ";
+                        margin-left: -25px;
+                    }
                 }
             `
         },
@@ -1788,6 +1761,12 @@
                     --tw-ring-offset-shadow: 0 0 #0000;
                 }
             `
+        },
+        autoCloseProjects: {
+            label: "Auto-Close Projects on Page Load",
+            enabled: false,
+            sheet: null,
+            style: ``
         },
         transparentHeader: {
             label: "Transparent Header",
@@ -1963,6 +1942,19 @@
 
     // load CSS settings
     const cssSettingsReady = loadCSSsettings();
+
+    // auto close projects
+    let projectsOpen = true;
+    const closeProjects = () => {
+        projectsOpen = false;
+
+        const newProjectButton = document.querySelector('button[aria-label="New project"]');
+        const projectsHeader = newProjectButton?.closest('div.group\\/sidebar-expando-section-header');
+        const projectsButton = projectsHeader?.firstElementChild;
+
+        if (!projectsButton?.matches('button[aria-expanded]')) return;
+        if (projectsButton.getAttribute('aria-expanded') === 'true') projectsButton.click();
+    };
 
     // load playback speed
     async function initializeSpeed() {
@@ -2243,6 +2235,7 @@
         controlsContainer.appendChild(plusButton);
 
         target.insertAdjacentElement('afterend', controlsContainer);
+        if (projectsOpen && features.autoCloseProjects.enabled) closeProjects();
     }
 
     // message navigation button section
@@ -2539,6 +2532,7 @@
 
     let modelBtnObserver;
     let modelQuickbar = null;
+
     const addModelButtons = () => {
         if (modelQuickbar?.isConnected) return;
         modelQuickbar = document.getElementById("CentAnni-gpt-model-quickbar");
@@ -2570,19 +2564,28 @@
 
         // color code model button
         requestIdleCallback(() => {
-            modelBtnObserver?.disconnect();
+            const attachModelBtnObserver = () => {
+                const div = targetContainer?.querySelector('div.relative');
+                if (!div) return false;
 
-            const div = targetContainer?.querySelector('div.relative'); if (!div) return;
-            const markExtendedButton = () => {
-                const selectedModel = div.querySelector('button')?.textContent?.trim().toLowerCase();
-                bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
-                    button.classList.toggle('CentAnni-active', button.dataset.model === selectedModel);
-                });
+                modelBtnObserver?.disconnect();
+                const markExtendedButton = () => {
+                    const selectedModel = div.querySelector('button')?.textContent?.trim().toLowerCase();
+                    bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
+                        button.classList.toggle('CentAnni-active', button.dataset.model === selectedModel);
+                    });
+                };
+
+                markExtendedButton();
+                modelBtnObserver = new MutationObserver(markExtendedButton);
+                modelBtnObserver.observe(div, { childList: true, characterData: true, subtree: true });
+                return true;
             };
 
-            markExtendedButton();
-            modelBtnObserver = new MutationObserver(markExtendedButton);
-            modelBtnObserver.observe(div, { childList: true, characterData: true, subtree: true });
+            if (attachModelBtnObserver()) return;
+            modelBtnObserver?.disconnect();
+            modelBtnObserver = new MutationObserver(attachModelBtnObserver);
+            modelBtnObserver.observe(targetContainer, { childList: true, subtree: true });
         });
     };
 
@@ -2698,9 +2701,9 @@
             cssSettingsReady.then(() => {
                 requestIdleCallback(initializeSpeed, { timeout: 2000 });
                 setTimeout(() => requestIdleCallback(() => createControlButtons(), { timeout: 2000 }), 50);
+                if (features.modelSelector.enabled) requestIdleCallback(addModelButtons, { timeout: 2000 });
                 if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
-                if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 50);
-                if (features.modelSelector.enabled) requestIdleCallback(() => { addModelButtons(); }, { timeout: 2000 });
+                if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 200);
             });
         }
     }
