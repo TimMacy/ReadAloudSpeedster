@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.31.1
+// @version      5.32
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://*.chatgpt.com/*
@@ -20,7 +20,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.31.1 - Read Aloud Speedster             *
+*                    Version: 5.32 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -912,12 +912,26 @@
             margin-right: unset;
         }
 
+        [data-composer-transition-slot="trailing"]:has(> div:nth-child(2) > div > span) #CentAnni-gpt-model-quickbar {
+            display: none;
+        }
+
         .CentAnni-gpt-model-btn.CentAnni-active {
             border-color: rgb(1, 105, 204);
 
             &:hover {
                 border-color: rgb(0, 111, 222);
             }
+        }
+
+        #page-header .bg-token-bg-primary,
+        [aria-label="Directory type"] [aria-current="page"] {
+            border: 1px solid rgb(0, 111, 222);
+        }
+
+        span.text-token-text-tertiary.hidden.shrink-0 {
+            display: inline;
+            color: rgb(0, 111, 222);;
         }
 
         .CentAnni-gpt-model-btn {
@@ -974,7 +988,7 @@
             position: absolute;
             display: flex;
             top: -61px;
-            left: 20px;
+            left: 3.1315%;
             width: 32px;
             height: 32px;
             color: deepskyblue;
@@ -984,6 +998,7 @@
             cursor: pointer;
             z-index: 9999;
             background: transparent;
+            transform: translateX(-50%);
 
             &:hover {
                 background-color: rgba(255, 255, 255, .07);
@@ -1456,10 +1471,12 @@
             enabled: false,
             sheet: null,
             style: `
+                div[data-testid="thread-disclaimer"],
                 #thread-bottom-container div.w-full.text-center.text-xs {
                     display: none;
                 }
 
+                .mb-\\(--thread-component-gap\\,1rem\\),
                 .mb-\\[var\\(--thread-component-gap\\,1rem\\)\\] {
                     margin-bottom: 10px;
                 }
@@ -1476,16 +1493,16 @@
                 nav > aside .-bottom-\\(--sticky-spacer\\),
                 div.pointer-events-none.h-px.w-px.-mb-px,
                 nav > a:has(use[href*="#266724"]) div.grow,
-                nav > a:has(use[href*="#056ca7"]) div.grow,
+                nav > a:has(use[href*="#b3759f"]) div.grow,
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href^="/deep-research"],
-                nav > div:has(use[href*="#c8839f"]) > a div.grow,
+                nav > div:has(use[href*="#3c07d3"]) > a div.grow,
                 nav li:has(a[data-testid="create-new-chat-button"]),
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
                 nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) div.min-w-0,
+                nav > div:has(use[href*="#623957"]):not(:has(button)) div.min-w-0,
                 nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) > div:last-of-type {
                     display: none;
                 }
@@ -1496,14 +1513,14 @@
                     margin-bottom: -10px;
                 }
 
-                nav > a:has(use[href*="#974afd"]),
-                nav > a:has(use[href*="#c8839f"]),
+                nav > a:has(use[href*="#1bb8a5"]),
+                nav > a:has(use[href*="#3c07d3"]),
                 nav > a:has(use[href*="#266724"]),
-                nav > a:has(use[href*="#056ca7"]),
-                nav > div:has(use[href*="#c8839f"]),
-                nav > div:has(use[href*="#c8839f"]) > a,
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)),
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div,
+                nav > a:has(use[href*="#b3759f"]),
+                nav > div:has(use[href*="#3c07d3"]),
+                nav > div:has(use[href*="#3c07d3"]) > a,
+                nav > div:has(use[href*="#623957"]):not(:has(button)),
+                nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
                 nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
                     margin: 0;
                     z-index: 31;
@@ -1513,8 +1530,8 @@
                     color: var(--text-tertiary);
                 }
 
-                nav > a:has(use[href*="#056ca7"]),
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div,
+                nav > a:has(use[href*="#b3759f"]),
+                nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
                 nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
                     border: none;
                 }
@@ -1539,7 +1556,7 @@
                     text-overflow: clip;
                 }
 
-                nav > a:has(use[href*="#056ca7"]) {
+                nav > a:has(use[href*="#b3759f"]) {
                     position: fixed;
                     margin: 0;
                     transform: translate(139px, 8px);
@@ -1547,7 +1564,7 @@
                     justify-content: center;
                 }
 
-                nav > a:has(use[href*="#c8839f"]) {
+                nav > a:has(use[href*="#3c07d3"]) {
                     display: none;
                     position: fixed;
                     width: fit-content;
@@ -1560,7 +1577,7 @@
                     }
                 }
 
-                nav > a:has(use[href*="#974afd"]) {
+                nav > a:has(use[href*="#1bb8a5"]) {
                     display: none;
                     position: fixed;
                     width: fit-content;
@@ -1573,46 +1590,46 @@
                     }
                 }
 
-                nav > a:has(use[href*="#974afd"]):hover,
-                nav > a:has(use[href*="#c8839f"]):hover,
-                nav:has( div[class*="sidebar-section-margin-top"]:hover use[href*="#f6d0e2"], > a:hover use:is([href*="#c8839f"], [href*="#974afd"]) ) > a:has(use:is([href*="#c8839f"], [href*="#974afd"])) {
+                nav > a:has(use[href*="#1bb8a5"]):hover,
+                nav > a:has(use[href*="#3c07d3"]):hover,
+                nav:has( div[class*="sidebar-section-margin-top"]:hover use[href*="#623957"], > a:hover use:is([href*="#3c07d3"], [href*="#1bb8a5"]) ) > a:has(use:is([href*="#3c07d3"], [href*="#1bb8a5"])) {
                     display: flex;
                 }
 
-                nav > div:has(use[href*="#c8839f"]) > a {
+                nav > div:has(use[href*="#3c07d3"]) > a {
                     padding: 0;
                     margin: 0;
                 }
 
-                nav > a:has(use[href*="#974afd"]):hover,
-                nav > a:has(use[href*="#c8839f"]):hover,
+                nav > a:has(use[href*="#1bb8a5"]):hover,
+                nav > a:has(use[href*="#3c07d3"]):hover,
                 nav > a:has(use[href*="#266724"]):hover,
-                nav > a:has(use[href*="#056ca7"]):hover,
-                nav > div:has(use[href*="#c8839f"]):hover,
+                nav > a:has(use[href*="#b3759f"]):hover,
+                nav > div:has(use[href*="#3c07d3"]):hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
-                nav > div:has(use[href*="#c8839f"]) > a:hover,
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div:hover,
+                nav > div:has(use[href*="#3c07d3"]) > a:hover,
+                nav > div:has(use[href*="#623957"]):not(:has(button)) > div:hover,
                 nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]):hover {
                     color: var(--text-primary);
                 }
 
-                nav > div:has(use[href*="#c8839f"]),
+                nav > div:has(use[href*="#3c07d3"]),
                 #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
                 #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
                     z-index: 17;
                 }
 
-                nav > div:has(use[href*="#c8839f"]) > a > div.items-center {
+                nav > div:has(use[href*="#3c07d3"]) > a > div.items-center {
                     margin-left: 8px;
                 }
 
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) {
+                nav > div:has(use[href*="#623957"]):not(:has(button)) {
                     position: fixed;
                     transform: translate(175px, 8px);
                     padding: 0;
                 }
 
-                nav > div:has(use[href*="#f6d0e2"]):not(:has(button)) > div {
+                nav > div:has(use[href*="#623957"]):not(:has(button)) > div {
                     padding: 0 7px 0 7px;
                     width: 36px !important;
                     max-height: unset !important;
@@ -1702,7 +1719,7 @@
                      min-height: unset !important;
                 }
 
-                nav > div:has(use[href*="#c8839f"]) > a {
+                nav > div:has(use[href*="#3c07d3"]) > a {
                     max-height: unset!important;
                     height: 36px;
                 }
@@ -1773,34 +1790,48 @@
             enabled: true,
             sheet: null,
             style: `
-                header#page-header {
-                    background: linear-gradient(to top, transparent, var(--CentAnni-header-bg, black) 51px) !important;
+                #page-header {
+                    background: linear-gradient(to top, transparent, #212121 51px) !important;
                     box-shadow: none;
+                    pointer-events: none;
+
+                    .top-full {
+                        padding-left: 0;
+                    }
+
+                    button[title="Task details"] {
+                        color: var(--text-primary);
+                    }
                 }
 
-                #conversation-header-actions {
-                    flex-direction: column;
+                #page-header:not(:has(button[aria-label*="temporary chat"], [aria-label="Task progress"])) {
+                    #conversation-header-actions,
+                    #conversation-header-actions > div {
+                        flex-direction: column;
+                    }
+
+                    .gap-3 {
+                        position: absolute;
+                        right: 10px;
+                        top: 50px;
+                    }
                 }
 
-                #page-header .gap-3:not(:has(button[aria-label*="temporary chat"])) {
-                    position: absolute;
-                    right: 10px;
-                    top: 50px;
-                }
-
-                html:has(#stage-sidebar-tiny-bar.opacity-100) #page-header .gap-3:not(:has(button[aria-label*="temporary chat"])) {
+                html:has(#stage-sidebar-tiny-bar.opacity-100) #page-header:not(:has(button[aria-label*="temporary chat"], [aria-label="Task progress"])) .gap-3 {
                     top: 10px;
                 }
 
                 #CentAnni-nav-btn-up {
+                    transform: translateX(-50%);
                     position: absolute;
-                    left: 10px;
+                    left: 3.1315%;
                     top: 10px
                 }
 
                 #CentAnni-nav-btn-down {
+                    transform: translateX(-50%);
                     position: absolute;
-                    left: 10px;
+                    left: 3.1315%;
                     top: 46px;
                 }
 
@@ -1825,10 +1856,6 @@
                 button[data-testid="share-chat-button"] > div {
                     justify-content: flex-start;
                     width: 18px !important;
-                }
-
-                #page-header {
-                    pointer-events: none;
                 }
 
                 a[aria-label*="Open"][aria-label*="project"] {
@@ -1870,13 +1897,13 @@
             enabled: false,
             sheet: null,
             style: `
-                [class~="[grid-area:trailing]"] button.__composer-pill {
+                [class~="[grid-area:trailing]"] button.__composer-pill:has(span.truncate > .flex) {
                     opacity: 0;
                 }
 
                 [class~="[grid-area:trailing]"] button.__composer-pill:hover,
                 [class~="[grid-area:trailing]"] button.__composer-pill[data-state="open"] {
-                    opacity: 1;
+                    opacity: 1 !important;
                 }
             `
         },
