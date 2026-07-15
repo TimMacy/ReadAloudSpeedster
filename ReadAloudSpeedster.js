@@ -3,10 +3,11 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.32
+// @version      5.32.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
-// @match        https://*.chatgpt.com/*
+// @match        https://chatgpt.com/*
+// @exclude      https://chatgpt.com/codex/*
 // @grant        GM.setValue
 // @grant        GM.getValue
 // @run-at       document-start
@@ -20,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.32 - Read Aloud Speedster               *
+*                    Version: 5.32.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -999,6 +1000,7 @@
             z-index: 9999;
             background: transparent;
             transform: translateX(-50%);
+            pointer-events: auto;
 
             &:hover {
                 background-color: rgba(255, 255, 255, .07);
@@ -1105,6 +1107,7 @@
                 .rounded-2xl\\!,
                 .rounded-\\[14px\\],
                 .rounded-t-\\[20px\\],
+                div[data-testid="writing-block-container"],
                 div.relative.z-30:has([data-testid="accounts-profile-button"]) .rounded-full.select-none {
                     border-radius: 0 !important;
                 }
@@ -1269,12 +1272,14 @@
                     background-color: var(--main-surface-secondary, #424242) !important;
                 }
 
-                body > picture {
+                body > picture,
+                .Ejxyja_threadFooterContentFade::after {
                     display: none;
                 }
 
                 body,
                 .content-fade::after,
+                #thread-bottom-container,
                 div[role="dialog"].bg-token-bg-primary {
                     background-color: #212121;
                 }
@@ -1295,10 +1300,6 @@
                 .sm\\:bg-gray-200\\/50 {
                     background-color: color-mix(in oklab, #0f0f0f 50%, transparent);
                     filter: blur(2px);
-                }
-
-                :root {
-                    --CentAnni-header-bg: #212121;
                 }
             `
         },
@@ -1476,8 +1477,7 @@
                     display: none;
                 }
 
-                .mb-\\(--thread-component-gap\\,1rem\\),
-                .mb-\\[var\\(--thread-component-gap\\,1rem\\)\\] {
+                :is(#thread-bottom,#thread-bottom-container) [class*="--thread-content-max-width"] {
                     margin-bottom: 10px;
                 }
             `
@@ -1835,7 +1835,10 @@
                     top: 46px;
                 }
 
-                /* share btn */
+                .translucent-surface {
+                    background-color: unset;
+                }
+
                 button[aria-label="Share"],
                 button[data-testid="share-chat-button"],
                 button[aria-label="Show project details"],
