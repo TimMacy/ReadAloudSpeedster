@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.32.1
+// @version      5.32.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.32.1 - Read Aloud Speedster             *
+*                    Version: 5.32.2 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -112,11 +112,13 @@
         }
 
         /* edit in canvas icon */
+        use[href$="#6ef7a4"],
         use[href$="#6d87e1"] {
             color: yellow !important;
             opacity: .8;
         }
 
+        .light use[href$="#6ef7a4"],
         .light use[href$="#6d87e1"] {
             color: indigo !important;
             opacity: .8;
@@ -154,6 +156,7 @@
             use[href$="#fa1dbd"],
             use[href$="#51753c"],
             use[href$="#2126ae"],
+            use[href$="#6ef7a4"],
             use[href$="#6d87e1"],
             use[href$="#54f145"],
             use[href$="#4944fe"],
@@ -337,11 +340,6 @@
             padding-bottom: 25dvh !important;
         }
 
-        #thread section[data-turn-id*="request-WEB"],
-        #thread article[data-turn-id*="request-WEB"] {
-            min-height: 10dvh;
-        }
-
         html:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
             width: -webkit-fill-available;
             width: -moz-available;
@@ -364,11 +362,12 @@
             align-items: center;
         }
 
+        .wcDTda_fallbackTextarea,
         #thread #prompt-textarea,
         textarea[class*="_fallbackTextarea_"],
         .bg-token-bg-elevated-primary.w-full > div {
-            padding: 0;
-            margin: 0;
+            margin-top: 10px !important;
+            padding-bottom: 10px !important;
         }
 
         #thread-bottom-container div.text-base.mx-auto {
@@ -398,11 +397,11 @@
             grid-template-areas: "header header header" "primary primary primary" "leading footer trailing" !important;
         }
 
-        div.grid.gap-y-2,
         #thread-bottom-container form div.cursor-text,
         form div.cursor-text:not(#thread-bottom-container),
         div.grid.\\[grid-template-areas\\:\\'leading_primary_trailing\\'\\] {
             padding-top: unset;
+            padding-bottom: 9px;
         }
 
         div.content-fade:not(#thread-bottom-container),
@@ -1009,6 +1008,12 @@
             &:active {
                 color: rgb(0, 251, 255);
             }
+
+            #thread-bottom-container:has(#composer-submit-button:has(use[href$="#bbf3a9"])) & {
+                pointer-events: none;
+                user-select: none;
+                opacity: .5;
+            }
         }
 
         html:has(#thread .composer-parent h1.text-page-header),
@@ -1501,9 +1506,10 @@
                 nav li:has(a[data-testid="create-new-chat-button"]),
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
+                #sidebar-header .header-wordmark span.text-token-text-tertiary,
                 nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
                 nav > div:has(use[href*="#623957"]):not(:has(button)) div.min-w-0,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) > div:last-of-type {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) > div:last-of-type {
                     display: none;
                 }
 
@@ -1521,7 +1527,7 @@
                 nav > div:has(use[href*="#3c07d3"]) > a,
                 nav > div:has(use[href*="#623957"]):not(:has(button)),
                 nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) {
                     margin: 0;
                     z-index: 31;
                     height: 37px;
@@ -1532,18 +1538,18 @@
 
                 nav > a:has(use[href*="#b3759f"]),
                 nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) {
                     border: none;
                 }
 
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) {
                     position: fixed;
                     top: 0;
                     justify-content: center;
-                    transform: translate(103px, 8px);
+                    transform: translate(-113px, 8px);
                 }
 
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]) > .flex {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) > .flex {
                     min-width: 20px;
                 }
 
@@ -1609,7 +1615,7 @@
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(use[href*="#3c07d3"]) > a:hover,
                 nav > div:has(use[href*="#623957"]):not(:has(button)) > div:hover,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ac6d36"]):hover {
+                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]):hover {
                     color: var(--text-primary);
                 }
 
@@ -1646,7 +1652,7 @@
             sheet: null,
             style: `
                 nav .__menu-item-trailing-btn,
-                nav .__menu-item:not(:has(use[href*="#ac6d36"])):not(:has(use[href*="#266724"])) {
+                nav .__menu-item:not(:has(use[href*="#ad5af8"])):not(:has(use[href*="#266724"])) {
                     min-height: calc(var(--spacing)*8);
                     max-height:32px;
                 }
@@ -1752,14 +1758,10 @@
             enabled: false,
             sheet: null,
             style: `
-                #thread section ul {
-                    list-style-type: none;
-
-                    & li::before {
-                        position: absolute;
-                        content: "– ";
-                        margin-left: -25px;
-                    }
+                #thread section ul li::marker {
+                    position: absolute;
+                    content: "– ";
+                    margin-left: -25px;
                 }
             `
         },
@@ -1859,10 +1861,6 @@
                 button[data-testid="share-chat-button"] > div {
                     justify-content: flex-start;
                     width: 18px !important;
-                }
-
-                a[aria-label*="Open"][aria-label*="project"] {
-                    background-color: var(--bg-tertiary);
                 }
 
                 .top-\\(--sticky-padding-top\\) {
