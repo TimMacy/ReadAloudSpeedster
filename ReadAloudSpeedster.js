@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.32.3
+// @version      5.32.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.32.3 - Read Aloud Speedster             *
+*                    Version: 5.32.4 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1498,19 +1498,14 @@
                 nav > aside a:has(use[href*="#3a5c87"]),
                 nav > aside .-bottom-\\(--sticky-spacer\\),
                 div.pointer-events-none.h-px.w-px.-mb-px,
-                nav > a:has(use[href*="#266724"]) div.grow,
-                nav > a:has(use[href*="#b3759f"]) div.grow,
+                nav > a[href="/library"] div.grow,
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href^="/deep-research"],
-                nav > div:has(use[href*="#3c07d3"]) > a div.grow,
                 nav li:has(a[data-testid="create-new-chat-button"]),
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
-                nav > a:has(use[href*="#266724"]) span.__menu-item-badge,
                 #sidebar-header .header-wordmark span.text-token-text-tertiary,
-                nav > a:has(use[href*="#266724"]) div.text-token-text-tertiary,
-                nav > div:has(use[href*="#623957"]):not(:has(button)) div.min-w-0,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) > div:last-of-type {
+                nav > div:has(use[href*="#623957"]):not(:has(button)) div.min-w-0 {
                     display: none;
                 }
 
@@ -1520,15 +1515,12 @@
                     margin-bottom: -10px;
                 }
 
-                nav > a:has(use[href*="#1bb8a5"]),
-                nav > a:has(use[href*="#3c07d3"]),
-                nav > a:has(use[href*="#266724"]),
-                nav > a:has(use[href*="#b3759f"]),
-                nav > div:has(use[href*="#3c07d3"]),
-                nav > div:has(use[href*="#3c07d3"]) > a,
+                nav > a[href="/scheduled"],
+                nav > a[href="/plugins"],
+                nav > a[href="/library"],
                 nav > div:has(use[href*="#623957"]):not(:has(button)),
                 nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) {
+                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     margin: 0;
                     z-index: 31;
                     height: 37px;
@@ -1537,33 +1529,24 @@
                     color: var(--text-tertiary);
                 }
 
-                nav > a:has(use[href*="#b3759f"]),
+                nav > a[href="/library"],
                 nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) {
+                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     border: none;
                 }
 
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) {
+                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     position: fixed;
                     top: 0;
                     justify-content: center;
                     transform: translate(-113px, 8px);
                 }
 
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]) > .flex {
+                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] > .flex {
                     min-width: 20px;
                 }
 
-                nav > a:has(use[href*="#266724"]) {
-                    position: fixed;
-                    transform: translate(93px, 8px);
-                }
-
-                nav > a:has(use[href*="#266724"]) div.truncate {
-                    text-overflow: clip;
-                }
-
-                nav > a:has(use[href*="#b3759f"]) {
+                nav > a[href="/library"] {
                     position: fixed;
                     margin: 0;
                     transform: translate(139px, 8px);
@@ -1571,7 +1554,7 @@
                     justify-content: center;
                 }
 
-                nav > a:has(use[href*="#3c07d3"]) {
+                nav > a[href="/plugins"] {
                     display: none;
                     position: fixed;
                     width: fit-content;
@@ -1584,7 +1567,7 @@
                     }
                 }
 
-                nav > a:has(use[href*="#1bb8a5"]) {
+                nav > a[href="/scheduled"] {
                     display: none;
                     position: fixed;
                     width: fit-content;
@@ -1597,37 +1580,24 @@
                     }
                 }
 
-                nav > a:has(use[href*="#1bb8a5"]):hover,
-                nav > a:has(use[href*="#3c07d3"]):hover,
+                nav > a[href="/scheduled"]:hover,
+                nav > a[href="/plugins"]:hover,
                 nav:has( div[class*="sidebar-section-margin-top"]:hover use[href*="#623957"], > a:hover use:is([href*="#3c07d3"], [href*="#1bb8a5"]) ) > a:has(use:is([href*="#3c07d3"], [href*="#1bb8a5"])) {
                     display: flex;
                 }
 
-                nav > div:has(use[href*="#3c07d3"]) > a {
-                    padding: 0;
-                    margin: 0;
-                }
-
-                nav > a:has(use[href*="#1bb8a5"]):hover,
-                nav > a:has(use[href*="#3c07d3"]):hover,
-                nav > a:has(use[href*="#266724"]):hover,
-                nav > a:has(use[href*="#b3759f"]):hover,
-                nav > div:has(use[href*="#3c07d3"]):hover,
+                nav > a[href="/scheduled"]:hover,
+                nav > a[href="/plugins"]:hover,
+                nav > a[href="/library"]:hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
-                nav > div:has(use[href*="#3c07d3"]) > a:hover,
                 nav > div:has(use[href*="#623957"]):not(:has(button)) > div:hover,
-                nav:not(#stage-sidebar-tiny-bar) button:has(use[href*="#ad5af8"]):hover {
+                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"]:hover {
                     color: var(--text-primary);
                 }
 
-                nav > div:has(use[href*="#3c07d3"]),
                 #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
                 #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
                     z-index: 17;
-                }
-
-                nav > div:has(use[href*="#3c07d3"]) > a > div.items-center {
-                    margin-left: 8px;
                 }
 
                 nav > div:has(use[href*="#623957"]):not(:has(button)) {
@@ -1724,11 +1694,6 @@
                 nav div[aria-label="Collapse section"] {
                     padding: 0px 10px;
                      min-height: unset !important;
-                }
-
-                nav > div:has(use[href*="#3c07d3"]) > a {
-                    max-height: unset!important;
-                    height: 36px;
                 }
 
                 #stage-slideover-sidebar nav div.overflow-hidden > h2 {
