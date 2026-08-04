@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.32.5
+// @version      5.32.6
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.32.5 - Read Aloud Speedster             *
+*                    Version: 5.32.6 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1509,7 +1509,7 @@
                 nav li:has(a[data-testid="create-new-chat-button"]),
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 #sidebar-header .header-wordmark span.text-token-text-tertiary,
-                nav > div:has(use[href*="#623957"]):not(:has(button)) div.min-w-0 {
+                nav > div:has(> [aria-haspopup="menu"]) div.min-w-0 {
                     display: none;
                 }
 
@@ -1522,8 +1522,8 @@
                 nav > a[href="/scheduled"],
                 nav > a[href="/plugins"],
                 nav > a[href="/library"],
-                nav > div:has(use[href*="#623957"]):not(:has(button)),
-                nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
+                nav > div:has(> [aria-haspopup="menu"]),
+                nav > div:has(> [aria-haspopup="menu"]) > div,
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     margin: 0;
                     z-index: 31;
@@ -1534,7 +1534,7 @@
                 }
 
                 nav > a[href="/library"],
-                nav > div:has(use[href*="#623957"]):not(:has(button)) > div,
+                nav > div:has(> [aria-haspopup="menu"]) > div,
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     border: none;
                 }
@@ -1584,9 +1584,7 @@
                     }
                 }
 
-                nav > a[href="/scheduled"]:hover,
-                nav > a[href="/plugins"]:hover,
-                nav:has( div[class*="sidebar-section-margin-top"]:hover use[href*="#623957"], > a:hover use:is([href*="#3c07d3"], [href*="#1bb8a5"]) ) > a:has(use:is([href*="#3c07d3"], [href*="#1bb8a5"])) {
+                nav:has(> div > [data-sidebar-item="true"][aria-haspopup="menu"]:hover, > a:is([href="/scheduled"], [href="/plugins"]):hover) > a:is([href="/scheduled"], [href="/plugins"]) {
                     display: flex;
                 }
 
@@ -1594,7 +1592,7 @@
                 nav > a[href="/plugins"]:hover,
                 nav > a[href="/library"]:hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
-                nav > div:has(use[href*="#623957"]):not(:has(button)) > div:hover,
+                nav > div:has(> [aria-haspopup="menu"]) > div:hover,
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"]:hover {
                     color: var(--text-primary);
                 }
@@ -1604,13 +1602,13 @@
                     z-index: 17;
                 }
 
-                nav > div:has(use[href*="#623957"]):not(:has(button)) {
+                nav > div:has(> [aria-haspopup="menu"]) {
                     position: fixed;
                     transform: translate(175px, 8px);
                     padding: 0;
                 }
 
-                nav > div:has(use[href*="#623957"]):not(:has(button)) > div {
+                nav > div:has(> [aria-haspopup="menu"]) > div {
                     padding: 0 7px 0 7px;
                     width: 36px !important;
                     max-height: unset !important;
@@ -1970,6 +1968,13 @@
         if (audio.preservesPitch !== true) audio.preservesPitch = true;
         if (audio.mozPreservesPitch !== true) audio.mozPreservesPitch = true;
         if (audio.webkitPreservesPitch !== true) audio.webkitPreservesPitch = true;
+    };
+
+    const nativeAudioPlay = HTMLAudioElement.prototype.play;
+    HTMLAudioElement.prototype.play = function (...args) {
+        configureAudio(this);
+        playingAudio.add(this);
+        return nativeAudioPlay.apply(this, args);
     };
 
     // set playback speed and manage listeners
