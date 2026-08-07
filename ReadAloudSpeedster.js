@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.32.6
+// @version      5.33
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.32.6 - Read Aloud Speedster             *
+*                    Version: 5.33 - Read Aloud Speedster               *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -181,13 +181,13 @@
         }
 
         /* scheduled separator line */
-        html:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\[360px\]) div[data-message-author-role="assistant"] {
+        html:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
             border-top: 1px solid springgreen;
             margin-top: 10px;
             padding-top: 10px;
         }
 
-        html[style*="color-scheme: light"]:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\[360px\]) div[data-message-author-role="assistant"] {
+        html[style*="color-scheme: light"]:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
             border-color: darkviolet;
         }
 
@@ -799,11 +799,27 @@
             z-index: 30;
             box-shadow: none;
             background-color: transparent;
-        }
 
-        div.relative.z-30:has([data-testid="accounts-profile-button"]) .trailing,
-        div.relative.z-30:has([data-testid="accounts-profile-button"]) > div:not(:has(*)) {
-            display: none;
+            .trailing,
+            > div:not(:has(*)) {
+                display: none;
+            }
+
+            section[data-testid="work-usage-sidebar"] {
+                position: fixed;
+                left: 8px;
+                bottom: 6px;
+                margin: 0;
+
+                > div[data-testid="work-usage-sidebar-shell"] {
+                    height: fit-content;
+                    width: 232px;
+
+                    > div[data-testid="work-usage-sidebar-fade"] {
+                        display: none;
+                    }
+                }
+            }
         }
 
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
@@ -815,6 +831,7 @@
             padding-right: 0;
         }
 
+        html.hide-model-picker div[data-radix-popper-content-wrapper],
         html:has(div.z-1.shrink-0.overflow-x-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]),
         html:has(section [data-testid="bar-search-sources-header"]) div.relative.z-30:has([data-testid="accounts-profile-button"]),
         html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]) {
@@ -967,10 +984,10 @@
             border-color: rgba(0, 0, 0, .5);
         }
 
+        html.workmode-enabled #CentAnni-gpt-model-quickbar,
         html:has(main header div.gap-4.ps-4) #CentAnni-gpt-model-quickbar,
         html:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar,
         html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar,
-        #thread-bottom [data-composer-transition-slot="trailing"]:has(span[data-animated-slider-trigger="true"]) #CentAnni-gpt-model-quickbar,
         html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) #CentAnni-gpt-model-quickbar {
             display: none;
         }
@@ -1010,7 +1027,7 @@
                 color: rgb(0, 251, 255);
             }
 
-            #thread-bottom-container:has(#composer-submit-button:has(use[href$="#bbf3a9"])) & {
+            #thread-bottom-container:has(#composer-submit-button[aria-label="Stop answering"]) & {
                 pointer-events: none;
                 user-select: none;
                 opacity: .5;
@@ -1283,7 +1300,8 @@
                 }
 
                 body > picture,
-                .Ejxyja_threadFooterContentFade::after {
+                .Ejxyja_threadFooterContentFade::after,
+                #thread-bottom-container > div.w-full:has(:empty) {
                     display: none;
                 }
 
@@ -1624,86 +1642,85 @@
             enabled: true,
             sheet: null,
             style: `
-                nav .__menu-item-trailing-btn,
-                nav .__menu-item:not(:has(use[href*="#ad5af8"])):not(:has(use[href*="#266724"])) {
-                    min-height: calc(var(--spacing)*8);
-                    max-height:32px;
-                }
+                nav {
+                    .__menu-item-trailing-btn,
+                    .__menu-item:not(:has(use[href*="#ad5af8"])):not(:has(use[href*="#266724"])) {
+                        min-height: calc(var(--spacing)*8);
+                        max-height: 32px;
+                    }
 
-                nav .__menu-item-trailing-btn,
-                .self-stretch {
-                    align-self:center;
-                }
+                    .__menu-item-trailing-btn,
+                    .self-stretch {
+                        align-self: center;
+                    }
 
-                nav .__menu-item-trailing-btn:hover {
-                    background: rgba(255, 255, 255, .1);
-                }
+                    .__menu-item-trailing-btn:hover {
+                        background: rgba(255, 255, 255, .1);
+                    }
 
-                nav .light .__menu-item-trailing-btn:hover {
-                    background: rgba(1, 1, 1, .1);
-                }
+                    .light .__menu-item-trailing-btn:hover {
+                        background: rgba(1, 1, 1, .1);
+                    }
 
-                nav .mt-\\(--sidebar-section-margin-top\\),
-                nav .pt-\\(--sidebar-section-margin-top\\),
-                nav .mt-\\(--sidebar-section-first-margin-top\\),
-                nav .pt-\\(--sidebar-section-first-margin-top\\) {
-                    margin-top: 10px!important;
-                    padding: 0!important;
-                }
+                    .mt-\\(--sidebar-section-margin-top\\),
+                    .pt-\\(--sidebar-section-margin-top\\),
+                    .mt-\\(--sidebar-section-first-margin-top\\),
+                    .pt-\\(--sidebar-section-first-margin-top\\) {
+                        margin-top: 10px !important;
+                        padding: 0 !important;
+                    }
 
-                nav div.group\\/sidebar-expando-section {
-                    margin: 10px 0 0 0;
-                }
+                    div.group\\/sidebar-expando-section {
+                        margin: 10px 0 0 0;
+                    }
 
-                nav div.group\\/sidebar-expando-section::before,
-                nav .mt-\\(--sidebar-section-margin-top\\)::before,
-                nav .pt-\\(--sidebar-section-margin-top\\)::before,
-                nav .mt-\\(--sidebar-section-first-margin-top\\)::before,
-                nav .pt-\\(--sidebar-section-first-margin-top\\)::before {
-                    content: '';
-                    position: absolute;
-                    width: 100%;
-                    height: 1px;
-                    background-color: color(srgb 1 1 1 / 0.17);
-                    display: block;
-                    transform: translateY(-5px);
-                }
+                    div.group\\/sidebar-expando-section::before,
+                    .mt-\\(--sidebar-section-margin-top\\)::before,
+                    .pt-\\(--sidebar-section-margin-top\\)::before,
+                    .mt-\\(--sidebar-section-first-margin-top\\)::before,
+                    .pt-\\(--sidebar-section-first-margin-top\\)::before {
+                        content: '';
+                        position: absolute;
+                        width: 100%;
+                        height: 1px;
+                        background-color: color(srgb 1 1 1 / 0.17);
+                        display: block;
+                        transform: translateY(-5px);
+                    }
 
-                nav .light .mt-\\(--sidebar-section-margin-top\\)::before,
-                nav .light .pt-\\(--sidebar-section-margin-top\\)::before,
-                nav .light .mt-\\(--sidebar-section-first-margin-top\\)::before,
-                nav .light .pt-\\(--sidebar-section-first-margin-top\\)::before {
-                    background-color: color(srgb 0 0 0 / 0.17);
-                }
+                    .light .mt-\\(--sidebar-section-margin-top\\)::before,
+                    .light .pt-\\(--sidebar-section-margin-top\\)::before,
+                    .light .mt-\\(--sidebar-section-first-margin-top\\)::before,
+                    .light .pt-\\(--sidebar-section-first-margin-top\\)::before {
+                        background-color: color(srgb 0 0 0 / 0.17);
+                    }
 
-                nav .tall\\:top-header-height {
-                    margin-top: 0 !important;
-                }
+                    .tall\\:top-header-height {
+                        margin-top: 0 !important;
+                    }
 
-                nav .tall\\:top-header-height::before {
-                    background-color: transparent;
-                }
+                    .tall\\:top-header-height::before {
+                        background-color: transparent;
+                    }
 
-                nav > #history > aside > h2 {
-                    padding:3px 10px 0 10px;
-                }
+                    > #history > aside > h2 {
+                        padding: 3px 10px 0 10px;
+                    }
 
-                .__menu-item:not(:disabled):not([data-disabled]):not([data-no-hover-bg]).hoverable:hover {
-                    background-color: var(--surface-hover);
-                }
+                    .__menu-item:not(:disabled):not([data-disabled]):not([data-no-hover-bg]).hoverable:hover {
+                        background-color: var(--surface-hover);
+                    }
 
-                nav div[aria-label="Expand section"],
-                nav div[aria-label="Collapse section"] {
-                    padding: 0px 10px;
-                     min-height: unset !important;
-                }
+                    div[aria-label="Expand section"],
+                    div[aria-label="Collapse section"] {
+                        padding: 0px 10px;
+                        min-height: unset !important;
+                    }
 
-                #stage-slideover-sidebar nav div.overflow-hidden > h2 {
-                    display: none;
-                }
-
-                nav h2.__menu-label {
-                    font-size: .75rem;
+                    h2.__menu-label {
+                        font-size: .75rem;
+                        text-transform: lowercase;
+                    }
                 }
             `
         },
@@ -1856,24 +1873,19 @@
             sheet: null,
             style: ``
         },
-        modelSelectorMedium: {
-            label: 'Also Include "Medium" Button',
-            enabled: false,
-            sheet: null,
-            style: ``
-        },
         hideModelSelector: {
             label: "Hide Model Selector Unless Hovered",
             enabled: false,
             sheet: null,
             style: `
-                [class~="[grid-area:trailing]"] button.__composer-pill:has(span.truncate > .flex) {
-                    opacity: 0;
-                }
+                html:not(.workmode-enabled) {
+                    div[data-composer-transition-slot="trailing"] button[data-state="closed"] {
+                        opacity: 0;
+                    }
 
-                [class~="[grid-area:trailing]"] button.__composer-pill:hover,
-                [class~="[grid-area:trailing]"] button.__composer-pill[data-state="open"] {
-                    opacity: 1 !important;
+                    div[data-composer-transition-slot="trailing"] button[data-state="closed"]:hover {
+                        opacity: 1 !important;
+                    }
                 }
             `
         },
@@ -1922,20 +1934,17 @@
     let observer = null;
     let playbackSpeed = 1;
     let configPopup = null;
-    let playListener = null;
-    let rateListener = null;
     const playingAudio = new Set();
-    const trackedAudio = new WeakSet();
     let controlsContainer = null;
-    let ignoreRateChange = false;
     let docListenerActive = false;
     let speedDisplayElement = null;
-    let lastUserRate = playbackSpeed;
 
     const MIN_SPEED = 1;
     const MAX_SPEED = 17;
     const DELTA = 0.25;
     let headerOffset = 52;
+
+    const docElement = document.documentElement;
 
     // load CSS settings
     const cssSettingsReady = loadCSSsettings();
@@ -1957,7 +1966,6 @@
     async function initializeSpeed() {
         savedSpeed = await GM.getValue('defaultSpeed', 1);
         playbackSpeed = savedSpeed;
-        lastUserRate = playbackSpeed;
 
         updateSpeedDisplay();
         setPlaybackSpeed();
@@ -1977,36 +1985,9 @@
         return nativeAudioPlay.apply(this, args);
     };
 
-    // set playback speed and manage listeners
+    // set playback speed
     function setPlaybackSpeed() {
         playingAudio.forEach(configureAudio);
-
-        if (!playListener) {
-            playListener = e => {
-                const audio = e.target;
-                if (!(audio instanceof HTMLAudioElement)) return;
-                configureAudio(audio);
-                playingAudio.add(audio);
-
-                if (!trackedAudio.has(audio)) {
-                    trackedAudio.add(audio);
-                    const remove = () => { playingAudio.delete(audio); };
-                    audio.addEventListener('pause', remove);
-                    audio.addEventListener('ended', remove);
-                }
-            };
-            document.addEventListener('play', playListener, true);
-        }
-
-        if (!rateListener) {
-            rateListener = e => {
-                const audio = e.target;
-                if (!(audio instanceof HTMLAudioElement)) return;
-                if (ignoreRateChange) { ignoreRateChange = false; return; }
-                if (audio.playbackRate !== lastUserRate) audio.playbackRate = lastUserRate;
-            };
-            document.addEventListener('ratechange', rateListener, true);
-        }
     }
 
     // config popup
@@ -2097,7 +2078,6 @@
             if (newSpeed >= MIN_SPEED && newSpeed <= MAX_SPEED) {
                 await GM.setValue('defaultSpeed', newSpeed);
                 playbackSpeed = newSpeed;
-                lastUserRate = newSpeed;
                 updateSpeedDisplay();
                 setPlaybackSpeed();
             }
@@ -2126,7 +2106,7 @@
         }
 
         saveButton.classList.add('save-button');
-        saveButton.addEventListener('click', handleSave);
+        saveButton.onclick = handleSave;
 
         configPopup.appendChild(headerWrapper);
         configPopup.appendChild(content);
@@ -2192,17 +2172,13 @@
         plusButton.classList.add('speed-btn', 'plus');
 
         function handleMinus() {
-            ignoreRateChange = true;
             playbackSpeed = Math.max(MIN_SPEED, playbackSpeed - DELTA);
-            lastUserRate = playbackSpeed;
             updateSpeedDisplay();
             setPlaybackSpeed();
         }
 
         function handlePlus() {
-            ignoreRateChange = true;
             playbackSpeed = Math.min(MAX_SPEED, playbackSpeed + DELTA);
-            lastUserRate = playbackSpeed;
             updateSpeedDisplay();
             setPlaybackSpeed();
         }
@@ -2230,9 +2206,9 @@
             }
         }
 
-        minusButton.addEventListener('click', handleMinus);
-        plusButton.addEventListener('click', handlePlus);
-        speedDisplay.addEventListener('click', handleSpeedClick);
+        minusButton.onclick = handleMinus;
+        plusButton.onclick = handlePlus;
+        speedDisplay.onclick = handleSpeedClick;
 
         controlsContainer.appendChild(minusButton);
         controlsContainer.appendChild(speedDisplay);
@@ -2277,7 +2253,7 @@
     let navCleanup = null;
     function navBtns() {
         let targetChatBox, actions, shareBtn;
-        const targetChatSelector = 'main > #thread div.flex.basis-auto.flex-col.grow';
+        const targetChatSelector = 'main #thread > div.composer-parent > div:first-child';
         let targetChat = document.querySelector(targetChatSelector);
         if (features.transparentHeader.enabled) targetChatBox = document.querySelector("#thread-bottom, #thread-bottom-container");
         else {
@@ -2292,7 +2268,7 @@
         const role = features.jumpToChat?.enabled ? 'user' : 'assistant';
         const messageSelector = `:is(article, section):has([data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"]))`;
         const queryMessages = () => {
-            if (!targetChat || !targetChat.isConnected) targetChat = document.querySelector(targetChatSelector);
+            if (!targetChat?.isConnected) targetChat = document.querySelector(targetChatSelector);
             if (!targetChat) return [];
             return Array.from(targetChat.querySelectorAll(messageSelector));
         };
@@ -2444,16 +2420,13 @@
 
     // model configurations
     const modelConfigs = {
-        'gpt-instant': { label: 'Instant' },
-        'gpt-medium': { label: 'Medium' },
-        'gpt-high': { label: 'High' }
+        'gpt-instant': { endpoint: 'first' },
+        'gpt-high': { endpoint: 'last' }
     };
 
     const getIntelligenceButton = (config) => {
-        for (const element of document.querySelectorAll('[data-testid="composer-intelligence-picker-content"] [role="menuitemradio"]')) {
-            if (element.querySelector('span.truncate')?.textContent.trim() === config.label) return element;
-        }
-        return null;
+        const ticks = document.querySelectorAll('[data-testid="composer-intelligence-picker-content"] [data-model-reasoning-effort-slider] [data-selected]');
+        return ticks[config.endpoint === 'first' ? 0 : ticks.length - 1] || null;
     };
 
     // select GPT model
@@ -2509,8 +2482,11 @@
         const check = () => {
             const modelButton = getIntelligenceButton(config);
             if (!modelButton) return false;
+            docElement.classList.add('hide-model-picker');
             simulateClick(modelButton);
+            simulateClick(headerButton);
             cleanup();
+            setTimeout(() => docElement.classList.remove('hide-model-picker'), 320);
             return true;
         };
 
@@ -2559,11 +2535,7 @@
         };
 
         bar.appendChild(mkBtn("Instant", "instant", () => selectModel("gpt-instant")));
-        if (features.modelSelectorMedium.enabled) {
-            bar.appendChild(mkBtn("Medium", "medium", () => selectModel("gpt-medium")));
-            bar.appendChild(mkBtn("High", "high", () => selectModel("gpt-high")));
-        } else bar.appendChild(mkBtn("Thinking", "high", () => selectModel("gpt-high")));
-
+        bar.appendChild(mkBtn("High", "high", () => selectModel("gpt-high")));
         targetContainer.insertBefore(bar, targetContainer.firstChild);
 
         // color code model button
@@ -2574,7 +2546,9 @@
 
                 modelBtnObserver?.disconnect();
                 const markExtendedButton = () => {
-                    const selectedModel = div.querySelector('button')?.textContent?.trim().toLowerCase();
+                    const isWorkMode = !!targetContainer?.closest('form')?.querySelector('[data-placeholder="Work on anything"]') || !!docElement.querySelector('a[data-sidebar-item="true"][data-active][aria-label*=", Work"]') || !!docElement.querySelector('#page-header div.font-medium:last-child button[data-state="on"]');
+                    docElement.classList.toggle('workmode-enabled', isWorkMode);
+                    const selectedModel = div.querySelector('button [class$="_SliderTriggerChatSelectionLabel"]')?.textContent?.trim().toLowerCase();
                     bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
                         button.classList.toggle('CentAnni-active', button.dataset.model === selectedModel);
                     });
@@ -2650,16 +2624,11 @@
     };
 
     let uiRefreshFrame = 0;
-    let audioRefreshPending = false;
     let mainRoot = null;
 
     const refreshUi = () => {
         uiRefreshFrame = 0;
 
-        if (audioRefreshPending) {
-            audioRefreshPending = false;
-            setPlaybackSpeed();
-        }
         if (!controlsContainer?.isConnected) createControlButtons();
         if (features.jumpToChatActive.enabled && !upBtn.isConnected) {
             navCleanup?.();
@@ -2669,8 +2638,7 @@
         if (features.modelSelector.enabled && !modelQuickbar?.isConnected) addModelButtons();
     };
 
-    const scheduleUiRefresh = audioFound => {
-        audioRefreshPending ||= audioFound;
+    const scheduleUiRefresh = () => {
         if (!uiRefreshFrame) uiRefreshFrame = requestAnimationFrame(refreshUi);
     };
 
@@ -2680,24 +2648,14 @@
             if (!mainRoot?.isConnected) mainRoot = document.getElementById('main');
 
             let hasMainMutations = false;
-            let audioFound = false;
             for (const mutation of mutations) {
                 if (!mainRoot?.contains(mutation.target)) continue;
                 hasMainMutations = true;
-
-                if (!playListener) {
-                    for (const node of mutation.addedNodes) {
-                        if (node.nodeName === 'AUDIO' || (node.nodeType === Node.ELEMENT_NODE && node.querySelector('audio'))) {
-                            audioFound = true;
-                            break;
-                        }
-                    }
-                }
-                if (audioFound) break;
+                break;
             }
 
             const uiMissing = !controlsContainer?.isConnected || (features.jumpToChatActive.enabled && !upBtn.isConnected) || (features.readAloudBtn.enabled && !readAloudButton?.isConnected) || (features.modelSelector.enabled && !modelQuickbar?.isConnected);
-            if (hasMainMutations && (audioFound || uiMissing)) scheduleUiRefresh(audioFound);
+            if (hasMainMutations && uiMissing) scheduleUiRefresh();
         });
 
         if (document.body) {
