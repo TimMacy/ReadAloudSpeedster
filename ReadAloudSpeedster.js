@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.33
+// @version      5.33.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.33 - Read Aloud Speedster               *
+*                    Version: 5.33.1 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -413,12 +413,6 @@
         main > #thread form div.group-data-expanded\\/composer\\:mb-0 {
             padding: 10px;
             margin: unset;
-        }
-
-        .bg-token-bg-elevated-primary.w-full,
-        :where(#thread-bottom form div[class*="_prosemirror-parent"]) {
-            max-height: 300px;
-            mask: none;
         }
 
         .group\\/message.gap-1:has(.bg-token-bg-tertiary) {
@@ -1214,6 +1208,7 @@
 
                 :root {
                     --show-dividers: none !important;
+                    --file-tile-radius: 0;
                 }
 
                 .bg-token-border-default {
@@ -1342,24 +1337,23 @@
             enabled: true,
             sheet: null,
             style: `
-                div[data-message-author-role="user"] div.whitespace-pre-wrap {
-                    max-height: 25dvh;
-                    overflow:auto;
-                    padding-right:15px;
-                    overscroll-behavior: contain;
+                div[data-message-author-role="user"] div[data-can-expand][data-collapsed] {
+                    div[data-testid="collapsible-user-message-content"] {
+                        overflow: auto !important;
+                        max-height: 25dvh !important;
+                        mask-image: none !important;
+                        padding-right: 14px;
+                        margin-right: 2px;
+                        overscroll-behavior: contain;
+
+                        + button[aria-expanded="false"] {
+                            display: none !important;
+                        }
+                    }
                 }
 
                 div[data-message-author-role="user"] div.relative {
-                    padding-right:5px;
-                }
-
-                main .bg-token-main-surface-tertiary {
-                    padding-right:0;
-                }
-
-                main .bg-token-main-surface-tertiary .justify-end,
-                main .bg-token-main-surface-tertiary>div.overflow-auto {
-                    padding-right:12px;
+                    padding: 10px 0 10px 16px;
                 }
             `
         },
@@ -1411,8 +1405,8 @@
             enabled: false,
             sheet: null,
             style: `
-                section button[aria-label="Share"],
-                article button[aria-label="Share"] {
+                button[aria-label="Share prompt"],
+                section button[aria-label="Share"] {
                     display: none;
                 }
             `
@@ -1520,7 +1514,7 @@
                 nav > aside a:has(use[href*="#3a5c87"]),
                 nav > aside .-bottom-\\(--sticky-spacer\\),
                 div.pointer-events-none.h-px.w-px.-mb-px,
-                nav > a[href="/library"] div.grow,
+                nav > a[href^="/library"] div.grow,
                 nav > aside > a:has(svg path[d^="M2.6687"]),
                 nav div.trailing:has(svg path[d^="M11.3349"]),
                 nav a.group.__menu-item[href^="/deep-research"],
@@ -1539,7 +1533,7 @@
 
                 nav > a[href="/scheduled"],
                 nav > a[href="/plugins"],
-                nav > a[href="/library"],
+                nav > a[href^="/library"],
                 nav > div:has(> [aria-haspopup="menu"]),
                 nav > div:has(> [aria-haspopup="menu"]) > div,
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
@@ -1551,7 +1545,7 @@
                     color: var(--text-tertiary);
                 }
 
-                nav > a[href="/library"],
+                nav > a[href^="/library"],
                 nav > div:has(> [aria-haspopup="menu"]) > div,
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     border: none;
@@ -1568,7 +1562,7 @@
                     min-width: 20px;
                 }
 
-                nav > a[href="/library"] {
+                nav > a[href^="/library"] {
                     position: fixed;
                     margin: 0;
                     transform: translate(139px, 8px);
@@ -1608,7 +1602,7 @@
 
                 nav > a[href="/scheduled"]:hover,
                 nav > a[href="/plugins"]:hover,
-                nav > a[href="/library"]:hover,
+                nav > a[href^="/library"]:hover,
                 nav button:has(svg path[d^="M6.83496"]):hover,
                 nav > div:has(> [aria-haspopup="menu"]) > div:hover,
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"]:hover {
