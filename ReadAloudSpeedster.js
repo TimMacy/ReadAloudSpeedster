@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.33.1
+// @version      5.33.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.33.1 - Read Aloud Speedster             *
+*                    Version: 5.33.2 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -62,6 +62,11 @@
             --red-700: #911e1b;
             --brand-purple: #ab68ff;
             --yellow-900: #4d3b00;
+
+            --transparent-header-bg: black;
+            &.light {
+                --transparent-header-bg: white;
+            }
         }
 
         /**************************************
@@ -85,17 +90,19 @@
         }
 
         /* copy icon */
-        use[href$="#ce3544"] {
+        button[aria-label^="Copy"] {
             color: darkorange;
             opacity: .9;
         }
 
         /* copied */
-        use[href$="#fa1dbd"] {
+        use[href$="#a31324"],
+        button[aria-label$="copied"] {
             color: springgreen;
         }
 
-        .light use[href$="#fa1dbd"] {
+        .light use[href$="#a31324"],
+        .light button[aria-label$="copied"] {
             color: limegreen;
         }
 
@@ -112,14 +119,12 @@
         }
 
         /* edit in canvas icon */
-        use[href$="#6ef7a4"],
-        use[href$="#6d87e1"] {
+        button[aria-label="Edit message"] {
             color: yellow !important;
             opacity: .8;
         }
 
-        .light use[href$="#6ef7a4"],
-        .light use[href$="#6d87e1"] {
+        .light button[aria-label="Edit message"] {
             color: indigo !important;
             opacity: .8;
         }
@@ -152,16 +157,15 @@
 
         /* hover opacity icons */
         :is(header button[aria-label="Turn on temporary chat"],
-            use[href$="#ce3544"],
-            use[href$="#fa1dbd"],
+            button[aria-label^="Copy"],
+            button[aria-label$="copied"],
             use[href$="#51753c"],
             use[href$="#2126ae"],
-            use[href$="#6ef7a4"],
-            use[href$="#6d87e1"],
             use[href$="#54f145"],
             use[href$="#4944fe"],
             use[href$="#f64f60"],
             use[href$="#f64f60"],
+            button[aria-label="Edit message"],
             section button[aria-label="Share"]):hover {
             opacity: 1;
         }
@@ -392,16 +396,10 @@
         /* chatbox adjustments for GPT5 changes */
         #thread ol div.group.text-token-text-tertiary { text-wrap: nowrap; }
 
-        div.grid.\\[grid-template-areas\\:\\'leading_primary_trailing\\'\\],
-        #thread form.group\\/composer[data-type="unified-composer"] > div > div.grid {
-            grid-template-areas: "header header header" "primary primary primary" "leading footer trailing" !important;
-        }
-
-        #thread-bottom-container form div.cursor-text,
-        form div.cursor-text:not(#thread-bottom-container),
-        div.grid.\\[grid-template-areas\\:\\'leading_primary_trailing\\'\\] {
+        #thread form [data-composer-grid] {
             padding-top: unset;
             padding-bottom: 9px;
+            grid-template-areas: "header header header" "primary primary primary" "leading footer trailing" !important;
         }
 
         div.content-fade:not(#thread-bottom-container),
@@ -817,6 +815,7 @@
         }
 
         [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
+            border: none;
             min-height: 36px;
             padding: 6px 7px;
         }
@@ -939,6 +938,10 @@
         span.text-token-text-tertiary.hidden.shrink-0 {
             display: inline;
             color: rgb(0, 111, 222);;
+        }
+
+        nav li .trailing .bg-theme-submit-btn-bg {
+            background-color: var(--blue-hover);
         }
 
         .CentAnni-gpt-model-btn {
@@ -1098,7 +1101,18 @@
 
         div.relative.z-30:has([data-testid="accounts-profile-button"]) {
             top: 10px;
-            width: 52px;
+            right: 10px;
+            width: fit-content;
+        }
+
+        [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
+            margin: 0;
+            width: 24px;
+            border: none;
+            padding: 0 6px;
+            min-height: 36px;
+            justify-content: center;
+            box-sizing: content-box;
         }
 
         #page-header,
@@ -1250,6 +1264,7 @@
                 :root {
                     --sidebar-surface-primary: #181818 !important;
                     --bg-secondary-surface: #181818 !important;
+                    --transparent-header-bg: #212121;
                 }
 
                 .bg-token-main-surface-primary,
@@ -1301,10 +1316,15 @@
                 }
 
                 body,
+                .bg-surface-primary,
                 .content-fade::after,
                 #thread-bottom-container,
                 div[role="dialog"].bg-token-bg-primary {
                     background-color: #212121;
+                }
+
+                .bg-surface-primary\\! {
+                    --main-surface-primary: #212121;
                 }
 
                 #thread-bottom-container,
@@ -1342,18 +1362,14 @@
                         overflow: auto !important;
                         max-height: 25dvh !important;
                         mask-image: none !important;
-                        padding-right: 14px;
-                        margin-right: 2px;
+                        padding-right: 16px;
+                        margin-right: -16px;
                         overscroll-behavior: contain;
 
                         + button[aria-expanded="false"] {
                             display: none !important;
                         }
                     }
-                }
-
-                div[data-message-author-role="user"] div.relative {
-                    padding: 10px 0 10px 16px;
                 }
             `
         },
@@ -1772,7 +1788,7 @@
             sheet: null,
             style: `
                 #page-header {
-                    background: linear-gradient(to top, transparent, #212121 51px) !important;
+                    background: linear-gradient(to top, transparent, var(--transparent-header-bg) 51px) !important;
                     box-shadow: none;
                     pointer-events: none;
 
@@ -1827,8 +1843,8 @@
                 button[aria-label="Open conversation options"] {
                     padding: 0;
                     margin: 0;
-                    width: 38px;
-                    height: 38px;
+                    width: 36px;
+                    height: 36px;
                     font-size: 0;
                 }
 
