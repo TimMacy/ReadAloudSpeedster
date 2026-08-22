@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.33.2
+// @version      5.33.3
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.33.2 - Read Aloud Speedster             *
+*                    Version: 5.33.3 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -38,6 +38,10 @@
         **************************************/
 
         :root {
+            --blue: rgb(1 105 204);
+            --blue-hover: rgb(0 111 222);
+            --black-bg: #181818;
+
             --user-chat-width: 100%; /* original 70% */
             --sidebar-width: 260px;
             --sidebar-section-margin-top: 1.25rem;
@@ -923,21 +927,21 @@
         }
 
         .CentAnni-gpt-model-btn.CentAnni-active {
-            border-color: rgb(1, 105, 204);
+            border-color: var(--blue);
 
             &:hover {
-                border-color: rgb(0, 111, 222);
+                border-color: var(--blue-hover);
             }
         }
 
-        #page-header .bg-token-bg-primary,
-        [aria-label="Directory type"] [aria-current="page"] {
-            border: 1px solid rgb(0, 111, 222);
+        [aria-label="Directory type"] [aria-current="page"],
+        #page-header .bg-token-bg-primary[data-tpp-toggle-highlight="true"] {
+            border: 1px solid var(--blue-hover);
         }
 
         span.text-token-text-tertiary.hidden.shrink-0 {
             display: inline;
-            color: rgb(0, 111, 222);;
+            color: var(--blue-hover);;
         }
 
         nav li .trailing .bg-theme-submit-btn-bg {
@@ -1262,14 +1266,14 @@
             sheet: null,
             style: `
                 :root {
-                    --sidebar-surface-primary: #181818 !important;
-                    --bg-secondary-surface: #181818 !important;
+                    --sidebar-surface-primary: var(--black-bg) !important;
+                    --bg-secondary-surface: var(--black-bg) !important;
                     --transparent-header-bg: #212121;
                 }
 
                 .bg-token-main-surface-primary,
                 .bg-token-bg-elevated-secondary {
-                    background: #181818 !important;
+                    background: var(--black-bg) !important;
                 }
 
                 div[slot="content"].bg-token-main-surface-primary {
@@ -1590,8 +1594,9 @@
                     display: none;
                     position: fixed;
                     width: fit-content;
-                    transform: translate(175px, 45px);
+                    transform: translate(118px, 45px);
                     justify-content: center;
+                    flex-direction: row-reverse;
                     background-color: var(--sidebar-surface-primary);
 
                     &:hover {
@@ -1603,8 +1608,9 @@
                     display: none;
                     position: fixed;
                     width: fit-content;
-                    transform: translate(175px, 82px);
+                    transform: translate(96px, 82px);
                     justify-content: center;
+                    flex-direction: row-reverse;
                     background-color: var(--sidebar-surface-primary);
 
                     &:hover {
