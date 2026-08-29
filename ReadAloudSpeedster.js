@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.33.3
+// @version      5.33.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.33.3 - Read Aloud Speedster             *
+*                    Version: 5.33.4 - Read Aloud Speedster             *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -239,6 +239,7 @@
         }
 
         /* change width of chat containers */
+        #thread-bottom ~ div,
         #thread-bottom-container #thread-bottom,
         div.text-base.my-auto:has(.bg-token-main-surface-tertiary),
         div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)),
@@ -2564,7 +2565,7 @@
                 const markExtendedButton = () => {
                     const isWorkMode = !!targetContainer?.closest('form')?.querySelector('[data-placeholder="Work on anything"]') || !!docElement.querySelector('a[data-sidebar-item="true"][data-active][aria-label*=", Work"]') || !!docElement.querySelector('#page-header div.font-medium:last-child button[data-state="on"]');
                     docElement.classList.toggle('workmode-enabled', isWorkMode);
-                    const selectedModel = div.querySelector('button [class$="_SliderTriggerChatSelectionLabel"]')?.textContent?.trim().toLowerCase();
+                    const selectedModel = div.querySelector('button.__composer-pill')?.textContent?.trim().toLowerCase();
                     bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
                         button.classList.toggle('CentAnni-active', button.dataset.model === selectedModel);
                     });
