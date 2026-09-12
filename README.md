@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-5.33.4-white.svg" alt="Version: 5.33.4"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-6.0-white.svg" alt="Version: 6.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 <a href="#"><picture><source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/d7606cb8-1f8e-43a8-b906-db6edbeab075"/><img align="left" width="120px" alt="Read Aloud Speedster Logo" src="https://github.com/user-attachments/assets/13149deb-3738-49b7-b9e3-69644f77527e"/></picture></a>
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses and bold text are color-coded.
@@ -32,6 +32,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **6.0**: adjustments for DOM changes; removed "Allow for Resizing the Text Field Vertically" as it is now natively supported; "Add Quick Model Selector Buttons" now supports Work
 - **5.33.4**: adjustments for DOM changes
 - **5.33.3**: adjustments for DOM changes
 - **5.33.2**: adjustments for DOM changes; Transparent Header fix for dark and light Appearance
@@ -51,11 +52,11 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **5.27.4**: adjustments for DOM changes and improvements
 - **5.27.1**: adjustments for DOM changes
 - **5.27**: new feature: "Transparent Header"
-- **5.26**: adjustments for the latest DOM changes; new feature: "Blur chats that don't include '⏿'"; removed "Hide 'Dictate' Button" as it's natively supported now
+- **5.26**: adjustments for the latest DOM changes; new feature: "Blur chats that don't include '⏿'"; removed "Hide 'Dictate' Button" as it is now natively supported
 - **5.25**: bug fixes and improvements
 - **5.24.2**: adjustments for DOM changes; "Darker Background for Header and Chatbox" now also keeps the gray backgrounds
 - **5.24**: added active state indicator for "Model Selector Buttons"; new feature: "Hide Model Selector Unless Hovered"
-- **5.23**: adjustments for DOM changes; removed "Send Message with Shift+Enter instead of Enter" as it's natively supported now
+- **5.23**: adjustments for DOM changes; removed "Send Message with Shift+Enter instead of Enter" as it is now natively supported
 - **5.22.1**: adjustments for DOM changes
 - **5.22**: adjustments for DOM changes
 - **5.21.1**: adjustments for DOM changes
