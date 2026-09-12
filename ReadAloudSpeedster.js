@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      5.33.4
+// @version      6.0
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 5.33.4 - Read Aloud Speedster             *
+*                    Version: 6.0 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -724,6 +724,44 @@
             cursor: pointer;
         }
 
+        .speed-control-config-popup .work-model-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+            padding-left: 23px;
+        }
+
+        .speed-control-config-popup .work-model-settings[hidden] {
+            display: none;
+        }
+
+        .speed-control-config-popup .work-model-row {
+            display: grid;
+            grid-template-columns: auto 1fr 1fr;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .speed-control-config-popup .work-model-settings select {
+            min-width: 0;
+            padding: 4px;
+            cursor: pointer;
+            border: 1px solid var(--border-default);
+            border-radius: 3px;
+            background: var(--main-surface-primary);
+            color: var(--text-primary);
+        }
+
+        .speed-control-config-popup .work-model-settings select:disabled {
+            opacity: .4;
+            cursor: not-allowed;
+        }
+
+        .speed-control-config-popup .work-model-hint {
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
         .speed-control-config-popup .speed-label {
             user-select: none;
             pointer-events: none;
@@ -838,6 +876,10 @@
             pointer-events: none;
         }
 
+        html.hide-model-picker div[data-composer-transition-slot="trailing"] button.__composer-pill {
+            background: transparent;
+        }
+
         html:has(section [data-testid="bar-search-sources-header"]) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
             margin-inline-end: calc(var(--spacing)*3);
         }
@@ -936,7 +978,8 @@
         }
 
         [aria-label="Directory type"] [aria-current="page"],
-        #page-header .bg-token-bg-primary[data-tpp-toggle-highlight="true"] {
+        #page-header .bg-token-bg-primary[data-tpp-toggle-highlight="true"],
+        #page-header [data-tpp-toggle-highlight="true"] .bg-token-bg-primary.rounded-full {
             border: 1px solid var(--blue-hover);
         }
 
@@ -951,12 +994,13 @@
 
         .CentAnni-gpt-model-btn {
             font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
-            padding: 6px 10px;
+            padding: 8px 10px;
             border-radius: 3px;
             border: 1px solid rgba(255, 255, 255, .1);
             background: rgba(255, 255, 255, .08);
             color: #fff;
             cursor: pointer;
+            text-box: trim-both cap alphabetic;
             transition: background-color .4s ease, border-color .4s ease;
         }
 
@@ -986,7 +1030,7 @@
             border-color: rgba(0, 0, 0, .5);
         }
 
-        html.workmode-enabled #CentAnni-gpt-model-quickbar,
+        #CentAnni-gpt-model-quickbar:empty,
         html:has(main header div.gap-4.ps-4) #CentAnni-gpt-model-quickbar,
         html:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar,
         html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar,
@@ -1272,6 +1316,10 @@
                     --transparent-header-bg: #212121;
                 }
 
+                .dark\\:\\[--code-block-surface\\:var\\(--composer-surface-primary\\)\\] {
+                    --code-block-surface: #111111;
+                }
+
                 .bg-token-main-surface-primary,
                 .bg-token-bg-elevated-secondary {
                     background: var(--black-bg) !important;
@@ -1324,7 +1372,8 @@
                 .bg-surface-primary,
                 .content-fade::after,
                 #thread-bottom-container,
-                div[role="dialog"].bg-token-bg-primary {
+                div[role="dialog"].bg-token-bg-primary,
+                .bg-token-bg-primary[data-page-table-background="true"] {
                     background-color: #212121;
                 }
 
@@ -1387,19 +1436,6 @@
                 li.list-none a > div:not(:has([aria-label*="⏿"])):first-child,
                 #thread:has(button[aria-label^="Edit the title of"]:not([aria-label*="⏿"])) :is(ol, .justify-between > .gap-1\\.5) {
                     filter: blur(5px);
-                }
-            `
-        },
-        resizeHandle: {
-            label: "Allow for Resizing the Text Field Vertically",
-            enabled: false,
-            sheet: null,
-            style: `
-                :where(form div[class*="_prosemirror-parent"]) {
-                    resize: vertical !important;
-                    max-height: 80svh !important;
-                    overflow: auto !important;
-                    padding-right: 7px;
                 }
             `
         },
@@ -1542,14 +1578,15 @@
                 nav li:has(a[data-testid="create-new-chat-button"]),
                 #stage-slideover-sidebar nav > aside div.absolute.inset-0,
                 #sidebar-header .header-wordmark span.text-token-text-tertiary,
-                nav > div:has(> [aria-haspopup="menu"]) div.min-w-0 {
+                nav > div:has(> [aria-haspopup="menu"]) div.min-w-0,
+                nav .bg-token-sidebar-surface-primary div[aria-hidden="true"].pointer-events-none {
                     display: none;
                 }
 
                 .tall\\:top-header-height {
                     height: 0;
                     padding: 0;
-                    margin-bottom: -10px;
+                    margin-bottom: -20px;
                 }
 
                 nav > a[href="/scheduled"],
@@ -1557,6 +1594,7 @@
                 nav > a[href^="/library"],
                 nav > div:has(> [aria-haspopup="menu"]),
                 nav > div:has(> [aria-haspopup="menu"]) > div,
+                nav .bg-token-sidebar-surface-primary a[href="/images"],
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     margin: 0;
                     z-index: 31;
@@ -1605,6 +1643,20 @@
                     }
                 }
 
+                nav .bg-token-sidebar-surface-primary a[href="/images"] {
+                    display: none;
+                    position: fixed;
+                    width: fit-content;
+                    transform: translate(56px, 66px);
+                    justify-content: center;
+                    flex-direction: row-reverse;
+                    background-color: var(--sidebar-surface-primary);
+
+                    &:hover {
+                        background-color: #3a3a3a !important;
+                    }
+                }
+
                 nav > a[href="/scheduled"] {
                     display: none;
                     position: fixed;
@@ -1619,10 +1671,11 @@
                     }
                 }
 
-                nav:has(> div > [data-sidebar-item="true"][aria-haspopup="menu"]:hover, > a:is([href="/scheduled"], [href="/plugins"]):hover) > a:is([href="/scheduled"], [href="/plugins"]) {
+                nav:has( > div > [data-sidebar-item="true"][aria-haspopup="menu"]:hover, a:is([href="/scheduled"], [href="/plugins"], [href="/images"]):hover ) a:is([href="/scheduled"], [href="/plugins"], [href="/images"]) {
                     display: flex;
                 }
 
+                nav .bg-token-sidebar-surface-primary a[href="/images"]:hover,
                 nav > a[href="/scheduled"]:hover,
                 nav > a[href="/plugins"]:hover,
                 nav > a[href^="/library"]:hover,
@@ -1884,6 +1937,12 @@
             sheet: null,
             style: ``
         },
+        readAloudBtn: {
+            label: "Add Button to Read Aloud Last Message",
+            enabled: true,
+            sheet: null,
+            style: ``
+        },
         modelSelector: {
             label: "Add Quick Model Selector Buttons",
             enabled: true,
@@ -1895,23 +1954,19 @@
             enabled: false,
             sheet: null,
             style: `
-                html:not(.workmode-enabled) {
-                    div[data-composer-transition-slot="trailing"] button[data-state="closed"] {
-                        opacity: 0;
-                    }
+                div[data-composer-transition-slot="trailing"] button.__composer-pill {
+                    opacity: 0;
+                }
 
-                    div[data-composer-transition-slot="trailing"] button[data-state="closed"]:hover {
-                        opacity: 1 !important;
-                    }
+                div[data-composer-transition-slot="trailing"] button.__composer-pill:hover {
+                    opacity: 1 !important;
+                }
+
+                html.hide-model-picker div[data-composer-transition-slot="trailing"] button.__composer-pill {
+                    opacity: 0 !important;
                 }
             `
-        },
-        readAloudBtn: {
-            label: "Add Button to Read Aloud Last Message",
-            enabled: true,
-            sheet: null,
-            style: ``
-        },
+        }
     };
 
     function applyFeature(key) {
@@ -1929,6 +1984,16 @@
         }
     }
 
+    const workModels = ['Luna', 'Terra', 'Sol', 'Astra'];
+    const thinkingModes = ['Light', 'Medium', 'High', 'Extra High', 'Max'];
+    let workModelButtons = [
+        { model: 'Luna', index: 2 },
+        { model: 'Sol', index: 2 },
+        { model: 'Astra', index: 0 },
+        { model: 'Astra', index: 2 },
+        { model: '', index: 0 }
+    ];
+
     // load feature settings from config or use defaults
     const loadCSSsettings = async () => {
         // apply defaults immediately
@@ -1944,6 +2009,7 @@
             }
         }
 
+        workModelButtons = await GM.getValue('workModelButtons', workModelButtons);
         headerOffset = features.transparentHeader.enabled ? 26 : 52;
     };
 
@@ -2062,6 +2128,7 @@
 
         // build settings interface
         const toggleElements = [];
+        const workModelElements = [];
         const createElement = (tag, className, attributes = {}) => {
             const element = document.createElement(tag);
             if (className) element.className = className;
@@ -2084,6 +2151,29 @@
             container.append(checkbox, label);
             toggleElements.push({ key, checkbox });
             content.appendChild(container);
+
+            if (key === 'modelSelector') {
+                const settings = createElement('div', 'work-model-settings', { hidden: !checkbox.checked });
+                settings.appendChild(createElement('span', '', { textContent: 'Work Buttons' }));
+                settings.appendChild(createElement('span', 'work-model-hint', { textContent: 'Choose None to hide a button.' }));
+                workModelButtons.forEach((config, index) => {
+                    const row = createElement('div', 'work-model-row');
+                    const model = createElement('select', '', { id: `workModel${index}` });
+                    const thinking = createElement('select', '', { disabled: !config.model });
+                    model.setAttribute('aria-label', `Work button ${index + 1} model`);
+                    thinking.setAttribute('aria-label', `Work button ${index + 1} thinking`);
+                    ['', ...workModels].forEach(value => model.appendChild(createElement('option', '', { value, textContent: value || 'None' })));
+                    thinkingModes.forEach((value, index) => thinking.appendChild(createElement('option', '', { value: index, textContent: value })));
+                    model.value = config.model;
+                    thinking.value = config.index;
+                    model.onchange = () => { thinking.disabled = !model.value; };
+                    row.append(createElement('label', '', { textContent: `Button ${index + 1}`, htmlFor: model.id }), model, thinking);
+                    settings.appendChild(row);
+                    workModelElements.push({ model, thinking });
+                });
+                checkbox.onchange = () => { settings.hidden = !checkbox.checked; };
+                content.appendChild(settings);
+            }
         });
 
         // save button
@@ -2100,6 +2190,7 @@
             }
 
             let navChanged = false;
+            let modelChanged = false;
             for (const { key, checkbox } of toggleElements) {
                 if (features[key].enabled !== checkbox.checked) {
                     features[key].enabled = checkbox.checked;
@@ -2107,7 +2198,22 @@
                     applyFeature(key);
                     if (key === 'transparentHeader') headerOffset = features[key].enabled ? 26 : 52;
                     if (key === 'jumpToChat' || key === 'transparentHeader') navChanged = true;
+                    if (key === 'modelSelector') modelChanged = true;
                 }
+            }
+
+            const models = workModelElements.map(({ model, thinking }) => ({ model: model.value, index: Number(thinking.value) }));
+            if (JSON.stringify(models) !== JSON.stringify(workModelButtons)) {
+                workModelButtons = models;
+                await GM.setValue('workModelButtons', workModelButtons);
+                modelChanged = true;
+            }
+
+            if (modelChanged) {
+                modelBtnObserver?.disconnect();
+                modelQuickbar?.remove();
+                modelQuickbar = null;
+                if (features.modelSelector.enabled) addModelButtons();
             }
 
             if (navChanged) {
@@ -2441,14 +2547,19 @@
         'gpt-high': { endpoint: 'last' }
     };
 
+    workModels.forEach(model => thinkingModes.forEach((thinking, index) => {
+        modelConfigs[`${model}-${index}`] = { model, index };
+    }));
+
     const getIntelligenceButton = (config) => {
         const ticks = document.querySelectorAll('[data-testid="composer-intelligence-picker-content"] [data-model-reasoning-effort-slider] [data-selected]');
-        return ticks[config.endpoint === 'first' ? 0 : ticks.length - 1] || null;
+        return ticks[config.index ?? (config.endpoint === 'first' ? 0 : ticks.length - 1)] || null;
     };
 
     // select GPT model
-    let modelObserver, modelCheckFrame, timeout;
+    let modelObserver, modelCheckFrame, timeout, modelHideTimeout;
     const selectModel = (modelType) => {
+        clearTimeout(modelHideTimeout);
         modelObserver?.disconnect();
         modelObserver = null;
         if (modelCheckFrame) {
@@ -2474,6 +2585,7 @@
                 clearTimeout(timeout);
                 timeout = 0;
             }
+            modelHideTimeout = setTimeout(() => docElement.classList.remove('hide-model-picker'), 320);
         };
 
         const simulateClick = (element) => {
@@ -2497,20 +2609,32 @@
         };
 
         const check = () => {
+            if (config.model) {
+                const panel = document.querySelector('[data-testid="composer-model-picker-slider-advanced-view"]');
+                const modelButton = Array.from(panel?.querySelectorAll('[role="menuitemradio"]') || []).find(button => button.textContent.trim().split(/\s+/).pop() === config.model);
+                if (!modelButton) return false;
+                if (modelButton.getAttribute('aria-checked') !== 'true' || panel.getAttribute('data-active') === 'true') {
+                    if (panel.getAttribute('data-active') === 'true') simulateClick(modelButton);
+                    else {
+                        const selector = document.querySelector('[data-testid="composer-intelligence-picker-content"] [aria-label="Select model"]');
+                        if (selector?.getAttribute('aria-expanded') === 'false') simulateClick(selector);
+                    }
+                    return false;
+                }
+            }
             const modelButton = getIntelligenceButton(config);
             if (!modelButton) return false;
-            docElement.classList.add('hide-model-picker');
             simulateClick(modelButton);
             simulateClick(headerButton);
             cleanup();
-            setTimeout(() => docElement.classList.remove('hide-model-picker'), 320);
             return true;
         };
 
         // open menu selector panel
         const headerButton = document.querySelector('[class~="[grid-area:trailing]"] button.__composer-pill');
         if (!headerButton) return;
-        simulateClick(headerButton);
+        docElement.classList.add('hide-model-picker');
+        if (headerButton.getAttribute('aria-expanded') !== 'true') simulateClick(headerButton);
         if (check()) return;
 
         // model observer
@@ -2522,7 +2646,7 @@
                 });
             }
         });
-        modelObserver.observe(document.body, { childList: true, subtree: true });
+        modelObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-checked', 'data-active'] });
         timeout = setTimeout(cleanup, 10000);
         check();
     };
@@ -2551,8 +2675,6 @@
             return b;
         };
 
-        bar.appendChild(mkBtn("Instant", "instant", () => selectModel("gpt-instant")));
-        bar.appendChild(mkBtn("High", "high", () => selectModel("gpt-high")));
         targetContainer.insertBefore(bar, targetContainer.firstChild);
 
         // color code model button
@@ -2565,7 +2687,13 @@
                 const markExtendedButton = () => {
                     const isWorkMode = !!targetContainer?.closest('form')?.querySelector('[data-placeholder="Work on anything"]') || !!docElement.querySelector('a[data-sidebar-item="true"][data-active][aria-label*=", Work"]') || !!docElement.querySelector('#page-header div.font-medium:last-child button[data-state="on"]');
                     docElement.classList.toggle('workmode-enabled', isWorkMode);
-                    const selectedModel = div.querySelector('button.__composer-pill')?.textContent?.trim().toLowerCase();
+                    const mode = isWorkMode ? 'work' : 'chat';
+                    if (bar.dataset.mode !== mode) {
+                        const models = isWorkMode ? workModelButtons.filter(config => config.model).map(config => [`${config.model} ${thinkingModes[config.index]}`, `${config.model}-${config.index}`]) : [['Instant', 'gpt-instant'], ['High', 'gpt-high']];
+                        bar.replaceChildren(...models.map(([label, model]) => mkBtn(label, label.toLowerCase().replace(/\s/g, ''), () => selectModel(model))));
+                        bar.dataset.mode = mode;
+                    }
+                    const selectedModel = div.querySelector('button.__composer-pill')?.textContent?.trim().toLowerCase().replace(/^gpt-[\d.]+\s*/, '').replace(/\s/g, '');
                     bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
                         button.classList.toggle('CentAnni-active', button.dataset.model === selectedModel);
                     });
