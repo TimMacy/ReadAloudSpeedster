@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.0
+// @version      6.0.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.0 - Read Aloud Speedster                *
+*                    Version: 6.0.1 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -209,11 +209,17 @@
         }
 
         /* red delete color */
-        div[data-testid="delete-chat-menu-item"] {
-            color: #e02e2a !important;
+        div[data-testid="delete-chat-menu-item"],
+        [data-radix-popper-content-wrapper] :is([role="menuitem"].interactive-label-danger-soft, [role="menuitem"].text-token-text-status-error) {
+            --text-status-error: var(--red-500);
+            --red-75: var(--red-500);
+            color: var(--red-500) !important;
         }
 
-        div[data-testid="delete-chat-menu-item"]:hover {
+        div[data-testid="delete-chat-menu-item"]:hover,
+        [data-radix-popper-content-wrapper] :is([role="menuitem"].interactive-label-danger-soft, [role="menuitem"].text-token-text-status-error):hover {
+            --red-75: white;
+            --text-status-error: white;
             color: white !important;
             background: rgba(255, 0, 0, .5) !important;
         }
@@ -225,11 +231,11 @@
         }
 
         /* pin and unpin color */
-        svg:has(use[href*="#a8c6bd"]),
-        div[role="menuitem"]:has(use[href*="#23d2ff"]),
-        div[role="menuitem"]:has(use[href*="#946e20"]),
-        div[role="menuitem"]:has(use[href*="#13322a"]) {
-            color: #e25507;
+        use[href$="pin-sm"],
+        use[href$="#23d2ff"],
+        use[href$="#13322a"],
+        use[href$="pin-filled"] {
+            color: darkorange;
         }
 
         /* select color */
@@ -1589,12 +1595,12 @@
                     margin-bottom: -20px;
                 }
 
+                nav > a[href^="/sites"],
                 nav > a[href="/scheduled"],
                 nav > a[href="/plugins"],
                 nav > a[href^="/library"],
                 nav > div:has(> [aria-haspopup="menu"]),
                 nav > div:has(> [aria-haspopup="menu"]) > div,
-                nav .bg-token-sidebar-surface-primary a[href="/images"],
                 nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
                     margin: 0;
                     z-index: 31;
@@ -1633,7 +1639,8 @@
                     display: none;
                     position: fixed;
                     width: fit-content;
-                    transform: translate(118px, 45px);
+                    left: 211px;
+                    transform: translate(-100%, 45px);
                     justify-content: center;
                     flex-direction: row-reverse;
                     background-color: var(--sidebar-surface-primary);
@@ -1643,11 +1650,12 @@
                     }
                 }
 
-                nav .bg-token-sidebar-surface-primary a[href="/images"] {
+                nav > a[href^="/sites"] {
                     display: none;
                     position: fixed;
                     width: fit-content;
-                    transform: translate(56px, 66px);
+                    left: 211px;
+                    transform: translate(-100%, 119px);
                     justify-content: center;
                     flex-direction: row-reverse;
                     background-color: var(--sidebar-surface-primary);
@@ -1661,7 +1669,8 @@
                     display: none;
                     position: fixed;
                     width: fit-content;
-                    transform: translate(96px, 82px);
+                    left: 211px;
+                    transform: translate(-100%, 82px);
                     justify-content: center;
                     flex-direction: row-reverse;
                     background-color: var(--sidebar-surface-primary);
@@ -1671,11 +1680,11 @@
                     }
                 }
 
-                nav:has( > div > [data-sidebar-item="true"][aria-haspopup="menu"]:hover, a:is([href="/scheduled"], [href="/plugins"], [href="/images"]):hover ) a:is([href="/scheduled"], [href="/plugins"], [href="/images"]) {
+                nav:has( > div > [data-sidebar-item="true"][aria-haspopup="menu"]:hover, a:is([href="/scheduled"], [href="/plugins"], [href="/sites"]):hover ) a:is([href="/scheduled"], [href="/plugins"], [href="/sites"]) {
                     display: flex;
                 }
 
-                nav .bg-token-sidebar-surface-primary a[href="/images"]:hover,
+                nav > a[href^="/sites"]:hover,
                 nav > a[href="/scheduled"]:hover,
                 nav > a[href="/plugins"]:hover,
                 nav > a[href^="/library"]:hover,
