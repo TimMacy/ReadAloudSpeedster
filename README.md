@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-6.0.1-white.svg" alt="Version: 6.0.1"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-6.1-white.svg" alt="Version: 6.1"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 <a href="#"><picture><source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/d7606cb8-1f8e-43a8-b906-db6edbeab075"/><img align="left" width="120px" alt="Read Aloud Speedster Logo" src="https://github.com/user-attachments/assets/13149deb-3738-49b7-b9e3-69644f77527e"/></picture></a>
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses and bold text are color-coded.
@@ -12,9 +12,8 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **Adjust On-the-Fly**: Easily adjust playback speed from 1x to 17x in 0.25x increments using the plus/minus buttons.
 - **Color-Coded Icons**: Copy, thumbs up/down, read aloud/stop, and edit buttons are assigned specific colors.
 - **Highlight Color**: Bold text is green in dark mode and violet in light mode.
-- **Blur chats that don't include "⏿"**: Conversations and projects without "⏿" in their names are blurred. Projects whose names include "⏿" will keep all their chats unblurred.
 - **Customizable**: Clicking the speed display opens a settings menu for saving a default speed and toggling various interface options.
-   - Square Design, Darker Background for Header and Chat Window, Keep Icons Visible, No Icon Animation, Hide Plus/Pro Avatar icon, Hide "View Plans" and "Get Plus", Hide "Get Pro" Button, Hide "Dictate" Button, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" Text, Codex/Sora and "New project"/"See more" Buttons Next to Each Other, Compact Search and Library Buttons, Compact Sidebar with Separators, Justify Text, Remove Focus Outlines, Navigate Between Messages, User Message Height Limiter, Send Message with Shift+Enter instead of Enter, Quick Model Selector Buttons, and Custom Avatar.
+   - Square Design, Darker Background for Sidebar and Chatbox, Keep Icons Visible, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" Text, Compact Sidebar with Separators, Keep Projects on Top Under Pinned, Message Navigation Arrows, Hide Share Icon Under Messages, Justify Text, Remove Focus Outlines, Navigate Between Messages, Make User Message Scrollable, and Quick Model Selector Buttons.
 
 <p align="center"><img width="100%" alt="Read Aloud Speedster by Tim Macy" src="https://github.com/user-attachments/assets/b51bb846-2829-484a-91aa-bd4ead3d94f1" /></p>
 
@@ -32,6 +31,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **6.1**: adjustments for Appearance/Visual style changes #5
 - **6.0.1**: adjustments for DOM changes
 - **6.0**: adjustments for DOM changes; removed "Allow for Resizing the Text Field Vertically" as it is now natively supported; "Add Quick Model Selector Buttons" now supports Work
 - **5.33.4**: adjustments for DOM changes
