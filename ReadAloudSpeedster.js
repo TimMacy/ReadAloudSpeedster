@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.0.1
+// @version      6.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.0.1 - Read Aloud Speedster              *
+*                    Version: 6.1 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -29,43 +29,15 @@
 
 (function () {
     'use strict';
-    const className = "sm:mt-5";
-    const escapedClassName = CSS.escape(className);
     const styleSheet = document.createElement('style');
     styleSheet.textContent = `
-        /**************************************
-                 default root settings
-        **************************************/
-
         :root {
-            --blue: rgb(1 105 204);
-            --blue-hover: rgb(0 111 222);
-            --black-bg: #181818;
-
-            --user-chat-width: 100%; /* original 70% */
-            --sidebar-width: 260px;
-            --sidebar-section-margin-top: 1.25rem;
-            --sidebar-section-first-margin-top: .5rem;
-            --sidebar-rail-width: calc(var(--spacing)*13);
-            --header-height: calc(var(--spacing)*13);
-            --white: #fff;
-            --black: #000;
-            --gray-50: #f9f9f9;
-            --gray-100: #ececec;
-            --gray-200: #e3e3e3;
-            --gray-300: #cdcdcd;
-            --gray-400: #b4b4b4;
-            --gray-500: #9b9b9b;
-            --gray-600: #676767;
-            --gray-700: #424242;
-            --gray-750: #2f2f2f;
-            --gray-800: #212121;
-            --gray-900: #171717;
-            --gray-950: #0d0d0d;
-            --red-500: #e02e2a;
-            --red-700: #911e1b;
-            --brand-purple: #ab68ff;
-            --yellow-900: #4d3b00;
+            /* colors */
+            --CentAnniBlue: rgb(1 105 204);
+            --CentAnniBlue-hover: rgb(0 111 222);
+            --primaryDefault: var(--color-background-composer-primary, var(--CentAnniBlue));
+            --primaryDefault-hover: color-mix(in srgb, var(--primaryDefault), white 10%);
+            --color-surface-sidebar: var(--color-surface);
 
             --transparent-header-bg: black;
             &.light {
@@ -73,24 +45,37 @@
             }
         }
 
+
         /**************************************
-                    general settings
+                         colors
         **************************************/
 
-        main .popover > div.relative.flex.min-h-0.w-full.flex-1.flex-col.self-end > div.absolute.bottom-0.z-20.h-24.w-full.transition-colors {
-            display: none;
+        button[aria-label="Send"],
+        button[aria-label="Stop"],
+        button[aria-label="Start Voice"] {
+            transition: opacity .165s cubic-bezier(.5, 1, .9, 1);
+            &:hover {
+                opacity: .8;
+            }
         }
 
-        /* chatbox - reduced vertical margin */
-        .${escapedClassName} {
-            margin-top: .5rem !important;
-            margin-bottom: var(--spacing) !important;
+        /* sidebar pinned, project, recents */
+        nav section .truncate {
+            text-transform: lowercase;
+            color: var(--primaryDefault);
         }
 
-        /* chatbox - fade effect for content */
-        main form {
-            border-top-left-radius: .25em !important;
-            border-top-right-radius: .25em !important;
+        nav[role="navigation"] .text-codex-description,
+        [role="presentation"].items-center.justify-center .motion-safe\\:animate-spin svg {
+            color: var(--primaryDefault);
+        }
+
+        nav section .opacity-75 {
+            opacity: 1;
+        }
+
+        nav[role="navigation"] a[aria-current="page"] {
+            color: var(--app-color-text-foreground, var(--primaryDefault), inherit);
         }
 
         /* copy icon */
@@ -100,26 +85,24 @@
         }
 
         /* copied */
-        use[href$="#a31324"],
-        button[aria-label$="copied"] {
+        button[aria-label$="copied" i] {
             color: springgreen;
         }
 
-        .light use[href$="#a31324"],
-        .light button[aria-label$="copied"] {
+        .light button[aria-label$="copied" i] {
             color: limegreen;
         }
 
         /* thumbs up icon */
-        use[href$="#51753c"] {
+        aside button[aria-label="Yes"],
+        [role="menu"][data-state="open"] [role="menuitem"] svg:has(path[d^="M11.2942 1.84473"]) {
             color: #00ad00 !important;
-            opacity: .9;
         }
 
         /* thumbs down icon */
-        use[href$="#2126ae"] {
+        aside button[aria-label="No"],
+        [role="menu"][data-state="open"] [role="menuitem"] svg:has(path[d^="M14.2282 1.83496"]) {
             color: crimson !important;
-            opacity: .9;
         }
 
         /* edit in canvas icon */
@@ -134,322 +117,87 @@
         }
 
         /* switch model icon */
-        main .flex.justify-start button[aria-haspopup="menu"][data-state="closed"] > div {
-            color: gray !important;
-        }
-
-        .light main .flex.justify-start button[aria-haspopup="menu"][data-state="closed"] > div {
-            color: dimgray !important;
+        button[aria-label="Regenerate response"][data-state="open"] {
+            color: var(--text-primary);
         }
 
         /* read aloud and stop icon */
-        use[href$="#54f145"],
-        use[href$="#4944fe"],
-        use[href$="#f64f60"] {
+        #CentAnni-speak-btn svg,
+        button[aria-label="Preview"],
+        button[aria-label="Read aloud"],
+        [role="menuitem"]:has(> div > span > svg path[d^="M9.75122 4.09203"]) svg,
+        button[aria-label="Stop reading aloud"] svg {
             color: deepskyblue !important;
             opacity: .9;
         }
 
-        use[href$="#f64f60"] {
+        button[aria-label="Loading audio…"] {
+            opacity: 1;
             color: deepskyblue !important;
         }
 
-        /* share icon */
-        section button[aria-label="Share"] {
-            opacity: .8;
-        }
-
-        /* hover opacity icons */
-        :is(header button[aria-label="Turn on temporary chat"],
-            button[aria-label^="Copy"],
-            button[aria-label$="copied"],
-            use[href$="#51753c"],
-            use[href$="#2126ae"],
-            use[href$="#54f145"],
-            use[href$="#4944fe"],
-            use[href$="#f64f60"],
-            use[href$="#f64f60"],
-            button[aria-label="Edit message"],
-            section button[aria-label="Share"]):hover {
-            opacity: 1;
-        }
-
-        header button[aria-label="Turn on temporary chat"] {
+        button[aria-label="Temporary chat"] {
             opacity: .7;
         }
 
-        /* highlight color - dark mode */
-        .markdown strong {
-            color: springgreen !important;
+        :is(button[aria-label^="Copy"],
+        button[aria-label$="copied" i],
+        #CentAnni-speak-btn svg,
+        button[aria-label="Read aloud"],
+        [role="menuitem"]:has(> div > span > svg path[d^="M9.75122 4.09203"]) svg,
+        button[aria-label="Stop reading aloud"] svg,
+        button[aria-label="Temporary chat"],
+        button[aria-label="Preview"]):hover {
+            opacity: 1;
         }
 
-        /* highlight color - light mode */
-        .light .markdown strong {
-            color: darkviolet !important;
+        /* highlight color */
+        strong.font-semibold {
+            color: var(--primaryDefault, var(--CentAnniBlue-hover));
         }
 
-        /* scheduled separator line */
-        html:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
-            border-top: 1px solid springgreen;
-            margin-top: 10px;
-            padding-top: 10px;
-        }
-
-        html[style*="color-scheme: light"]:has(#thread section div.border-token-border-default.overflow-hidden.max-w-\\[360px\\]) div[data-message-author-role="assistant"] {
-            border-color: darkviolet;
-        }
-
-        /* group icons color */
-        button[title="Add reaction"] {
-            color: yellow !important;
-        }
-
-        button[title="Reply"] {
-            color: deepskyblue !important;
-        }
-
-        /* red delete color */
-        div[data-testid="delete-chat-menu-item"],
-        [data-radix-popper-content-wrapper] :is([role="menuitem"].interactive-label-danger-soft, [role="menuitem"].text-token-text-status-error) {
-            --text-status-error: var(--red-500);
-            --red-75: var(--red-500);
-            color: var(--red-500) !important;
-        }
-
-        div[data-testid="delete-chat-menu-item"]:hover,
-        [data-radix-popper-content-wrapper] :is([role="menuitem"].interactive-label-danger-soft, [role="menuitem"].text-token-text-status-error):hover {
-            --red-75: white;
-            --text-status-error: white;
-            color: white !important;
-            background: rgba(255, 0, 0, .5) !important;
-        }
-
-        /* stop icon size inner */
-        #thread-bottom-container .icon-lg {
-            height: calc(var(--spacing)*5);
-            width: calc(var(--spacing)*5);
+        header span.pointer-events-none.rounded-full.relative {
+            border: 1px solid var(--primaryDefault, var(--CentAnniBlue-hover));
         }
 
         /* pin and unpin color */
-        use[href$="pin-sm"],
-        use[href$="#23d2ff"],
-        use[href$="#13322a"],
-        use[href$="pin-filled"] {
+        button[aria-label="Pin chat"],
+        button[aria-label="Unpin chat"] {
             color: darkorange;
         }
 
-        /* select color */
-        ::selection {
-            background-color: var(--text-primary);
-            color: var(--main-surface-tertiary);
+        /* red delete color */
+        .text-danger {
+            --color-text-danger: #e02e2a;
+
+            &:hover {
+                color: white;
+                background-color: rgb(255 0 0 / 50%);
+            }
         }
 
-        /* change width of chat containers */
-        #thread-bottom ~ div,
-        #thread-bottom-container #thread-bottom,
-        div.text-base.my-auto:has(.bg-token-main-surface-tertiary),
-        div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)),
-        html:not(:has(#thread-bottom-container #thread-bottom)) #thread-bottom-container div.text-base.mx-auto {
-            margin: 0 6.263%;
-            padding: 0;
-        }
-
-        html:has(main button[aria-label^="Edit the title of"]) div.mx-auto.flex-1:has(div.shadow-short):not(:is(#thread-bottom *)) {
+        /* chat container and content width */
+        [data-pip-obstacle="thread-footer"] {
             margin: 0;
-        }
-
-        #thread-bottom-container,
-        #thread-bottom-container div.mb-4.flex-1 {
-            margin-bottom: 0;
-        }
-
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #thread-bottom-container #thread-bottom {
-            margin: 0 1dvw;
-        }
-
-        html:has(h1.text-page-header) #thread-bottom-container.mb-4.flex.flex-col > #thread-bottom {
-            margin: 0 12.525%;
-        }
-
-        [class*="--thread-content-max-width"] {
-            max-width: unset;
-        }
-
-        div.border-token-border-sharp div.p-4 {
             width: 100%;
+            padding: 0 16px;
+            max-width: unset;
+            box-sizing: border-box;
         }
 
-        div.border-token-border-sharp div.text-message {
-            box-shadow: none;
-            margin-top: 20px;
-        }
-
-        div.border-token-border-sharp :where([class*="_tableContainer_"]),
-        div.border-token-border-sharp :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]),
-        div.border-token-border-sharp :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]) > table {
+        [data-thread-user-message-navigation-content="true"] {
             margin: 0;
-        }
-
-        #thread-bottom > div {
-            padding-inline: 0 !important;
-            --thread-content-margin: 0 !important;
-        }
-
-        [data-message-author-role="user"] > div > div {
-            width: 100%;
-        }
-
-        .px-\\(--thread-content-margin\\):has([data-message-author-role="user"]) {
-            margin: 20px 6.263% 20px 37.574%;
-            padding: 0;
-        }
-
-        .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
-            margin: 0 6.263%;
-            padding: 0 0 20px 0;
-        }
-
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .px-\\(--thread-content-margin\\):has([data-message-author-role="assistant"]) {
-            margin: 0 1dvw;
-        }
-
-        .grow.overflow-hidden > div > div {
-            overflow-x: hidden;
-        }
-
-        .\\[--composer-overlap-px\\:24px\\] {
-            --composer-overlap-px: 0;
-        }
-
-        .flex.max-w-full.flex-col.grow:empty + .flex.min-h-\\[46px\\].justify-start [class*="mask-image"] {
-            margin-left: calc(6.263% - var(--spacing)*6) !important;
-        }
-
-        main div.text-base.my-auto:has(.loading-shimmer) {
-            padding-left: 6.263%;
-            padding-right: 4.263%;
-        }
-
-        main .mx-\\[calc\\(--spacing\\(-2\\)-1px\\)\\]:not(.loading-shimmer) {
-            margin-left: -6px;
-        }
-
-        div.text-base,
-        div[class*="turn-messages"] {
-            --thread-content-max-width: unset !important;
-            max-width: 1129px;
-        }
-
-        #prosemirror-editor-container,
-        #prosemirror-editor-container > .markdown.prose {
-            width: 100% !important;
-        }
-
-        main.min-h-0 .h-full.w-full > .justify-center:not(span[style*="background-image"]) {
-            margin: 0 5dvw !important;
-        }
-
-        main div.flex.basis-auto.flex-col .pb-25,
-        main > #thread div.flex.flex-col.text-sm.thread-xl\\:pt-header-height,
-        main > #thread div.\\@thread-xl\\/thread\\:pt-header-height.flex.flex-col.text-sm {
-            padding-bottom: 25dvh !important;
-        }
-
-        html:has(#stage-slideover-sidebar) main div.flex.basis-auto.flex-col.grow.overflow-hidden > div {
-            width: -webkit-fill-available;
-            width: -moz-available;
-            width: fill-available;
-        }
-
-        main #thread section div.mt-3.w-full.empty\\:hidden,
-        main #thread article div.mt-3.w-full.empty\\:hidden {
-            margin-bottom: 20px;
-        }
-
-        :where([class*="tableContainer"]),
-        :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]),
-        :where([class*="_tableContainer_"]) > :where([class*="_tableWrapper_"]) > table {
-            width: 100% !important;
-        }
-
-        div.relative.mx-5:has([class*="_prosemirror-parent_"]) {
-            padding-block: calc(var(--spacing)*3);
-            align-items: center;
-        }
-
-        .wcDTda_fallbackTextarea,
-        #thread #prompt-textarea,
-        textarea[class*="_fallbackTextarea_"],
-        .bg-token-bg-elevated-primary.w-full > div {
-            margin-top: 10px !important;
-            padding-bottom: 10px !important;
-        }
-
-        #thread-bottom-container div.text-base.mx-auto {
-            --thread-content-margin: 0;
             max-width: unset;
-            padding: 0;
-        }
-
-        /* menu hover shadow fix */
-        .shadow-long:is(.dark *) {
-            --tw-shadow: 0px 8px 16px 0px var(--tw-shadow-color, #00000052), 0px 0px 1px 0px var(--tw-shadow-color, #0000009e) !important;
-            box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
-            border: 1px solid #272727 !important;
-        }
-
-        .shadow-long {
-            --tw-shadow: 0px 8px 12px 0px var(--tw-shadow-color, var(--shadow-color-1, #00000014)), 0px 0px 1px 0px var(--tw-shadow-color, var(--shadow-color-2, #0000009e)) !important;
-            box-shadow: var(--tw-inset-shadow), var(--tw-inset-ring-shadow), var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow) !important;
-            border: 1px solid #e6e6e6 !important;
-        }
-
-        /* chatbox adjustments for GPT5 changes */
-        #thread ol div.group.text-token-text-tertiary { text-wrap: nowrap; }
-
-        #thread form [data-composer-grid] {
-            padding-top: unset;
-            padding-bottom: 9px;
-            grid-template-areas: "header header header" "primary primary primary" "leading footer trailing" !important;
-        }
-
-        div.content-fade:not(#thread-bottom-container),
-        div.content-fade:not(#thread-bottom-container) form {
-            padding: unset;
-        }
-
-        .bg-token-bg-elevated-primary.w-full,
-        main > #thread form div.group-data-expanded\\/composer\\:mb-0 {
-            padding: 10px;
-            margin: unset;
-        }
-
-        .group\\/message.gap-1:has(.bg-token-bg-tertiary) {
-            margin-bottom: 15px;
-        }
-
-        .-my-2\\.5 {
-            margin-block: unset;
-        }
-
-        .min-h-14,
-        .min-h-12 {
-            min-height: unset;
-        }
-
-        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) .-my-2\\.5 {
-            margin-block: calc(var(--spacing)*-2.5);
+            padding: 0 6.263%;
+            box-sizing: border-box;
         }
 
         /**************************************
-                    Read Aloud Speedster
+                 Read Aloud Speedster
         **************************************/
-
         .speed-control-container {
             display: flex;
             align-items: center;
-            grid-area: leading;
-            margin: 0 8px 0 44px;
         }
 
         .speed-btn {
@@ -457,27 +205,30 @@
             align-items: center;
             justify-content: center;
             height: 36px;
-            min-width: 36px;
+            min-width: 0;
+            width: 0;
+            opacity: 0;
             font-size: .75rem;
             line-height: 1rem;
             font-weight: 600;
+            border-radius: 50%;
+            pointer-events: none;
             background: transparent;
-            color: var(--text-secondary);
+            color: var(--color-text-secondary, gray);
             cursor: pointer;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
-        }
+            transition: width .5s linear(0, 0.887 15.2%, 1.149 23.6%, 1.296 32.6%, 1.338 39.8%, 1.326 48%, 1.053 82%, 1);
 
-        .speed-btn.minus {
-            border-radius: 50%;
-            border-right: none !important;
-        }
-
-        .speed-btn.plus {
-            border-radius: 50%;
-            border-left: none !important;
+            .speed-control-container:hover & {
+                opacity: 1;
+                color: var(--app-color-text-foreground, var(--primaryDefault));
+                width: 36px;
+                pointer-events: auto;
+                transition: width .5s linear(0, 0.887 15.2%, 1.149 23.6%, 1.296 32.6%, 1.338 39.8%, 1.326 48%, 1.053 82%, 1) .3s, opacity .5s cubic-bezier(0.4, 0, 0.69, 1) .3s;
+            }
         }
 
         .speed-btn.plus::before,
@@ -488,8 +239,14 @@
             position: absolute;
             width: 1px;
             height: 12px;
-            background-color: var(--border-default);
-            display: var(--show-dividers, block);
+            background-color: color-mix(in oklab, var(--app-color-text-foreground) 25%, transparent);
+        }
+
+        .speed-display::before,
+        .speed-display::after {
+            position: absolute;
+            top: 50%;
+            transform: translateY(-50%);
         }
 
         .speed-btn.plus::before {
@@ -503,11 +260,11 @@
         }
 
         .speed-display::after {
-            transform: translateX(26px);
+            right: 0;
         }
 
         .speed-display::before {
-            transform: translateX(-26px);
+            left: 0
         }
 
         .speed-btn:hover,
@@ -532,21 +289,31 @@
 
         .speed-display {
             display: flex;
+            position: relative;
             align-items: center;
             justify-content: center;
             height: 36px;
-            min-width: 52px;
+            min-width: 0;
+            width: fit-content;
             padding: .5rem;
             font-size: .75rem;
             line-height: 1rem;
             font-weight: 600;
             background: transparent;
-            color: var(--text-secondary);
+            color: var(--color-text-secondary, gray);
             cursor: default;
             -webkit-user-select: none;
             -moz-user-select: none;
             -ms-user-select: none;
             user-select: none;
+            interpolate-size: allow-keywords;
+            transition: width .25s cubic-bezier(0.78, 0, 0.22, 1);
+
+            .speed-control-container:hover & {
+                width: 50px;
+                color: var(--app-color-text-foreground, var(--primaryDefault));
+                transition: width .5s cubic-bezier(0.78, 0, 0.22, 1) .3s, color 0s .3s;
+            }
         }
 
         .speed-control-config-popup {
@@ -554,7 +321,7 @@
             bottom: 100%;
             left: 50%;
             transform: translateX(-50%);
-            background: var(--main-surface-primary);
+            background: var(--color-background-panel, #2d2d2d);
             border: 1px solid var(--border-default);
             border-radius: 3px;
             padding: 15px 10px 15px 30px;
@@ -574,7 +341,7 @@
             align-items: baseline;
             justify-content: center;
             font-family: -apple-system, "Roboto", "Arial", sans-serif;
-            color: var(--text-secondary);
+            color: var(--color-text-secondary, gray);
             font-weight: 600;
             width: 100%;
             padding-right: 20px;
@@ -623,9 +390,9 @@
             font-size: .75rem;
             line-height: 1.5em;
             font-weight: 500;
-            color: var(--text-secondary);
+            color: var(--color-text-secondary, gray);
             text-decoration: none;
-            transition: color 0.2s ease-in-out;
+            transition: color .2s ease-in-out;
         }
 
         .speed-control-config-popup .popup-footer a:hover {
@@ -662,7 +429,7 @@
             right: 0;
             height: 3.2rem;
             pointer-events: none;
-            box-shadow: 0 -30px 20px 0 var(--main-surface-primary);
+            box-shadow: 0 -30px 20px 0 var(--color-background-panel, #2d2d2d);
         }
 
         .speed-control-config-popup.show {
@@ -678,7 +445,7 @@
             border: 1px solid rgba(255, 255, 255, .27);
             border-radius: 3px;
             background: transparent;
-            color: var(--text-primary);
+            color: var(--color-text, gray);
             text-align: center;
             margin-right: 10px;
         }
@@ -697,16 +464,16 @@
 
         .speed-control-config-popup input[type="url"] {
             flex: 1;
-            color: var(--text-primary);
+            color: var(--color-text, gray);
             background: transparent;
             margin-left: 10px;
             border-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, .27);
+            border: 1px solid rgba(255 255 255 / .27);
         }
 
         .light .speed-control-config-popup input[type="url"],
         .light .speed-control-config-popup input[type="number"] {
-            border-color: rgba(0, 0, 0, 0.27);
+            border-color: rgba(0 0 0 /.27);
         }
 
         .speed-control-config-popup input[type="url"]:hover,
@@ -728,6 +495,14 @@
         .speed-control-config-popup .toggle-label:hover {
             text-decoration: underline;
             cursor: pointer;
+        }
+
+        .speed-control-config-popup input[type="checkbox"] {
+            -webkit-appearance: checkbox !important;
+            appearance: auto !important;
+            width: 13px;
+            height: 13px;
+            flex: 0 0 13px;
         }
 
         .speed-control-config-popup .work-model-settings {
@@ -754,8 +529,8 @@
             cursor: pointer;
             border: 1px solid var(--border-default);
             border-radius: 3px;
-            background: var(--main-surface-primary);
-            color: var(--text-primary);
+            background: #212121;
+            color: var(--color-text, gray);
         }
 
         .speed-control-config-popup .work-model-settings select:disabled {
@@ -765,7 +540,7 @@
 
         .speed-control-config-popup .work-model-hint {
             font-size: 12px;
-            color: var(--text-secondary);
+            color: var(--color-text-secondary, gray);
         }
 
         .speed-control-config-popup .speed-label {
@@ -775,356 +550,22 @@
 
         .speed-control-config-popup button {
             padding: 4px 8px;
-            border: 1px solid rgba(255, 255, 255, 0.27);
+            border: 1px solid rgba(255 255 255 /.27);
             border-radius: 3px;
             background: transparent;
-            color: var(--text-secondary);
+            color: var(--color-text-secondary, gray);
             cursor: pointer;
         }
 
         .light .speed-control-config-popup button {
-            border-color: rgba(0, 0, 0, 0.27);
+            border-color: rgba(0 0 0 / .27);
         }
 
         .speed-control-config-popup .toggle-container {
             display: flex;
             align-items: center;
             text-wrap: nowrap;
-        }
-
-        html:has(.CentAnni-style-nav-btn):has(#stage-sidebar-tiny-bar.opacity-100) header button[data-testid="open-sidebar-button"] {
-            display: none;
-        }
-
-        .CentAnni-style-nav-btn:active  { opacity: .8;  }
-        .CentAnni-style-nav-btn.enabled  { opacity: 1;  }
-        .CentAnni-style-nav-btn.disabled { opacity: .5; }
-
-        /* avatar position */
-        #stage-slideover-sidebar .h-full > .opacity-100 {
-            padding-bottom: 10px;
-        }
-
-        #page-header,
-        main > div > header,
-        #calpico-page-header,
-        main div.hidden.sm\\:justify-end {
-            padding-right: 130.5px;
-        }
-
-        #page-header.sticky {
-            position: sticky;
-        }
-
-        main #thread div.thread-xl\\:pt-\\(--header-height\\) {
-            padding-top: 0;
-        }
-
-        .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
-            margin-right: 125px;
-        }
-
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
-            margin: unset !important;
-        }
-
-        div.relative.z-30:has([data-testid="accounts-profile-button"]) {
-            position: fixed;
-            top: 0;
-            right: 4px;
-            height: fit-content;
-            padding: 0;
-            margin: 0;
-            width: 125px;
-            opacity: 1;
-            z-index: 30;
-            box-shadow: none;
-            background-color: transparent;
-
-            .trailing,
-            > div:not(:has(*)) {
-                display: none;
-            }
-
-            section[data-testid="work-usage-sidebar"] {
-                position: fixed;
-                left: 8px;
-                bottom: 6px;
-                margin: 0;
-
-                > div[data-testid="work-usage-sidebar-shell"] {
-                    height: fit-content;
-                    width: 232px;
-
-                    > div[data-testid="work-usage-sidebar-fade"] {
-                        display: none;
-                    }
-                }
-            }
-        }
-
-        [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
-            border: none;
-            min-height: 36px;
-            padding: 6px 7px;
-        }
-
-        .bg-token-sidebar-surface-primary .p-1\\.5 {
-            padding-right: 0;
-        }
-
-        html.hide-model-picker div[data-radix-popper-content-wrapper],
-        html:has(div.z-1.shrink-0.overflow-x-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]),
-        html:has(section [data-testid="bar-search-sources-header"]) div.relative.z-30:has([data-testid="accounts-profile-button"]),
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.relative.z-30:has([data-testid="accounts-profile-button"]) {
-            opacity: 0;
-            z-index: -1;
-            pointer-events: none;
-        }
-
-        html.hide-model-picker div[data-composer-transition-slot="trailing"] button.__composer-pill {
-            background: transparent;
-        }
-
-        html:has(section [data-testid="bar-search-sources-header"]) .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
-            margin-inline-end: calc(var(--spacing)*3);
-        }
-
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) .speed-control-config-popup.show {
-            transform: translateX(-17%) !important;
-        }
-
-        html:has(section [data-testid="bar-search-sources-header"]) div.bg-token-sidebar-surface-primary.relative.z-1 {
-            z-index: 30;
-        }
-
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #page-header,
-        html:has(section [data-testid="bar-search-sources-header"]) #page-header,
-        html:has(#stage-sidebar-tiny-bar.opacity-100) main > div > header,
-        html:has(#stage-sidebar-tiny-bar.opacity-100) #page-header,
-        html:has(div.z-1.shrink-0.overflow-x-hidden) #page-header {
-            padding: calc(var(--spacing)*2);
-        }
-
-        section [data-testid="bar-search-sources-header"] {
-            background: color(srgb 0.0941 0.0941 0.0941);
-            border-bottom: 1px solid rgba(45, 45, 45, 1);
-            transform: translateY(-1px);
-        }
-
-        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div {
-            background-color: #ffffff0d;
-        }
-
-        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) div.relative.z-30:has([data-testid="accounts-profile-button"]) > div > div:hover {
-            background-color: var(--menu-item-highlighted);
-        }
-
-        #stage-slideover-sidebar nav > div.align-end {
-            display: none;
-        }
-
-        #sidebar-header button:has(svg path[d^="M7.94556"]) {
-            display: none;
-        }
-
-        /* GPT model picker */
-        #CentAnni-gpt-model-quickbar {
-            position: relative;
-            display: flex;
-            gap: 8px;
-            order: 2;
-            margin-right: 5px;
-            background: transparent;
-            text-wrap: nowrap;
-            overflow-y: hidden;
-            overflow-x: auto;
-            scrollbar-width: none;
-        }
-
-        [class~="[grid-area:trailing]"] > div.relative {
-            order: 1;
-            margin-right: 8px;
-        }
-
-        [class~="[grid-area:trailing]"] button.__composer-pill {
-            max-height: 29px;
-        }
-
-        [class~="[grid-area:trailing]"] > div.ms-auto {
-            order: 3;
-        }
-
-        html:has(#CentAnni-gpt-model-quickbar) [class*="\\[grid-area\\:trailing\\]"],
-        html:has(#CentAnni-gpt-model-quickbar) [class*="\\[grid-area\\:trailing\\]"] > .ms-auto {
-            min-width: 0;
-        }
-
-        div.\\[grid-area\\:footer\\] {
-            width: max-content;
-            margin-right: 5px;
-        }
-
-        #composer-submit-button {
-            min-width: 36px;
-            min-height: 36px;
-        }
-
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) div.\\[grid-area\\:footer\\] {
-            width: unset;
-            margin-right: unset;
-        }
-
-        .CentAnni-gpt-model-btn.CentAnni-active {
-            border-color: var(--blue);
-
-            &:hover {
-                border-color: var(--blue-hover);
-            }
-        }
-
-        [aria-label="Directory type"] [aria-current="page"],
-        #page-header .bg-token-bg-primary[data-tpp-toggle-highlight="true"],
-        #page-header [data-tpp-toggle-highlight="true"] .bg-token-bg-primary.rounded-full {
-            border: 1px solid var(--blue-hover);
-        }
-
-        span.text-token-text-tertiary.hidden.shrink-0 {
-            display: inline;
-            color: var(--blue-hover);;
-        }
-
-        nav li .trailing .bg-theme-submit-btn-bg {
-            background-color: var(--blue-hover);
-        }
-
-        .CentAnni-gpt-model-btn {
-            font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
-            padding: 8px 10px;
-            border-radius: 3px;
-            border: 1px solid rgba(255, 255, 255, .1);
-            background: rgba(255, 255, 255, .08);
-            color: #fff;
-            cursor: pointer;
-            text-box: trim-both cap alphabetic;
-            transition: background-color .4s ease, border-color .4s ease;
-        }
-
-        .CentAnni-gpt-model-btn:hover {
-            background: rgba(255, 255, 255, .12) !important;
-            border-color: rgba(255, 255, 255, .25);
-        }
-
-        .CentAnni-gpt-model-btn:active {
-            background: rgba(255, 255, 255, .2) !important;
-            border-color: rgba(255, 255, 255, .5);
-            transition: background-color .25s ease-out, border-color .1s ease-out;
-        }
-
-        html.light .CentAnni-gpt-model-btn {
-            border: 1px solid rgba(0, 0, 0, .1);
-            color: black;
-        }
-
-        html.light .CentAnni-gpt-model-btn:hover {
-            background: rgb(250, 250, 250) !important;
-            border-color: rgba(0, 0, 0, .2);
-        }
-
-        html.light .CentAnni-gpt-model-btn:active {
-            background: rgb(245, 245, 245) !important;
-            border-color: rgba(0, 0, 0, .5);
-        }
-
-        #CentAnni-gpt-model-quickbar:empty,
-        html:has(main header div.gap-4.ps-4) #CentAnni-gpt-model-quickbar,
-        html:has(#main > div > header > div:nth-child(1) > h1) #CentAnni-gpt-model-quickbar,
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-gpt-model-quickbar,
-        html:has(nav > aside > a.__menu-item:not(:disabled):not([data-disabled])[data-active] svg use[href*="#266724"]) #CentAnni-gpt-model-quickbar {
-            display: none;
-        }
-
-        #thread-bottom form div.min-h-0 {
-            min-height: unset !important;
-        }
-
-        @media (max-width: 768px) {
-            #CentAnni-gpt-model-quickbar {
-                display: none;
-            }
-        }
-
-        #CentAnni-speak-btn {
-            position: absolute;
-            display: flex;
-            top: -61px;
-            left: 3.1315%;
-            width: 32px;
-            height: 32px;
-            color: deepskyblue;
-            justify-content: center;
-            align-items: center;
-            border-radius: 50%;
-            cursor: pointer;
-            z-index: 9999;
-            background: transparent;
-            transform: translateX(-50%);
-            pointer-events: auto;
-
-            &:hover {
-                background-color: rgba(255, 255, 255, .07);
-            }
-
-            &:active {
-                color: rgb(0, 251, 255);
-            }
-
-            #thread-bottom-container:has(#composer-submit-button[aria-label="Stop answering"]) & {
-                pointer-events: none;
-                user-select: none;
-                opacity: .5;
-            }
-        }
-
-        html:has(#thread .composer-parent h1.text-page-header),
-        html:has(main button[aria-label^="Edit the title of"]),
-        html:has(header button[aria-label="Turn on temporary chat"]),
-        html:has(header button[aria-label="Turn off temporary chat"]) {
-            #CentAnni-speak-btn {
-                display: none;
-            }
-        }
-
-        html:has(.bg-token-bg-primary.absolute.start-0.z-20.h-full.overflow-hidden) #CentAnni-speak-btn {
-            bottom: 115px;
-            left: 0;
-        }
-
-        #thread-bottom form div.no-scrollbar.horizontal-scroll-fade-mask {
-            margin: 10px 0 -10px 0;
-            padding-bottom: unset;
-        }
-
-        #thread section.text-token-text-primary :where([class*="_tableWrapper_"]) div.absolute.end-0,
-        #thread article.text-token-text-primary :where([class*="_tableWrapper_"]) div.absolute.end-0 {
-            height: unset !important;
-        }
-
-        /* move 'More actions' menu */
-        [data-radix-popper-content-wrapper]:has(use[href*="#03583c"]),
-        [data-radix-popper-content-wrapper]:has([aria-label="Branch in new chat"]) {
-            translate: 45px calc(20px + 50%);
-        }
-
-        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]),
-        [data-radix-popper-content-wrapper]:has(use[href*="#f64f60"]) {
-            translate: 45px calc(3px + 100%);
-        }
-
-        [data-radix-popper-content-wrapper]:has([aria-label="Stop"]) > div,
-        [data-radix-popper-content-wrapper]:has(use[href*="#f64f60"]) > div{
-            flex-direction: column-reverse;
-            display: flex;
+            accent-color: var(--primaryDefault);
         }
     `;
 
@@ -1145,264 +586,392 @@
         }
     });
 
-    const hidePlusAvatarStyle = `
-        header button[aria-label$="open profile menu"] span,
-        nav div[aria-label$="open profile menu"] div.min-w-0,
-        main button[aria-label$="open profile menu"] span span,
-        div.relative.z-30:has([data-testid="accounts-profile-button"]) [class="min-w-0"],
-        #page-header #conversation-header-actions button[aria-label$="open profile menu"] span {
-            display: none;
-        }
-
-        div.relative.z-30:has([data-testid="accounts-profile-button"]) {
-            top: 10px;
-            right: 10px;
-            width: fit-content;
-        }
-
-        [data-testid="accounts-profile-button"]:not(#stage-sidebar-tiny-bar *) {
-            margin: 0;
-            width: 24px;
-            border: none;
-            padding: 0 6px;
-            min-height: 36px;
-            justify-content: center;
-            box-sizing: content-box;
-        }
-
-        #page-header,
-        main > div > header,
-        #calpico-page-header,
-        main div.hidden.sm\\:justify-end {
-            padding-right: 60px;
-        }
-
-        .bg-token-sidebar-surface-primary button:has(svg path[d^="M14.2548"]) {
-            margin-right: 55px;
-        }
-    `;
-
     const features = {
+        disableVoiceModeBtn: {
+            label: "Disable Voice Mode Button",
+            enabled: false,
+            sheet: null,
+            style: `
+                button[aria-label="Start Voice"] {
+                    opacity: .5;
+                    pointer-events: none;
+                }
+            `
+        },
+        heightUserMessage: {
+            label: "Make User Message Scrollable",
+            enabled: true,
+            sheet: null,
+            style: `
+                div[data-user-message-bubble="true"]:has(button[aria-expanded="false"]) {
+                    overflow: auto !important;
+                    max-height: 25dvh !important;
+                    overscroll-behavior: contain;
+
+                    .overflow-hidden {
+                        max-height: unset !important;
+                    }
+
+                    button[aria-expanded="false"],
+                    span[aria-hidden="true"].block {
+                        display: none;
+                    }
+                }
+            `
+        },
+        hideShareIcon: {
+            label: "Hide Share Icon Under Messages",
+            enabled: false,
+            sheet: null,
+            style: `
+                div[data-thread-find-target="conversation"] {
+                    button[aria-label="Share prompt"],
+                    button[aria-label="Share"] {
+                        display: none;
+                    }
+                }
+            `
+        },
         squareDesign: {
             label: 'Square Design',
             enabled: false,
             sheet: null,
             style: `
-                .rounded-b-lg,
-                div.z-100.w-80,
-                .rounded-2xl\\!,
-                .rounded-\\[14px\\],
-                .rounded-t-\\[20px\\],
-                div[data-testid="writing-block-container"],
-                div.relative.z-30:has([data-testid="accounts-profile-button"]) .rounded-full.select-none {
-                    border-radius: 0 !important;
-                }
-
-                [role="presentation"] rect {
-                    rx: 0;
-                    ry: 0;
-                }
-
-                .btn,
-                .rounded-lg,
-                .rounded-md,
-                .rounded-xl,
-                .rounded-2xl,
-                .rounded-3xl,
-                .__menu-item,
-                .rounded-t-2xl,
-                .rounded-b-3xl,
-                .rounded-t-3xl,
-                .__composer-pill,
-                .rounded-\\[10px\\],
-                form > div > div,
-                .rounded-\\[18px\\],
-                .rounded-\\[20px\\],
-                .rounded-\\[36px\\],
-                .rounded-\\[28px\\],
-                .rounded-\\[24px\\],
-                .rounded-\\[22px\\],
-                .rounded-\\[26px\\],
-                .rounded-\\[30px\\],
-                #CentAnni-speak-btn,
-                .rounded-\\[1\\.75rem\\],
-                .composer-btn:enabled,
-                .composer-btn::before,
-                .surface-popover:before,
-                .__menu-item-trailing-btn,
-                form > div:nth-child(2) > div,
-                main form div.contain-inline-size,
-                .before\\:rounded-\\[16px\\]::before,
-                :where(.puik-root [data-theme]) > div,
-                .rounded-full:not(.bg-token-bg-tertiary),
-                #wham-message-modal-footer div.cursor-text.shadow-short {
-                    border-radius: 2px !important;
-                }
-
-                .composer-submit-btn,
-                button[aria-label="Send prompt"],
-                button[aria-label="Stop streaming"],
-                button[aria-label="Start voice mode"] {
-                    border-radius: 4px !important;
-                }
-
-                /* button minus radius */
-                .speed-btn.minus {
-                    border-radius: 2px 0 0 2px;
-                }
-
-                /* button plus radius */
-                .speed-btn.plus {
-                    border-radius: 0 2px 2px 0;
-                }
-
-                /* canvas */
-                section.popover .text-black\\!,
-                #prosemirror-context-children > div,
-                section.popover .shadow-xl:not([role="toolbar"]),
-                section.popover .shadow-lg:not([role="toolbar"]),
-                section.popover div.border-token-border-default.z-70 {
-                    border-radius: 0 !important;
-                    right: -1px !important;
-                    bottom: -1px !important;
-
-                }
-
-                .speed-btn,
-                .speed-display,
-                .composer-btn:enabled,
-                button.__composer-pill {
-                    border: 1px solid var(--border-default);
-                }
-
                 :root {
-                    --show-dividers: none !important;
-                    --file-tile-radius: 0;
+                    --radius-2xl: 0;
+                    --radius-xl: 0;
+                    --radius-lg: 0;
                 }
 
-                .bg-token-border-default {
-                    background-color: transparent;
+                header .rounded-full,
+                [data-app-shell-focus-area="main"] .rounded-2xl {
+                    border-radius: 0;
                 }
 
-                button.composer-btn[data-pill="true"][aria-haspopup="menu"],
-                button.composer-btn[data-pill="true"][aria-haspopup="dialog"] {
-                    margin-left: 8px;
+                [data-codex-window-type=browser] {
+                    --radius-xs-base: 0;
+                    --radius-sm-base: 0;
+                    --radius-md-base: 0;
+                    --radius-lg-base: 0;
+                    --radius-3xl-base: 0;
+                    --radius-4xl-base: 0;
                 }
 
-                main div:has(.loading-shimmer) a > span.rounded-ee-full,
-                main div:has(.loading-shimmer) a > span.rounded-se-full {
-                    border-start-end-radius: 2px;
-                    border-end-end-radius: 2px;
+                [data-markdown-copy="code-block"] .px-4.md\\:px-5.pt-0.pb-3 {
+                    padding-top: 12px;
                 }
 
-                main form div.\\[grid-area\\:footer\\].\\[scrollbar-width\\:none\\] > div {
-                    gap: 8px;
+                [data-user-message-bubble="true"] {
+                    clip-path: polygon(0 0, 100% 0, 100% calc(100% - calc(var(--spacing) * 3)), calc(100% - calc(var(--spacing) * 3)) 100%, 0 100%);
+
+                    &:has(button[aria-expanded="false"]) {
+                        clip-path: polygon(0 0, 100% 0, 100% calc(100% - min(40%, calc(var(--spacing) * 7))), calc(100% - calc(var(--spacing) * 7)) 100%, 0 100%);
+                    }
                 }
 
-                section ul {
-                    list-style-type: square;
+                nav[role="navigation"] div[aria-current="page"] {
+                    clip-path: polygon(0 0, 100% 0, 100% calc(100% - calc(var(--spacing) * 3)), calc(100% - calc(var(--spacing) * 3)) 100%, 0 100%);
                 }
 
-                .speed-display::after,
-                .speed-display::before,
-                .speed-btn.plus::before,
-                .speed-btn.minus::before {
-                    display: none;
+                [role="dialog"][data-state="open"] form .rounded-button-action {
+                    border-radius: 0;
                 }
             `
         },
         darkerMode: {
-            label: "Darker Background for Header and Chatbox",
+            label: "Darker Background for Sidebar and Chatbox",
             enabled: false,
             sheet: null,
             style: `
                 :root {
-                    --sidebar-surface-primary: var(--black-bg) !important;
-                    --bg-secondary-surface: var(--black-bg) !important;
-                    --transparent-header-bg: #212121;
+                    --color-background-user-message: black;
+                    --color-surface-sidebar: #181818;
                 }
 
-                .dark\\:\\[--code-block-surface\\:var\\(--composer-surface-primary\\)\\] {
-                    --code-block-surface: #111111;
+                header .items-center.justify-center span.pointer-events-none {
+                    &.absolute {
+                        background-color: #111111;
+                    }
+
+                    &.relative {
+                        background-color: var(--color-surface);
+                    }
                 }
 
-                .bg-token-main-surface-primary,
-                .bg-token-bg-elevated-secondary {
-                    background: var(--black-bg) !important;
+                [role="dialog"][data-state="open"] form {
+                    background-color: #2d2d2d;
+
+                    button[type="submit"].text-chart-red {
+                        color: white;
+                        background-color: rgb(255 0 0 / 50%);
+
+                        &:hover {
+                            background-color: #e02e2a;
+                        }
+                    }
                 }
 
-                div[slot="content"].bg-token-main-surface-primary {
-                    background-color: black !important;
+                #app-shell-sidebar {
+                    background-color: #181818;
                 }
 
-                div.grid.gap-y-2,
-                form > div:nth-child(2) > div,
-                main form div.contain-inline-size,
-                div form > div.bg-token-bg-primary,
-                div.grid.\\[grid-template-areas\\:\\'leading_primary_trailing\\'\\] {
-                    background-color: #141414 !important;
-                    border: 1px solid #2d2d2d;
+                [data-markdown-copy="code-block"] {
+                    background-color: #111111;
+
+                    [data-markdown-copy="exclude"] {
+                        background-color: #141414;
+                    }
                 }
 
-                .bg-token-bg-elevated-primary,
-                div[data-testid="artifacts-surface-top-controls"].bg-surface-primary {
-                    background-color: unset;
+                [class^="ComposerLayoutRoot"] {
+                    --composer-layout-surface-background: #141414;
                 }
 
-                .border-token-border-light {
-                    border-color: rgba(0, 0, 0, 0.27);
+                @layer theme, base, components, utilities;
+                @layer components {
+                    [data-composer-utility-bar-variant="home"] [data-composer-body][data-composer-layout] {
+                        border: 1px solid #2d2d2d !important;
+                    }
                 }
 
-                .shadow-short,
-                .shadow-short:is(.dark *) {
-                    box-shadow:unset;
+                .group\\/sidebar-rail[data-app-navigation-rail="true"][aria-label="App navigation"] {
+                    background-color: #141414;
+
+                    + .sidebar-navigation {
+                        border-radius: 0;
+                        background-color: #181818;
+                    }
                 }
 
-                main .btn-secondary:not(:disabled):not([data-disabled]):hover,
-                .dark\\:hover\\:bg-token-main-surface-tertiary:is(.dark *):hover {
-                    background-color: var(--main-surface-tertiary, #2f2f2f) !important;
+                [data-app-shell-workspace-row="true"] [class^="PageSurface"][aria-hidden="true"] {
+                    border-radius: 0;
                 }
 
-                .hover\\:bg-token-main-surface-secondary:hover,
-                div[data-radix-popper-content-wrapper] .__menu-item:not(:disabled):not([data-disabled]):not(:hover)[data-active] {
-                    background-color: var(--main-surface-secondary, #424242) !important;
-                }
+                /* sidebar bg for without app nav bar */
+                aside .bg-surface,aside nav[aria-label="Show sidebar"] {background-color:#181818;}
 
-                body > picture,
-                .Ejxyja_threadFooterContentFade::after,
-                #thread-bottom-container > div.w-full:has(:empty) {
+            `
+        },
+        keepIconsVisible: {
+            label: "Keep Icons Visible",
+            enabled: false,
+            sheet: null,
+            style: `
+                .group\\/user-message .opacity-0 {
+                    opacity: 1;
+                }
+            `
+        },
+        hideMistakesTxt: {
+            label: 'Hide "ChatGPT can make mistakes" Text',
+            enabled: false,
+            sheet: null,
+            style: `
+                .sticky.bottom-0.self-end .text-codex-description[data-markdown-copy="exclude"],
+                [data-thread-scroll-footer="true"] div.relative.z-10.pt-2.\\*\\:pointer-events-auto.empty\\:hidden {
                     display: none;
                 }
 
-                body,
-                .bg-surface-primary,
-                .content-fade::after,
-                #thread-bottom-container,
-                div[role="dialog"].bg-token-bg-primary,
-                .bg-token-bg-primary[data-page-table-background="true"] {
-                    background-color: #212121;
+                [data-thread-scroll-footer="true"] {
+                    padding-bottom: 12px;
+                }
+            `
+        },
+        sideBarReorder: {
+            label: "Keep Projects on Top Under Pinned",
+            enabled: false,
+            sheet: null,
+            style: `
+                nav[role="navigation"] [data-sidebar-project-container-id="pinned"] .flex.flex-col[tabindex="-1"]:not([aria-label]) {
+                    flex-direction: column-reverse;
+                }
+            `
+        },
+        sidebarSections: {
+            label: "Compact Sidebar with Separators",
+            enabled: false,
+            sheet: null,
+            style: `
+                nav[role="navigation"] {
+                    > .gap-\\(--sidebar-navigation-header-gap\\) {
+                        gap: 0;
+                        padding-top: 6px;
+                    }
+
+                    > [data-app-action-sidebar-scroll] {
+                        padding: 0;
+                        gap: 4px;
+
+                        .browser\\:h-9:where([data-codex-window-type=browser] .browser\\:h-9) {
+                            height: fit-content;
+
+                            /*
+                            .text-tertiary.opacity-75::before {
+                                display: block;
+                                position: absolute;
+                                left: 0;
+                                content: '';
+                                height: 1px;
+                                width: 100%;
+                                transform: translateY(-4px);
+                                background-color: color-mix(in srgb, var(--color-text) 25%, transparent);
+                            }
+                            */
+                        }
+                    }
+
+                    &::after {
+                        position: absolute;
+                        bottom: 0;
+                        content:'';
+                        width: 100%;
+                        align-self: baseline;
+                        height: calc(var(--spacing) * 4);
+                        background-image: linear-gradient(to top, var(--color-surface-sidebar), transparent);
+                    }
                 }
 
-                .bg-surface-primary\\! {
-                    --main-surface-primary: #212121;
+                [data-app-shell-sidebar-open="true"] nav[aria-label="App navigation"] {
+                    width: 36px;
+
+                    > .flex.flex-col {
+                        padding: 0;
+
+                        button {
+                            border-radius: 0;
+                        }
+                    }
                 }
 
-                #thread-bottom-container,
-                div.mx-auto.flex-1 > div.relative.w-full:not(.text-xs.text-pretty) {
-                    box-shadow: 0 -20px 20px 0 #212121;
+                /* smaller avatar when app sidebar missing */
+                nav[role="navigation"][aria-label="Chat history"] + .bottom-0.z-20 {
+                    outline: 1px solid color-mix(in srgb, var(--color-text) 25%, transparent);
+                    .h-toolbar{min-height:fit-content;}
+                    .group{padding:0 10px;min-height: 24px;}
+                    .text-codex-description {display: none;}
+                }
+            `
+        },
+        justifyText: {
+            label: "Justify Text",
+            enabled: false,
+            sheet: null,
+            style: `
+                [data-markdown-text-style="assistant-message"] p[class*="Paragraph"] {
+                    text-align: justify;
+                }
+            `
+        },
+        listDashes: {
+            label: "Replace Bullets with Dashes in Lists",
+            enabled: false,
+            sheet: null,
+            style: `
+                [data-chatgpt-conversation-selection-target="true"] [class*="UnorderedList"] {
+                    list-style: "-";
+                    margin-left: -7px;
+                }
+            `
+        },
+        removeFocusOutlines: {
+            label: "Remove Focus Outlines",
+            enabled: false,
+            sheet: null,
+            style: `
+                :root {
+                    --color-ring: transparent;
+                }
+            `
+        },
+        transparentHeader: {
+            label: "Transparent Header",
+            enabled: true,
+            sheet: null,
+            style: `
+                main [class*="MainContentFrame"] {
+                    margin-top: 0;
                 }
 
-                .content-fade-top::after {
-                    --content-fade-surface: #212121;
+                main [class*="MainContentTopFade"] {
+                    display: block;
                 }
 
-                #page-header {
-                    pointer-events: all;
+                header [data-app-shell-main-titlebar="true"] {
+                    contain: layout !important;
+                    overflow: visible !important;
+
+                    > .ms-auto {
+                        margin-top: 8px;
+                        align-self: flex-start;
+                    }
+
+                    .gap-toolbar-action {
+                        flex-direction: column-reverse;
+                    }
+
+                    button[aria-label="Share"] {
+                        gap: 0;
+                        width: 36px;
+                        padding: 0;
+                        border: none;
+                        font-size: 0;
+                        justify-content: center;
+                    }
                 }
 
-                .sm\\:bg-gray-200\\/50 {
-                    background-color: color-mix(in oklab, #0f0f0f 50%, transparent);
-                    filter: blur(2px);
+                /*
+                header [data-testid="app-shell-header-context-menu-surface"]::before {
+                    content:'';
+                    width: 100%;
+                    align-self: baseline;
+                    height: calc(var(--spacing) * 4);
+                    background-image: linear-gradient(to bottom, var(--color-surface), transparent);
+                }
+                */
+            `
+        },
+        jumpToChatActive: {
+            label: "Add Message Navigation Arrows",
+            enabled: true,
+            sheet: null,
+            style: `
+                .CentAnni-style-nav-btn {
+                    position: absolute;
+                    display: flex;
+                    left: 0;
+                    width: 32px;
+                    height: 32px;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    z-index: 9999;
+                    background-color: var(--color-surface);
+                    pointer-events: auto;
+
+                    &:active {
+                        opacity: .8;
+                    }
+
+                    &.enabled {
+                        opacity: 1;
+                    }
+
+                    &.disabled {
+                        opacity: .5;
+                    }
+
+                    &:hover {
+                        opacity: 1;
+                        color: var(--primaryDefault);
+                    }
+                }
+
+                #CentAnni-nav-btn-up {
+                    top: -122px;
+                }
+                #CentAnni-nav-btn-down {
+                    top: -90px;
                 }
             `
         },
@@ -1412,566 +981,134 @@
             sheet: null,
             style: ``
         },
-        heightUserMessage: {
-            label: "User Message Height Limiter",
-            enabled: true,
-            sheet: null,
-            style: `
-                div[data-message-author-role="user"] div[data-can-expand][data-collapsed] {
-                    div[data-testid="collapsible-user-message-content"] {
-                        overflow: auto !important;
-                        max-height: 25dvh !important;
-                        mask-image: none !important;
-                        padding-right: 16px;
-                        margin-right: -16px;
-                        overscroll-behavior: contain;
-
-                        + button[aria-expanded="false"] {
-                            display: none !important;
-                        }
-                    }
-                }
-            `
-        },
-        blurChats: {
-            label: `Blur chats that don't include "⏿"`,
-            enabled: false,
-            sheet: null,
-            style: `
-                li.list-none div.group\\/project-unfurl-row > div:first-child,
-                li.list-none a > div:not(:has([aria-label*="⏿"])):first-child,
-                #thread:has(button[aria-label^="Edit the title of"]:not([aria-label*="⏿"])) :is(ol, .justify-between > .gap-1\\.5) {
-                    filter: blur(5px);
-                }
-            `
-        },
-        compactShareAddBtn: {
-            label: "Compact 'Share' and 'Add People' Buttons",
-            enabled: false,
-            sheet: null,
-            style: `
-                button[data-testid="share-chat-button"] > div {
-                    width: 16px;
-                    overflow: hidden;
-                    justify-content: flex-start;
-                }
-
-                button[data-testid="start-group-chat-from-conversation-button"] > div {
-                    width: 17px;
-                    overflow: hidden;
-                    justify-content: flex-start;
-                }
-            `
-        },
-        hideShareIcon: {
-            label: "Hide Share Icon",
-            enabled: false,
-            sheet: null,
-            style: `
-                button[aria-label="Share prompt"],
-                section button[aria-label="Share"] {
-                    display: none;
-                }
-            `
-        },
-        keepIconsVisible: {
-            label: "Keep Icons Visible",
-            enabled: true,
-            sheet: null,
-            style: `
-                main [class*="mask-image"] {
-                    mask-image: none !important;
-                    -webkit-mask-image: none !important;
-                }
-
-                .group\\/turn-messages .pointer-events-none.opacity-0.select-none {
-                    opacity: 1 !important;
-                    pointer-events: auto !important;
-                }
-            `
-        },
-        reduceAnimation: {
-            label: "No Icon Animation",
-            enabled: false,
-            sheet: null,
-            style: `
-                .motion-safe\\:transition-opacity {
-                    transition-duration: unset;
-                    transition-property: none;
-                    transition-timing-function: unset;
-                }
-            `
-        },
-        hidePlusAvatar: {
-            label: "Hide Plus/Pro Icon in Avatar",
-            enabled: false,
-            sheet: null,
-            style: hidePlusAvatarStyle
-        },
-        hideViewPlans: {
-            label: "Hide 'View plans' and 'Get Plus'",
-            enabled: false,
-            sheet: null,
-            style: `
-                div.__menu-item:has(svg path[d^="M8.44824"]),
-                #page-header div:has(path[d^="M17.665 10C17"]) {
-                    display: none !important;
-                }
-            `
-        },
-        hideGetProBtn: {
-            label: "Hide 'Get Pro' Button",
-            enabled: false,
-            sheet: null,
-            style: `
-                div[role="menuitem"]:has(use[href*="#ac4202"]),
-                main .flex > button.btn-primary:first-child:last-child {
-                    display: none;
-                }
-            `
-        },
-        disableVoiceModeBtn: {
-            label: "Disable Voice Mode Button",
-            enabled: false,
-            sheet: null,
-            style: `
-                button[aria-label="Start Voice"],
-                button[aria-label="Start voice mode"] {
-                    pointer-events: none;
-                    opacity: 0.5;
-                }
-
-                div:has(> button[aria-label="Start Voice"]),
-                span:has(> button[aria-label="Start Voice"]),
-                div:has(> button[aria-label="Start voice mode"]) {
-                    cursor: default;
-                }
-
-                div[role="tooltip"][popover="hint"].fixed {
-                    display: none;
-                }
-            `
-        },
-        hideMistakesTxt: {
-            label: "Hide 'ChatGPT can make mistakes' Text",
-            enabled: false,
-            sheet: null,
-            style: `
-                div[data-testid="thread-disclaimer"],
-                #thread-bottom-container div.w-full.text-center.text-xs {
-                    display: none;
-                }
-
-                :is(#thread-bottom,#thread-bottom-container) [class*="--thread-content-max-width"] {
-                    margin-bottom: 10px;
-                }
-            `
-        },
-        navIconsUp: {
-            label: "Compact Search and Library Buttons",
-            enabled: true,
-            sheet: null,
-            style: `
-                nav a.group.__menu-item[href^="/codex"],
-                nav a.group.__menu-item[href^="/atlas"],
-                nav > aside a:has(use[href*="#3a5c87"]),
-                nav > aside .-bottom-\\(--sticky-spacer\\),
-                div.pointer-events-none.h-px.w-px.-mb-px,
-                nav > a[href^="/library"] div.grow,
-                nav > aside > a:has(svg path[d^="M2.6687"]),
-                nav div.trailing:has(svg path[d^="M11.3349"]),
-                nav a.group.__menu-item[href^="/deep-research"],
-                nav li:has(a[data-testid="create-new-chat-button"]),
-                #stage-slideover-sidebar nav > aside div.absolute.inset-0,
-                #sidebar-header .header-wordmark span.text-token-text-tertiary,
-                nav > div:has(> [aria-haspopup="menu"]) div.min-w-0,
-                nav .bg-token-sidebar-surface-primary div[aria-hidden="true"].pointer-events-none {
-                    display: none;
-                }
-
-                .tall\\:top-header-height {
-                    height: 0;
-                    padding: 0;
-                    margin-bottom: -20px;
-                }
-
-                nav > a[href^="/sites"],
-                nav > a[href="/scheduled"],
-                nav > a[href="/plugins"],
-                nav > a[href^="/library"],
-                nav > div:has(> [aria-haspopup="menu"]),
-                nav > div:has(> [aria-haspopup="menu"]) > div,
-                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
-                    margin: 0;
-                    z-index: 31;
-                    height: 37px;
-                    width: 36px;
-                    max-height: unset !important;
-                    color: var(--text-tertiary);
-                }
-
-                nav > a[href^="/library"],
-                nav > div:has(> [aria-haspopup="menu"]) > div,
-                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
-                    border: none;
-                }
-
-                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] {
-                    position: fixed;
-                    top: 0;
-                    justify-content: center;
-                    transform: translate(-113px, 8px);
-                }
-
-                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"] > .flex {
-                    min-width: 20px;
-                }
-
-                nav > a[href^="/library"] {
-                    position: fixed;
-                    margin: 0;
-                    transform: translate(139px, 8px);
-                    min-height: 36px !important;
-                    justify-content: center;
-                }
-
-                nav > a[href="/plugins"] {
-                    display: none;
-                    position: fixed;
-                    width: fit-content;
-                    left: 211px;
-                    transform: translate(-100%, 45px);
-                    justify-content: center;
-                    flex-direction: row-reverse;
-                    background-color: var(--sidebar-surface-primary);
-
-                    &:hover {
-                        background-color: #3a3a3a !important;
-                    }
-                }
-
-                nav > a[href^="/sites"] {
-                    display: none;
-                    position: fixed;
-                    width: fit-content;
-                    left: 211px;
-                    transform: translate(-100%, 119px);
-                    justify-content: center;
-                    flex-direction: row-reverse;
-                    background-color: var(--sidebar-surface-primary);
-
-                    &:hover {
-                        background-color: #3a3a3a !important;
-                    }
-                }
-
-                nav > a[href="/scheduled"] {
-                    display: none;
-                    position: fixed;
-                    width: fit-content;
-                    left: 211px;
-                    transform: translate(-100%, 82px);
-                    justify-content: center;
-                    flex-direction: row-reverse;
-                    background-color: var(--sidebar-surface-primary);
-
-                    &:hover {
-                        background-color: #3a3a3a !important;
-                    }
-                }
-
-                nav:has( > div > [data-sidebar-item="true"][aria-haspopup="menu"]:hover, a:is([href="/scheduled"], [href="/plugins"], [href="/sites"]):hover ) a:is([href="/scheduled"], [href="/plugins"], [href="/sites"]) {
-                    display: flex;
-                }
-
-                nav > a[href^="/sites"]:hover,
-                nav > a[href="/scheduled"]:hover,
-                nav > a[href="/plugins"]:hover,
-                nav > a[href^="/library"]:hover,
-                nav button:has(svg path[d^="M6.83496"]):hover,
-                nav > div:has(> [aria-haspopup="menu"]) > div:hover,
-                nav:not(#stage-sidebar-tiny-bar) button[aria-label="Search"]:hover {
-                    color: var(--text-primary);
-                }
-
-                #stage-slideover-sidebar nav > div.sticky.top-0.z-30,
-                #stage-slideover-sidebar div.bg-token-bg-elevated-secondary.top-0 {
-                    z-index: 17;
-                }
-
-                nav > div:has(> [aria-haspopup="menu"]) {
-                    position: fixed;
-                    transform: translate(175px, 8px);
-                    padding: 0;
-                }
-
-                nav > div:has(> [aria-haspopup="menu"]) > div {
-                    padding: 0 7px 0 7px;
-                    width: 36px !important;
-                    max-height: unset !important;
-                }
-
-                nav a[href="/projects"] {
-                    margin-top: 10px;
-                }
-            `
-        },
-        sidebarSections: {
-            label: "Compact Sidebar with Separators",
-            enabled: true,
-            sheet: null,
-            style: `
-                nav {
-                    .__menu-item-trailing-btn,
-                    .__menu-item:not(:has(use[href*="#ad5af8"])):not(:has(use[href*="#266724"])) {
-                        min-height: calc(var(--spacing)*8);
-                        max-height: 32px;
-                    }
-
-                    .__menu-item-trailing-btn,
-                    .self-stretch {
-                        align-self: center;
-                    }
-
-                    .__menu-item-trailing-btn:hover {
-                        background: rgba(255, 255, 255, .1);
-                    }
-
-                    .light .__menu-item-trailing-btn:hover {
-                        background: rgba(1, 1, 1, .1);
-                    }
-
-                    .mt-\\(--sidebar-section-margin-top\\),
-                    .pt-\\(--sidebar-section-margin-top\\),
-                    .mt-\\(--sidebar-section-first-margin-top\\),
-                    .pt-\\(--sidebar-section-first-margin-top\\) {
-                        margin-top: 10px !important;
-                        padding: 0 !important;
-                    }
-
-                    div.group\\/sidebar-expando-section {
-                        margin: 10px 0 0 0;
-                    }
-
-                    div.group\\/sidebar-expando-section::before,
-                    .mt-\\(--sidebar-section-margin-top\\)::before,
-                    .pt-\\(--sidebar-section-margin-top\\)::before,
-                    .mt-\\(--sidebar-section-first-margin-top\\)::before,
-                    .pt-\\(--sidebar-section-first-margin-top\\)::before {
-                        content: '';
-                        position: absolute;
-                        width: 100%;
-                        height: 1px;
-                        background-color: color(srgb 1 1 1 / 0.17);
-                        display: block;
-                        transform: translateY(-5px);
-                    }
-
-                    .light .mt-\\(--sidebar-section-margin-top\\)::before,
-                    .light .pt-\\(--sidebar-section-margin-top\\)::before,
-                    .light .mt-\\(--sidebar-section-first-margin-top\\)::before,
-                    .light .pt-\\(--sidebar-section-first-margin-top\\)::before {
-                        background-color: color(srgb 0 0 0 / 0.17);
-                    }
-
-                    .tall\\:top-header-height {
-                        margin-top: 0 !important;
-                    }
-
-                    .tall\\:top-header-height::before {
-                        background-color: transparent;
-                    }
-
-                    > #history > aside > h2 {
-                        padding: 3px 10px 0 10px;
-                    }
-
-                    .__menu-item:not(:disabled):not([data-disabled]):not([data-no-hover-bg]).hoverable:hover {
-                        background-color: var(--surface-hover);
-                    }
-
-                    div[aria-label="Expand section"],
-                    div[aria-label="Collapse section"] {
-                        padding: 0px 10px;
-                        min-height: unset !important;
-                    }
-
-                    h2.__menu-label {
-                        font-size: .75rem;
-                        text-transform: lowercase;
-                    }
-                }
-            `
-        },
-        justifyText: {
-            label: "Justify Text",
-            enabled: true,
-            sheet: null,
-            style: `
-                .markdown {
-                    text-align: justify;
-                }
-
-                .markdown h1 {
-                    text-align: left;
-                }
-            `
-        },
-        listDashes: {
-            label: "Replace Bullets with Dashes in Lists",
-            enabled: false,
-            sheet: null,
-            style: `
-                #thread section ul li::marker {
-                    position: absolute;
-                    content: "– ";
-                    margin-left: -25px;
-                }
-            `
-        },
-        removeFocusOutlines: {
-            label: "Remove Focus Outlines",
-            enabled: false,
-            sheet: null,
-            style: `
-                :focus {
-                    outline: none;
-                    box-shadow: 0 0 0 0 transparent;
-                }
-
-                [data-testid="profile-button"] .group-focus-visible\\:ring-2 {
-                    --tw-ring-shadow: 0 0 #0000;
-                    --tw-ring-offset-shadow: 0 0 #0000;
-                }
-            `
-        },
-        autoCloseProjects: {
-            label: "Auto-Close Projects on Page Load",
-            enabled: false,
-            sheet: null,
-            style: ``
-        },
-        transparentHeader: {
-            label: "Transparent Header",
-            enabled: true,
-            sheet: null,
-            style: `
-                #page-header {
-                    background: linear-gradient(to top, transparent, var(--transparent-header-bg) 51px) !important;
-                    box-shadow: none;
-                    pointer-events: none;
-
-                    .top-full {
-                        padding-left: 0;
-                    }
-
-                    button[title="Task details"] {
-                        color: var(--text-primary);
-                    }
-                }
-
-                #page-header:not(:has(button[aria-label*="temporary chat"], [aria-label="Task progress"])) {
-                    #conversation-header-actions,
-                    #conversation-header-actions > div {
-                        flex-direction: column;
-                        margin: 0;
-                    }
-
-                    .gap-3 {
-                        position: absolute;
-                        right: 10px;
-                        top: 50px;
-                    }
-                }
-
-                html:has(#stage-sidebar-tiny-bar.opacity-100) #page-header:not(:has(button[aria-label*="temporary chat"], [aria-label="Task progress"])) .gap-3 {
-                    top: 10px;
-                }
-
-                #CentAnni-nav-btn-up {
-                    transform: translateX(-50%);
-                    position: absolute;
-                    left: 3.1315%;
-                    top: 10px
-                }
-
-                #CentAnni-nav-btn-down {
-                    transform: translateX(-50%);
-                    position: absolute;
-                    left: 3.1315%;
-                    top: 46px;
-                }
-
-                .translucent-surface {
-                    background-color: unset;
-                }
-
-                button[aria-label="Share"],
-                button[data-testid="share-chat-button"],
-                button[aria-label="Show project details"],
-                button[aria-label="Open conversation options"] {
-                    padding: 0;
-                    margin: 0;
-                    width: 36px;
-                    height: 36px;
-                    font-size: 0;
-                }
-
-                button[aria-label="Share"] span,
-                button[data-testid="share-chat-button"] span,
-                button[aria-label="Open conversation options"] span {
-                    display: none;
-                }
-
-                button[data-testid="share-chat-button"] > div {
-                    justify-content: flex-start;
-                    width: 18px !important;
-                }
-
-                .top-\\(--sticky-padding-top\\) {
-                    top: 0;
-                }
-
-                div.pointer-events-none.sticky.z-40 {
-                    top: 45px !important;
-                }
-
-                /* hide plus */
-                ${hidePlusAvatarStyle}
-            `
-        },
-        jumpToChatActive: {
-            label: "Add Message Navigation Arrows",
-            enabled: true,
-            sheet: null,
-            style: ``
-        },
         readAloudBtn: {
             label: "Add Button to Read Aloud Last Message",
-            enabled: true,
+            enabled: false,
             sheet: null,
-            style: ``
+            style: `
+                #CentAnni-speak-btn {
+                    position: absolute;
+                    display: flex;
+                    top: -40px;
+                    left: 0;
+                    width: 32px;
+                    height: 32px;
+                    color: deepskyblue;
+                    justify-content: center;
+                    align-items: center;
+                    border-radius: 50%;
+                    cursor: pointer;
+                    z-index: 9999;
+                    background-color: var(--color-surface);
+                    pointer-events: auto;
+
+                    &:hover {
+                        background-color: rgba(255, 255, 255, .07);
+                    }
+
+                    &:active {
+                        color: rgb(0, 251, 255);
+                    }
+
+                    form[data-composer-placement="thread"]:has(button[aria-label="Stop"]) & {
+                        pointer-events: none;
+                        user-select: none;
+                        opacity: .5;
+                    }
+                }
+            `
         },
         modelSelector: {
             label: "Add Quick Model Selector Buttons",
             enabled: true,
             sheet: null,
-            style: ``
+            style: `
+                #CentAnni-gpt-model-quickbar {
+                    position: relative;
+                    display: flex;
+                    gap: 4px;
+                    order: 2;
+                    margin: 0 4px;
+                    background: transparent;
+                    text-wrap: nowrap;
+                    overflow-y: hidden;
+                    overflow-x: auto;
+                    scrollbar-width: none;
+                }
+
+                .CentAnni-gpt-model-btn.CentAnni-active {
+                    border-color: var(--primaryDefault, var(--CentAnniBlue));
+
+                    &:hover {
+                        border-color: var(--primaryDefault-hover, var(--CentAnniBlue-hover));
+                    }
+                }
+
+                .CentAnni-gpt-model-btn {
+                    font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+                    padding: 8px 10px;
+                    border-radius: 3px;
+                    border: 1px solid rgba(255 255 255 / .1);
+                    background: rgba(255 255 255 / .08);
+                    color: white;
+                    cursor: pointer;
+                    margin-right: 4px;
+                    text-box: trim-both cap alphabetic;
+                    transition: background-color .4s ease, border-color .4s ease;
+                }
+
+                .CentAnni-gpt-model-btn:hover {
+                    background: rgba(255 255 255 / .12) !important;
+                    border-color: rgba(255 255 255 / .25);
+                }
+
+                .CentAnni-gpt-model-btn:active {
+                    background: rgba(255 255 255 / .2) !important;
+                    border-color: rgba(255 255 255 / .5);
+                    transition: background-color .25s ease-out, border-color .1s ease-out;
+                }
+
+                html.light .CentAnni-gpt-model-btn {
+                    border: 1px solid rgba(0 0 0 / .1);
+                    color: black;
+                }
+
+                html.light .CentAnni-gpt-model-btn:hover {
+                    background: rgb(250 250 250) !important;
+                    border-color: rgba(0 0 0 / .2);
+                }
+
+                html.light .CentAnni-gpt-model-btn:active {
+                    background: rgb(245 245 245) !important;
+                    border-color: rgba(0 0 0 / .5);
+                }
+
+                .hide-model-picker {
+                    form button[aria-label="Select ChatGPT model"] {
+                        background: transparent;
+                    }
+
+                    body > .contents > [data-radix-popper-content-wrapper]:has([data-model-picker-view]) {
+                        opacity: 0;
+                    }
+                }
+            `
         },
         hideModelSelector: {
             label: "Hide Model Selector Unless Hovered",
             enabled: false,
             sheet: null,
             style: `
-                div[data-composer-transition-slot="trailing"] button.__composer-pill {
+                form button[aria-haspopup="menu"][data-composer-navigation-target="reasoning"] {
                     opacity: 0;
+
+                    &:hover,
+                    &[data-state="open"] {
+                        opacity: 1;
+                    }
                 }
 
-                div[data-composer-transition-slot="trailing"] button.__composer-pill:hover {
-                    opacity: 1 !important;
-                }
-
-                html.hide-model-picker div[data-composer-transition-slot="trailing"] button.__composer-pill {
+                .hide-model-picker form button[aria-label="Select ChatGPT model"] {
                     opacity: 0 !important;
                 }
             `
@@ -2019,7 +1156,6 @@
         }
 
         workModelButtons = await GM.getValue('workModelButtons', workModelButtons);
-        headerOffset = features.transparentHeader.enabled ? 26 : 52;
     };
 
     let savedSpeed;
@@ -2034,25 +1170,12 @@
     const MIN_SPEED = 1;
     const MAX_SPEED = 17;
     const DELTA = 0.25;
-    let headerOffset = 52;
+    const headerOffset = 15;
 
     const docElement = document.documentElement;
 
     // load CSS settings
     const cssSettingsReady = loadCSSsettings();
-
-    // auto close projects
-    let projectsOpen = true;
-    const closeProjects = () => {
-        projectsOpen = false;
-
-        const newProjectButton = document.querySelector('button[aria-label="New project"]');
-        const projectsHeader = newProjectButton?.closest('div.group\\/sidebar-expando-section-header');
-        const projectsButton = projectsHeader?.firstElementChild;
-
-        if (!projectsButton?.matches('button[aria-expanded]')) return;
-        if (projectsButton.getAttribute('aria-expanded') === 'true') projectsButton.click();
-    };
 
     // load playback speed
     async function initializeSpeed() {
@@ -2205,9 +1328,7 @@
                     features[key].enabled = checkbox.checked;
                     await GM.setValue(key, features[key].enabled);
                     applyFeature(key);
-                    if (key === 'transparentHeader') headerOffset = features[key].enabled ? 26 : 52;
-                    if (key === 'jumpToChat' || key === 'transparentHeader') navChanged = true;
-                    if (key === 'modelSelector') modelChanged = true;
+                    if (key === 'jumpToChat') navChanged = true;
                 }
             }
 
@@ -2279,9 +1400,12 @@
 
     // create controls
     function createControlButtons() {
-        if (controlsContainer?.isConnected) return;
-        const target = document.querySelector('#thread-bottom-container div.\\[grid-area\\:leading\\]');
-        if (!target) return;
+        const addButton = document.querySelector('form [data-composer-footer-responsive] button[aria-label="Add files and more"]');
+        if (!addButton?.parentElement) return;
+        if (controlsContainer?.isConnected) {
+            if (controlsContainer.previousElementSibling !== addButton.parentElement) addButton.parentElement.insertAdjacentElement('afterend', controlsContainer);
+            return;
+        }
 
         controlsContainer = document.createElement('div');
         controlsContainer.classList.add('speed-control-container');
@@ -2346,8 +1470,7 @@
         controlsContainer.appendChild(speedDisplay);
         controlsContainer.appendChild(plusButton);
 
-        target.insertAdjacentElement('afterend', controlsContainer);
-        if (projectsOpen && features.autoCloseProjects.enabled) closeProjects();
+        addButton.parentElement.insertAdjacentElement('afterend', controlsContainer);
     }
 
     // message navigation button section
@@ -2384,21 +1507,16 @@
 
     let navCleanup = null;
     function navBtns() {
-        let targetChatBox, actions, shareBtn;
-        const targetChatSelector = 'main #thread > div.composer-parent > div:first-child';
+        const targetChatSelector = '[data-thread-find-target="conversation"]';
         let targetChat = document.querySelector(targetChatSelector);
-        if (features.transparentHeader.enabled) targetChatBox = document.querySelector("#thread-bottom, #thread-bottom-container");
-        else {
-            actions = document.getElementById('conversation-header-actions');
-            shareBtn = actions?.querySelector('button[aria-label="Share"]');
-        }
-        if (!(targetChatBox || (actions && shareBtn)) || !targetChat) return () => {};
+        const targetChatBox = document.querySelector('form[data-composer-placement="thread"]');
+        if (!(targetChatBox) || !targetChat) return () => {};
 
         let chatObserver = null;
         let messageCache = [];
 
-        const role = features.jumpToChat?.enabled ? 'user' : 'assistant';
-        const messageSelector = `:is(article, section):has([data-message-author-role="${role}"]:not([data-message-id^="placeholder-request"]))`;
+        const role = features.jumpToChat?.enabled ? '[data-user-message-bubble="true"]' : '[data-conversation-role="assistant"]';
+        const messageSelector = `${role}`;
         const queryMessages = () => {
             if (!targetChat?.isConnected) targetChat = document.querySelector(targetChatSelector);
             if (!targetChat) return [];
@@ -2482,11 +1600,7 @@
             upBtn.onclick = () => jump(true);
             downBtn.onclick = () => jump(false);
 
-            if (features.transparentHeader.enabled) targetChatBox.append(upBtn, downBtn);
-            else {
-                actions.insertBefore(downBtn, shareBtn);
-                actions.insertBefore(upBtn, downBtn);
-            }
+            targetChatBox.append(upBtn, downBtn);
 
             populateCache();
             startObserver();
@@ -2561,7 +1675,7 @@
     }));
 
     const getIntelligenceButton = (config) => {
-        const ticks = document.querySelectorAll('[data-testid="composer-intelligence-picker-content"] [data-model-reasoning-effort-slider] [data-selected]');
+        const ticks = document.querySelectorAll('[data-model-picker-view="simple"] [data-model-picker-power-slider] [data-selected]');
         return ticks[config.index ?? (config.endpoint === 'first' ? 0 : ticks.length - 1)] || null;
     };
 
@@ -2619,32 +1733,36 @@
 
         const check = () => {
             if (config.model) {
-                const panel = document.querySelector('[data-testid="composer-model-picker-slider-advanced-view"]');
+                const panel = document.querySelector('[data-model-picker-view]');
                 const modelButton = Array.from(panel?.querySelectorAll('[role="menuitemradio"]') || []).find(button => button.textContent.trim().split(/\s+/).pop() === config.model);
                 if (!modelButton) return false;
-                if (modelButton.getAttribute('aria-checked') !== 'true' || panel.getAttribute('data-active') === 'true') {
-                    if (panel.getAttribute('data-active') === 'true') simulateClick(modelButton);
-                    else {
-                        const selector = document.querySelector('[data-testid="composer-intelligence-picker-content"] [aria-label="Select model"]');
-                        if (selector?.getAttribute('aria-expanded') === 'false') simulateClick(selector);
-                    }
+                if (panel.dataset.modelPickerView === 'advanced') {
+                    simulateClick(modelButton);
+                    return false;
+                }
+                if (modelButton.getAttribute('aria-checked') !== 'true') {
+                    simulateClick(panel.querySelector('[data-model-picker-view-toggle][aria-label="Select model"]'));
                     return false;
                 }
             }
             const modelButton = getIntelligenceButton(config);
             if (!modelButton) return false;
-            simulateClick(modelButton);
+            const slider = modelButton.closest('[data-model-picker-power-slider]')?.querySelector('[role="slider"]');
+            const selectedIndex = config.index ?? (config.endpoint === 'first' ? 0 : Number(slider?.getAttribute('aria-valuemax')));
+            if (Number(slider?.getAttribute('aria-valuenow')) !== selectedIndex) {
+                simulateClick(modelButton);
+                return false;
+            }
             simulateClick(headerButton);
             cleanup();
             return true;
         };
 
         // open menu selector panel
-        const headerButton = document.querySelector('[class~="[grid-area:trailing]"] button.__composer-pill');
+        const headerButton = document.querySelector('form [data-composer-footer-responsive] button[aria-label="Select ChatGPT model"]');
         if (!headerButton) return;
         docElement.classList.add('hide-model-picker');
         if (headerButton.getAttribute('aria-expanded') !== 'true') simulateClick(headerButton);
-        if (check()) return;
 
         // model observer
         modelObserver = new MutationObserver(() => {
@@ -2655,7 +1773,7 @@
                 });
             }
         });
-        modelObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-checked', 'data-active'] });
+        modelObserver.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-checked', 'aria-valuenow', 'data-active', 'data-selected-reasoning-effort'] });
         timeout = setTimeout(cleanup, 10000);
         check();
     };
@@ -2664,13 +1782,11 @@
     let modelQuickbar = null;
 
     const addModelButtons = () => {
-        if (modelQuickbar?.isConnected) return;
-        modelQuickbar = document.getElementById("CentAnni-gpt-model-quickbar");
-        if (modelQuickbar) return;
-        const targetContainer = document.querySelector("main div.\\[grid-area\\:trailing\\]");
-        if (!targetContainer) return;
+        if (modelQuickbar?.isConnected && modelQuickbar.childElementCount) return;
+        const modelPicker = document.querySelector('form [data-composer-footer-responsive] button[aria-label="Select ChatGPT model"]');
+        if (!modelPicker?.parentElement) return;
 
-        const bar = document.createElement("div");
+        const bar = document.getElementById("CentAnni-gpt-model-quickbar") || document.createElement("div");
         bar.id = "CentAnni-gpt-model-quickbar";
         modelQuickbar = bar;
         const mkBtn = (label, model, clickHandler) => {
@@ -2684,40 +1800,33 @@
             return b;
         };
 
-        targetContainer.insertBefore(bar, targetContainer.firstChild);
+        if (bar.previousElementSibling !== modelPicker.parentElement) modelPicker.parentElement.insertAdjacentElement('afterend', bar);
 
         // color code model button
         requestIdleCallback(() => {
-            const attachModelBtnObserver = () => {
-                const div = targetContainer?.querySelector('div.relative');
-                if (!div) return false;
-
-                modelBtnObserver?.disconnect();
-                const markExtendedButton = () => {
-                    const isWorkMode = !!targetContainer?.closest('form')?.querySelector('[data-placeholder="Work on anything"]') || !!docElement.querySelector('a[data-sidebar-item="true"][data-active][aria-label*=", Work"]') || !!docElement.querySelector('#page-header div.font-medium:last-child button[data-state="on"]');
-                    docElement.classList.toggle('workmode-enabled', isWorkMode);
-                    const mode = isWorkMode ? 'work' : 'chat';
-                    if (bar.dataset.mode !== mode) {
-                        const models = isWorkMode ? workModelButtons.filter(config => config.model).map(config => [`${config.model} ${thinkingModes[config.index]}`, `${config.model}-${config.index}`]) : [['Instant', 'gpt-instant'], ['High', 'gpt-high']];
-                        bar.replaceChildren(...models.map(([label, model]) => mkBtn(label, label.toLowerCase().replace(/\s/g, ''), () => selectModel(model))));
-                        bar.dataset.mode = mode;
-                    }
-                    const selectedModel = div.querySelector('button.__composer-pill')?.textContent?.trim().toLowerCase().replace(/^gpt-[\d.]+\s*/, '').replace(/\s/g, '');
-                    bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
-                        button.classList.toggle('CentAnni-active', button.dataset.model === selectedModel);
-                    });
-                };
-
-                markExtendedButton();
-                modelBtnObserver = new MutationObserver(markExtendedButton);
-                modelBtnObserver.observe(div, { childList: true, characterData: true, subtree: true });
-                return true;
+            const markExtendedButton = () => {
+                const targetContainer = bar.parentElement;
+                const isWorkMode = !!targetContainer?.closest('form')?.querySelector('[data-composer-markdown][aria-label="Work with ChatGPT"]') || !!docElement.querySelector('a[data-sidebar-item="true"][data-active][aria-label*=", Work"]') || !!docElement.querySelector('#page-header div.font-medium:last-child button[data-state="on"]');
+                docElement.classList.toggle('workmode-enabled', isWorkMode);
+                const mode = isWorkMode ? 'work' : 'chat';
+                if (bar.dataset.mode !== mode) {
+                    const models = isWorkMode ? workModelButtons.filter(config => config.model).map(config => [`${config.model} ${thinkingModes[config.index]}`, `${config.model}-${config.index}`]) : [['Instant', 'gpt-instant'], ['High', 'gpt-high']];
+                    bar.replaceChildren(...models.map(([label, model]) => mkBtn(label, model, () => selectModel(model))));
+                    bar.dataset.mode = mode;
+                }
+                const picker = targetContainer?.querySelector('button[aria-label="Select ChatGPT model"]');
+                const selectedModel = workModels.find(model => picker?.textContent?.includes(model));
+                const selectedIndex = ['low', 'medium', 'high', 'xhigh', 'max'].indexOf(picker?.dataset.selectedReasoningEffort);
+                const activeModel = isWorkMode ? `${selectedModel}-${selectedIndex}` : picker?.dataset.selectedReasoningEffort === 'none' ? 'gpt-instant' : picker?.dataset.selectedReasoningEffort === 'high' ? 'gpt-high' : '';
+                bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
+                    button.classList.toggle('CentAnni-active', button.dataset.model === activeModel);
+                });
             };
 
-            if (attachModelBtnObserver()) return;
             modelBtnObserver?.disconnect();
-            modelBtnObserver = new MutationObserver(attachModelBtnObserver);
-            modelBtnObserver.observe(targetContainer, { childList: true, subtree: true });
+            markExtendedButton();
+            modelBtnObserver = new MutationObserver(markExtendedButton);
+            modelBtnObserver.observe(bar.parentElement, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['data-selected-reasoning-effort'] });
         });
     };
 
@@ -2726,25 +1835,31 @@
         const button = buttons[buttons.length - 1];
         if (!button) return;
 
+        const closestBtn = button.closest('[data-turn-key]');
+        const directButton = closestBtn?.querySelector('button[aria-label="Read aloud"]') || closestBtn?.querySelector('button[aria-label="Stop reading aloud"]');
+        if (directButton) { directButton.click(); return; }
+
         button.focus();
         button.dispatchEvent(new KeyboardEvent('keydown', { key: 'Enter', bubbles: true }));
         button.dispatchEvent(new KeyboardEvent('keyup', { key: 'Enter', bubbles: true }));
-        setTimeout(() => {
-            const wrapper = document.querySelector('[data-radix-popper-content-wrapper]');
-            const readAloud = wrapper?.querySelector('[aria-label="Read aloud"], [data-testid="voice-play-turn-action-button"]');
 
-            if (readAloud) readAloud.click();
-            else {
-                const observer = new MutationObserver(() => {
-                    const btn = wrapper.querySelector('[aria-label="Read aloud"], [data-testid="voice-play-turn-action-button"]');
-                    if (!btn) return;
-                    clearTimeout(observer.timer);
-                    observer.disconnect();
-                    btn.click();
-                });
-                observer.timer = setTimeout(() => observer.disconnect(), 1000);
-                wrapper && observer.observe(wrapper, { childList: true, subtree: true });
-            }
+        setTimeout(() => {
+            const clickReadAloud = () => {
+                const menu = document.getElementById(button.getAttribute('aria-controls'));
+                const menuItem = Array.from(menu?.querySelectorAll('[role="menuitem"]') || []).find(item => item.textContent.trim().toLowerCase() === 'read aloud');
+                if (!menuItem) return false;
+                menuItem.click();
+                return true;
+            };
+
+            if (clickReadAloud()) return;
+            const observer = new MutationObserver(() => {
+                if (!clickReadAloud()) return;
+                clearTimeout(observer.timer);
+                observer.disconnect();
+            });
+            observer.timer = setTimeout(() => observer.disconnect(), 1000);
+            observer.observe(document.body, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-controls', 'data-state'] });
         }, 100);
     };
 
@@ -2759,7 +1874,7 @@
         if (readAloudButton?.isConnected) return;
         readAloudButton = document.getElementById("CentAnni-speak-btn");
         if (readAloudButton) return;
-        const speakBtnLoc = document.querySelector("#thread-bottom, #thread-bottom-container");
+        const speakBtnLoc = document.querySelector('form[data-composer-placement="thread"]');
         if (!speakBtnLoc) return;
 
         const speakBtn = document.createElement('button');
@@ -2799,7 +1914,9 @@
     // initialization after DOM has loaded
     function init() {
         observer = new MutationObserver(mutations => {
-            if (!mainRoot?.isConnected) mainRoot = document.getElementById('main');
+            const uiMissing = !controlsContainer?.isConnected || (features.jumpToChatActive.enabled && !upBtn.isConnected) || (features.readAloudBtn.enabled && !readAloudButton?.isConnected) || (features.modelSelector.enabled && !modelQuickbar?.isConnected);
+            if (!uiMissing) return;
+            if (!mainRoot?.isConnected) mainRoot = document.getElementById('root');
 
             let hasMainMutations = false;
             for (const mutation of mutations) {
@@ -2808,25 +1925,24 @@
                 break;
             }
 
-            const uiMissing = !controlsContainer?.isConnected || (features.jumpToChatActive.enabled && !upBtn.isConnected) || (features.readAloudBtn.enabled && !readAloudButton?.isConnected) || (features.modelSelector.enabled && !modelQuickbar?.isConnected);
-            if (hasMainMutations && uiMissing) scheduleUiRefresh();
+            if (hasMainMutations) scheduleUiRefresh();
         });
 
         if (document.body) {
             observer.observe(document.body, { childList: true, subtree: true });
             cssSettingsReady.then(() => {
                 requestIdleCallback(initializeSpeed, { timeout: 2000 });
-                setTimeout(() => requestIdleCallback(() => createControlButtons(), { timeout: 2000 }), 50);
+                requestIdleCallback(createControlButtons, { timeout: 2000 });
                 if (features.modelSelector.enabled) requestIdleCallback(addModelButtons, { timeout: 2000 });
                 if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
-                if (features.readAloudBtn.enabled) setTimeout(() => requestIdleCallback(() => addReadAloudBtn(), { timeout: 2000 }), 200);
+                if (features.readAloudBtn.enabled) requestIdleCallback(addReadAloudBtn, { timeout: 2000 });
             });
         }
     }
 
     // wait for DOM to be ready
     const check = () => {
-        if (window.threadObserverActive || window.location.pathname.startsWith('/codex') || window.location.hostname === 'sora.chatgpt.com') return;
+        if (window.threadObserverActive || window.location.pathname.startsWith('/codex')) return;
         window.threadObserverActive = true;
 
         let timer;
@@ -2835,7 +1951,7 @@
             observer?.disconnect();
             clearTimeout(timer);
             clearTimeout(t);
-            init();
+            requestIdleCallback(init, { timeout: 1000 });
         };
 
         const observer = new MutationObserver(() => {
