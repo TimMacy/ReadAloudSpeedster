@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.1
+// @version      6.1.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.1 - Read Aloud Speedster                *
+*                    Version: 6.1.1 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -156,7 +156,7 @@
             color: var(--primaryDefault, var(--CentAnniBlue-hover));
         }
 
-        header span.pointer-events-none.rounded-full.relative {
+        [aria-label="Composer mode"] span.pointer-events-none.rounded-full.relative {
             border: 1px solid var(--primaryDefault, var(--CentAnniBlue-hover));
         }
 
@@ -570,21 +570,9 @@
     `;
 
     // append css
-    (document.head
-        ? Promise.resolve(document.head)
-        : new Promise(resolve => {
-            document.readyState === 'loading'
-                ? document.addEventListener('DOMContentLoaded', () => resolve(document.head), { once: true })
-                : resolve(document.head);
-        })
-    ).then(head => {
-        if (head)
-            head.appendChild(styleSheet);
-        else {
-            document.documentElement.appendChild(styleSheet);
-            console.error("Read Aloud Speedster: Failed to find head element. Using backup to append stylesheet.");
-        }
-    });
+    const constructedStyleSheet = new CSSStyleSheet();
+    constructedStyleSheet.replaceSync(styleSheet.textContent);
+    document.adoptedStyleSheets.push(constructedStyleSheet);
 
     const features = {
         disableVoiceModeBtn: {
@@ -638,12 +626,12 @@
             sheet: null,
             style: `
                 :root {
-                    --radius-2xl: 0;
-                    --radius-xl: 0;
-                    --radius-lg: 0;
+                    --radius-2xl: 0 !important;
+                    --radius-xl: 0 !important;
+                    --radius-lg: 0 !important;
                 }
 
-                header .rounded-full,
+                [aria-label="Composer mode"] .rounded-full,
                 [data-app-shell-focus-area="main"] .rounded-2xl {
                     border-radius: 0;
                 }
@@ -688,7 +676,7 @@
                     --color-surface-sidebar: #181818;
                 }
 
-                header .items-center.justify-center span.pointer-events-none {
+                [aria-label="Composer mode"] span.pointer-events-none {
                     &.absolute {
                         background-color: #111111;
                     }
@@ -729,7 +717,8 @@
 
                 @layer theme, base, components, utilities;
                 @layer components {
-                    [data-composer-utility-bar-variant="home"] [data-composer-body][data-composer-layout] {
+                    form[data-composer-placement="home"] [data-composer-layout][data-composer-body],
+                    form[data-composer-placement="thread"] [data-composer-layout][role="presentation"] {
                         border: 1px solid #2d2d2d !important;
                     }
                 }
@@ -888,7 +877,7 @@
             enabled: true,
             sheet: null,
             style: `
-                main [class*="MainContentFrame"] {
+                main [data-app-shell-main-content-layout="thread-edge-scroll"] [class*="MainContentFrame"] {
                     margin-top: 0;
                 }
 
@@ -917,17 +906,12 @@
                         font-size: 0;
                         justify-content: center;
                     }
-                }
 
-                /*
-                header [data-testid="app-shell-header-context-menu-surface"]::before {
-                    content:'';
-                    width: 100%;
-                    align-self: baseline;
-                    height: calc(var(--spacing) * 4);
-                    background-image: linear-gradient(to bottom, var(--color-surface), transparent);
+                    [data-app-shell-thread-content-overlap="true"].backdrop-blur-xl {
+                        max-width: fit-content;
+                        align-self: flex-start;
+                    }
                 }
-                */
             `
         },
         jumpToChatActive: {
@@ -1120,12 +1104,13 @@
         if (!feature) return;
         if (feature.enabled) {
             if (feature.style && !feature.sheet) {
-                feature.sheet = document.createElement('style');
-                feature.sheet.textContent = feature.style;
-                (document.head || document.documentElement).appendChild(feature.sheet);
+                feature.sheet = new CSSStyleSheet();
+                feature.sheet.replaceSync(feature.style);
+                document.adoptedStyleSheets.push(feature.sheet);
             }
         } else if (feature.sheet) {
-            feature.sheet.remove();
+            const index = document.adoptedStyleSheets.indexOf(feature.sheet);
+            if (index !== -1) document.adoptedStyleSheets.splice(index, 1);
             feature.sheet = null;
         }
     }
@@ -1951,7 +1936,7 @@
             observer?.disconnect();
             clearTimeout(timer);
             clearTimeout(t);
-            requestIdleCallback(init, { timeout: 1000 });
+            init();
         };
 
         const observer = new MutationObserver(() => {
