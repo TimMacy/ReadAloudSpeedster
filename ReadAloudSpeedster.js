@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.1.1
+// @version      6.1.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -60,9 +60,16 @@
         }
 
         /* sidebar pinned, project, recents */
-        nav section .truncate {
-            text-transform: lowercase;
-            color: var(--primaryDefault);
+        nav[role="navigation"][aria-label="Chat history"] {
+            section .truncate,
+            .shrink-0.text-xs.text-tertiary {
+                text-transform: lowercase;
+                color: var(--primaryDefault);
+            }
+
+            .shrink-0.text-xs.text-tertiary.hidden {
+                display: inline;
+            }
         }
 
         nav[role="navigation"] .text-codex-description,
@@ -197,10 +204,13 @@
         **************************************/
         .speed-control-container {
             display: flex;
+            z-index: 2077;
             align-items: center;
+            background-color: var(--composer-layout-surface-background);
         }
 
         .speed-btn {
+            position: relative;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -229,42 +239,29 @@
                 pointer-events: auto;
                 transition: width .5s linear(0, 0.887 15.2%, 1.149 23.6%, 1.296 32.6%, 1.338 39.8%, 1.326 48%, 1.053 82%, 1) .3s, opacity .5s cubic-bezier(0.4, 0, 0.69, 1) .3s;
             }
-        }
 
-        .speed-btn.plus::before,
-        .speed-btn.minus::before,
-        .speed-display::before,
-        .speed-display::after {
-            content: '';
-            position: absolute;
-            width: 1px;
-            height: 12px;
-            background-color: color-mix(in oklab, var(--app-color-text-foreground) 25%, transparent);
-        }
+            &.plus::before,
+            &.plus::after,
+            &.minus::before,
+            &.minus::after {
+                content: '';
+                position: absolute;
+                width: 1px;
+                height: 12px;
+                top: 50%;
+                transform: translateY(-50%);
+                background-color: color-mix(in oklab, var(--app-color-text-foreground) 25%, transparent);
+            }
 
-        .speed-display::before,
-        .speed-display::after {
-            position: absolute;
-            top: 50%;
-            transform: translateY(-50%);
-        }
+            &.plus::before,
+            &.minus::before {
+                left: 0;
+            }
 
-        .speed-btn.plus::before {
-            position: relative;
-            left: 22px;
-        }
-
-        .speed-btn.minus::before {
-            position: relative;
-            right: 15px;
-        }
-
-        .speed-display::after {
-            right: 0;
-        }
-
-        .speed-display::before {
-            left: 0
+            &.plus::after,
+            &.minus::after {
+                right: 0;
+            }
         }
 
         .speed-btn:hover,
@@ -1072,7 +1069,7 @@
                         background: transparent;
                     }
 
-                    body > .contents > [data-radix-popper-content-wrapper]:has([data-model-picker-view]) {
+                    [data-radix-popper-content-wrapper]:has([data-model-picker-view]) {
                         opacity: 0;
                     }
                 }
@@ -1385,7 +1382,8 @@
 
     // create controls
     function createControlButtons() {
-        const addButton = document.querySelector('form [data-composer-footer-responsive] button[aria-label="Add files and more"]');
+        const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
+        const addButton = page.querySelector('form [data-composer-footer-responsive] button[aria-label="Add files and more"]');
         if (!addButton?.parentElement) return;
         if (controlsContainer?.isConnected) {
             if (controlsContainer.previousElementSibling !== addButton.parentElement) addButton.parentElement.insertAdjacentElement('afterend', controlsContainer);
@@ -1492,9 +1490,10 @@
 
     let navCleanup = null;
     function navBtns() {
+        const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
         const targetChatSelector = '[data-thread-find-target="conversation"]';
-        let targetChat = document.querySelector(targetChatSelector);
-        const targetChatBox = document.querySelector('form[data-composer-placement="thread"]');
+        let targetChat = page.querySelector(targetChatSelector);
+        const targetChatBox = page.querySelector('form[data-composer-placement="thread"]');
         if (!(targetChatBox) || !targetChat) return () => {};
 
         let chatObserver = null;
@@ -1503,7 +1502,7 @@
         const role = features.jumpToChat?.enabled ? '[data-user-message-bubble="true"]' : '[data-conversation-role="assistant"]';
         const messageSelector = `${role}`;
         const queryMessages = () => {
-            if (!targetChat?.isConnected) targetChat = document.querySelector(targetChatSelector);
+            if (!targetChat?.isConnected) targetChat = page.querySelector(targetChatSelector);
             if (!targetChat) return [];
             return Array.from(targetChat.querySelectorAll(messageSelector));
         };
@@ -1744,7 +1743,8 @@
         };
 
         // open menu selector panel
-        const headerButton = document.querySelector('form [data-composer-footer-responsive] button[aria-label="Select ChatGPT model"]');
+        const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
+        const headerButton = page.querySelector('form [data-composer-footer-responsive] button[aria-label="Select ChatGPT model"]');
         if (!headerButton) return;
         docElement.classList.add('hide-model-picker');
         if (headerButton.getAttribute('aria-expanded') !== 'true') simulateClick(headerButton);
@@ -1767,8 +1767,9 @@
     let modelQuickbar = null;
 
     const addModelButtons = () => {
-        if (modelQuickbar?.isConnected && modelQuickbar.childElementCount) return;
-        const modelPicker = document.querySelector('form [data-composer-footer-responsive] button[aria-label="Select ChatGPT model"]');
+        const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
+        if (page.contains(modelQuickbar) && modelQuickbar.childElementCount) return;
+        const modelPicker = page.querySelector('form [data-composer-footer-responsive] button[aria-label="Select ChatGPT model"]');
         if (!modelPicker?.parentElement) return;
 
         const bar = document.getElementById("CentAnni-gpt-model-quickbar") || document.createElement("div");
@@ -1788,31 +1789,29 @@
         if (bar.previousElementSibling !== modelPicker.parentElement) modelPicker.parentElement.insertAdjacentElement('afterend', bar);
 
         // color code model button
-        requestIdleCallback(() => {
-            const markExtendedButton = () => {
-                const targetContainer = bar.parentElement;
-                const isWorkMode = !!targetContainer?.closest('form')?.querySelector('[data-composer-markdown][aria-label="Work with ChatGPT"]') || !!docElement.querySelector('a[data-sidebar-item="true"][data-active][aria-label*=", Work"]') || !!docElement.querySelector('#page-header div.font-medium:last-child button[data-state="on"]');
-                docElement.classList.toggle('workmode-enabled', isWorkMode);
-                const mode = isWorkMode ? 'work' : 'chat';
-                if (bar.dataset.mode !== mode) {
-                    const models = isWorkMode ? workModelButtons.filter(config => config.model).map(config => [`${config.model} ${thinkingModes[config.index]}`, `${config.model}-${config.index}`]) : [['Instant', 'gpt-instant'], ['High', 'gpt-high']];
-                    bar.replaceChildren(...models.map(([label, model]) => mkBtn(label, model, () => selectModel(model))));
-                    bar.dataset.mode = mode;
-                }
-                const picker = targetContainer?.querySelector('button[aria-label="Select ChatGPT model"]');
-                const selectedModel = workModels.find(model => picker?.textContent?.includes(model));
-                const selectedIndex = ['low', 'medium', 'high', 'xhigh', 'max'].indexOf(picker?.dataset.selectedReasoningEffort);
-                const activeModel = isWorkMode ? `${selectedModel}-${selectedIndex}` : picker?.dataset.selectedReasoningEffort === 'none' ? 'gpt-instant' : picker?.dataset.selectedReasoningEffort === 'high' ? 'gpt-high' : '';
-                bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
-                    button.classList.toggle('CentAnni-active', button.dataset.model === activeModel);
-                });
-            };
+        const markExtendedButton = () => {
+            const targetContainer = bar.parentElement;
+            const isWorkMode = !!targetContainer?.closest('form')?.querySelector('[data-composer-markdown][aria-label="Work with ChatGPT"]') || !!docElement.querySelector('a[data-sidebar-item="true"][data-active][aria-label*=", Work"]') || !!docElement.querySelector('#page-header div.font-medium:last-child button[data-state="on"]');
+            docElement.classList.toggle('workmode-enabled', isWorkMode);
+            const mode = isWorkMode ? 'work' : 'chat';
+            if (bar.dataset.mode !== mode) {
+                const models = isWorkMode ? workModelButtons.filter(config => config.model).map(config => [`${config.model} ${thinkingModes[config.index]}`, `${config.model}-${config.index}`]) : [['Instant', 'gpt-instant'], ['High', 'gpt-high']];
+                bar.replaceChildren(...models.map(([label, model]) => mkBtn(label, model, () => selectModel(model))));
+                bar.dataset.mode = mode;
+            }
+            const picker = targetContainer?.querySelector('button[aria-label="Select ChatGPT model"]');
+            const selectedModel = workModels.find(model => picker?.textContent?.includes(model));
+            const selectedIndex = ['low', 'medium', 'high', 'xhigh', 'max'].indexOf(picker?.dataset.selectedReasoningEffort);
+            const activeModel = isWorkMode ? `${selectedModel}-${selectedIndex}` : picker?.dataset.selectedReasoningEffort === 'none' ? 'gpt-instant' : picker?.dataset.selectedReasoningEffort === 'high' ? 'gpt-high' : '';
+            bar.querySelectorAll('.CentAnni-gpt-model-btn').forEach(button => {
+                button.classList.toggle('CentAnni-active', button.dataset.model === activeModel);
+            });
+        };
 
-            modelBtnObserver?.disconnect();
-            markExtendedButton();
-            modelBtnObserver = new MutationObserver(markExtendedButton);
-            modelBtnObserver.observe(bar.parentElement, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['data-selected-reasoning-effort'] });
-        });
+        modelBtnObserver?.disconnect();
+        markExtendedButton();
+        modelBtnObserver = new MutationObserver(markExtendedButton);
+        modelBtnObserver.observe(bar.parentElement, { childList: true, characterData: true, subtree: true, attributes: true, attributeFilter: ['data-selected-reasoning-effort'] });
     };
 
     const readAloud = () => {
@@ -1856,11 +1855,11 @@
 
     let readAloudButton = null;
     const addReadAloudBtn = () => {
-        if (readAloudButton?.isConnected) return;
+        const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
+        const speakBtnLoc = page.querySelector('form[data-composer-placement="thread"]');
+        if (!speakBtnLoc || speakBtnLoc.contains(readAloudButton)) return;
         readAloudButton = document.getElementById("CentAnni-speak-btn");
-        if (readAloudButton) return;
-        const speakBtnLoc = document.querySelector('form[data-composer-placement="thread"]');
-        if (!speakBtnLoc) return;
+        if (readAloudButton) { speakBtnLoc.appendChild(readAloudButton); return; }
 
         const speakBtn = document.createElement('button');
         const svg = document.createElementNS('http://www.w3.org/2000/svg', 'svg');
@@ -1879,42 +1878,64 @@
 
     let uiRefreshFrame = 0;
     let mainRoot = null;
+    let activePage = null;
+
+    const getMissingUi = () => {
+        const composer = activePage?.querySelector('[data-composer-placement]');
+        const threadComposer = activePage?.querySelector('[data-composer-placement="thread"]');
+        return {
+            controls: !!composer && !composer.contains(controlsContainer),
+            navigation: features.jumpToChatActive.enabled && !!threadComposer && !threadComposer.contains(upBtn) && !!activePage.querySelector('[data-thread-find-target="conversation"]'),
+            readAloud: features.readAloudBtn.enabled && !!threadComposer && !threadComposer.contains(readAloudButton),
+            models: features.modelSelector.enabled && !!composer && !composer.contains(modelQuickbar)
+        };
+    };
 
     const refreshUi = () => {
         uiRefreshFrame = 0;
 
-        if (!controlsContainer?.isConnected) createControlButtons();
-        if (features.jumpToChatActive.enabled && !upBtn.isConnected) {
+        const missing = getMissingUi();
+        if (missing.controls) createControlButtons();
+        if (missing.navigation) {
             navCleanup?.();
             navCleanup = navBtns();
         }
-        if (features.readAloudBtn.enabled && !readAloudButton?.isConnected) addReadAloudBtn();
-        if (features.modelSelector.enabled && !modelQuickbar?.isConnected) addModelButtons();
+        if (missing.readAloud) addReadAloudBtn();
+        if (missing.models) addModelButtons();
     };
 
     const scheduleUiRefresh = () => {
         if (!uiRefreshFrame) uiRefreshFrame = requestAnimationFrame(refreshUi);
     };
 
+    const observeUiTargets = () => {
+        observer.disconnect();
+        mainRoot = document.querySelector('#root [data-app-shell-workspace-row]');
+        activePage = mainRoot?.querySelector(':scope > [data-app-shell-active-page="true"]') || null;
+
+        if (!mainRoot) {
+            observer.observe(document.body, { childList: true, subtree: true });
+            return;
+        }
+
+        observer.observe(mainRoot, { childList: true });
+        for (const page of mainRoot.querySelectorAll(':scope > [data-app-shell-active-page]')) {
+            observer.observe(page, { attributes: true, attributeFilter: ['data-app-shell-active-page'] });
+        }
+        if (activePage) observer.observe(activePage, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-app-shell-active-page'] });
+    };
+
     // initialization after DOM has loaded
     function init() {
         observer = new MutationObserver(mutations => {
-            const uiMissing = !controlsContainer?.isConnected || (features.jumpToChatActive.enabled && !upBtn.isConnected) || (features.readAloudBtn.enabled && !readAloudButton?.isConnected) || (features.modelSelector.enabled && !modelQuickbar?.isConnected);
-            if (!uiMissing) return;
-            if (!mainRoot?.isConnected) mainRoot = document.getElementById('root');
-
-            let hasMainMutations = false;
-            for (const mutation of mutations) {
-                if (!mainRoot?.contains(mutation.target)) continue;
-                hasMainMutations = true;
-                break;
-            }
-
-            if (hasMainMutations) scheduleUiRefresh();
+            if (!mainRoot?.isConnected || mutations.some(mutation => mutation.target === mainRoot || mutation.type === 'attributes')) observeUiTargets();
+            if (uiRefreshFrame) return;
+            const missing = getMissingUi();
+            if (missing.controls || missing.navigation || missing.readAloud || missing.models) scheduleUiRefresh();
         });
 
         if (document.body) {
-            observer.observe(document.body, { childList: true, subtree: true });
+            observeUiTargets();
             cssSettingsReady.then(() => {
                 requestIdleCallback(initializeSpeed, { timeout: 2000 });
                 requestIdleCallback(createControlButtons, { timeout: 2000 });
