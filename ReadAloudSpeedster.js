@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.1.2
+// @version      6.1.3
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.1.1 - Read Aloud Speedster              *
+*                    Version: 6.1.3 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -702,9 +702,11 @@
 
                 [data-markdown-copy="code-block"] {
                     background-color: #111111;
+                    background-image: unset;
 
                     [data-markdown-copy="exclude"] {
                         background-color: #141414;
+                        background-image: linear-gradient(rgba(241, 241, 241, 0.078));
                     }
                 }
 
@@ -715,7 +717,9 @@
                 @layer theme, base, components, utilities;
                 @layer components {
                     form[data-composer-placement="home"] [data-composer-layout][data-composer-body],
-                    form[data-composer-placement="thread"] [data-composer-layout][role="presentation"] {
+                    form[data-composer-placement="thread"] [data-composer-layout][role="presentation"],
+                    [data-composer-utility-bar-variant="default"][data-composer-radius-variant=default],
+                    [data-composer-utility-bar-variant=home][data-composer-radius-variant=default] [class^="ComposerLayoutBody"] {
                         border: 1px solid #2d2d2d !important;
                     }
                 }
@@ -874,7 +878,7 @@
             enabled: true,
             sheet: null,
             style: `
-                main [data-app-shell-main-content-layout="thread-edge-scroll"] [class*="MainContentFrame"] {
+                [data-app-shell-active-page="true"] main [class*="MainContentFrame"] {
                     margin-top: 0;
                 }
 
@@ -889,6 +893,7 @@
                     > .ms-auto {
                         margin-top: 8px;
                         align-self: flex-start;
+                        flex-direction: column;
                     }
 
                     .gap-toolbar-action {
@@ -904,9 +909,10 @@
                         justify-content: center;
                     }
 
-                    [data-app-shell-thread-content-overlap="true"].backdrop-blur-xl {
+                    [data-app-shell-thread-content-overlap="true"] {
                         max-width: fit-content;
                         align-self: flex-start;
+                        backdrop-filter: blur(1px);
                     }
                 }
             `
@@ -1566,8 +1572,9 @@
 
         const scrollToMessage = (msg) => {
             const scroller = getScroller();
+            const breadCrumb = document.querySelector('header nav[aria-label="Breadcrumb"]') ? 36 : 0;
             const scrollerTop = scroller === document.scrollingElement ? 0 : scroller.getBoundingClientRect().top;
-            const top = scroller.scrollTop + msg.getBoundingClientRect().top - scrollerTop - headerOffset;
+            const top = scroller.scrollTop + msg.getBoundingClientRect().top - scrollerTop - headerOffset - breadCrumb;
             scroller.scrollTo({ top, behavior: 'auto' });
         };
 
