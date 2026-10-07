@@ -1,4 +1,4 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-6.1.4-white.svg" alt="Version: 6.1.4"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-6.2-white.svg" alt="Version: 6.2"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 <a href="#"><picture><source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/d7606cb8-1f8e-43a8-b906-db6edbeab075"/><img align="left" width="120px" alt="Read Aloud Speedster Logo" src="https://github.com/user-attachments/assets/13149deb-3738-49b7-b9e3-69644f77527e"/></picture></a>
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses and bold text are color-coded.
@@ -11,7 +11,8 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **Default Speed Control**: Automatically applies the saved playback speed from persistent storage to detected audio elements.
 - **Adjust On-the-Fly**: Easily adjust playback speed from 1x to 17x in 0.25x increments using the plus/minus buttons.
 - **Color-Coded Icons**: Copy, thumbs up/down, read aloud/stop, and edit buttons are assigned specific colors.
-- **Highlight Color**: Bold text is green in dark mode and violet in light mode.
+- **Highlight Color**: Bold text uses the accent color selected in ChatGPT's [Appearance settings](https://chatgpt.com/settings/appearance).
+- **Automatically Read Aloud Message**: With both "Read Aloud Last Message" and "Message Navigation Arrows" enabled, clicking the added Read Aloud button while ChatGPT is generating a response will start read aloud once the response is complete.
 - **Customizable**: Clicking the speed display opens a settings menu for saving a default speed and toggling various interface options.
    - Square Design, Darker Background for Sidebar and Chatbox, Keep Icons Visible, Disable Voice Mode Button, Hide "ChatGPT can make mistakes" Text, Compact Sidebar with Separators, Keep Projects on Top Under Pinned, Message Navigation Arrows, Hide Share Icon Under Messages, Justify Text, Remove Focus Outlines, Navigate Between Messages, Make User Message Scrollable, and Quick Model Selector Buttons.
 
@@ -31,6 +32,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **6.2**: bug fixes; feature change: With both "Read Aloud Last Message" and "Message Navigation Arrows" enabled, clicking the added Read Aloud button while ChatGPT is generating a response will start read aloud once the response is complete
 - **6.1.4**: bug fixes (buttons accidentally sending text from the chatbox)
 - **6.1.3**: adjustments for DOM changes
 - **6.1.2**: adjustments for Appearance/Visual style changes #5
