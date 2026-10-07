@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.1.4
+// @version      6.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.1.4 - Read Aloud Speedster              *
+*                    Version: 6.2 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -970,7 +970,7 @@
         },
         readAloudBtn: {
             label: "Add Button to Read Aloud Last Message",
-            enabled: false,
+            enabled: true,
             sheet: null,
             style: `
                 #CentAnni-speak-btn {
@@ -997,7 +997,7 @@
                         color: rgb(0, 251, 255);
                     }
 
-                    form[data-composer-placement="thread"]:has(button[aria-label="Stop"]) & {
+                    form[data-composer-placement="thread"]:has(button[aria-label="Stop"]) &.disabled {
                         pointer-events: none;
                         user-select: none;
                         opacity: .5;
@@ -1314,9 +1314,17 @@
             for (const { key, checkbox } of toggleElements) {
                 if (features[key].enabled !== checkbox.checked) {
                     features[key].enabled = checkbox.checked;
+                    if ((key === 'jumpToChatActive' || key === 'readAloudBtn') && !features[key].enabled) setReadAloudPending(false);
                     await GM.setValue(key, features[key].enabled);
                     applyFeature(key);
-                    if (key === 'jumpToChat') navChanged = true;
+                    if (key === 'jumpToChat' || key === 'jumpToChatActive') navChanged = true;
+                    if (key === 'readAloudBtn') {
+                        if (features[key].enabled) addReadAloudBtn();
+                        else {
+                            readAloudButton?.remove();
+                            readAloudButton = null;
+                        }
+                    }
                 }
             }
 
@@ -1336,8 +1344,10 @@
 
             if (navChanged) {
                 navCleanup?.();
-                navCleanup = navBtns();
+                navCleanup = features.jumpToChatActive.enabled ? navBtns() : null;
             }
+
+            readAloudButton?.classList.toggle('disabled', !features.jumpToChatActive.enabled);
 
             configPopup.classList.remove('show');
             if (docListenerActive) {
@@ -1496,6 +1506,7 @@
     const downBtn = createNavButton(DOWN_ARROW_PATH, 'Jump to next message', 'down');
 
     let navCleanup = null;
+    const stopBtnSelectors = '[data-app-shell-active-page="true"] form button[aria-label="Stop"]';
     function navBtns() {
         const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
         const targetChatSelector = '[data-thread-find-target="conversation"]';
@@ -1599,26 +1610,25 @@
         };
 
         // observer for new messages
-        let stopButtonPresent;
-        const targetSelector = '#thread-bottom-container form div.flex.items-center.gap-2 > div.ms-auto';
-        const stopBtnSelectors = 'button[data-testid="stop-button"],#composer-submit-button[aria-label="Stop streaming"]';
-        stopButtonPresent = !!document.querySelector(stopBtnSelectors);
+        let stopButtonPresent = !!targetChatBox.querySelector(stopBtnSelectors);
 
         const buttonObserver = new MutationObserver(() => {
-            const stopButton = document.querySelector(stopBtnSelectors);
+            const stopButton = targetChatBox.querySelector(stopBtnSelectors);
 
             if (stopButton && !stopButtonPresent) stopButtonPresent = true;
             else if (!stopButton && stopButtonPresent) {
                 stopButtonPresent = false;
                 requestAnimationFrame(() => {
                     checkForNewBelow();
-                    requestAnimationFrame(() => update());
+                    requestAnimationFrame(() => {
+                        update();
+                        if (readAloudPending) readAloud();
+                    });
                 });
             }
         });
 
-        const targetNode = document.querySelector(targetSelector);
-        if (targetNode) buttonObserver.observe(targetNode, { childList: true, subtree: true });
+        buttonObserver.observe(targetChatBox, { childList: true, subtree: true, attributes: true, attributeFilter: ['aria-label'] });
 
         const startObserver = () => {
             if (chatObserver || !targetChat) return;
@@ -1648,6 +1658,7 @@
         createButtons();
 
         return () => {
+            setReadAloudPending(false);
             stopObserver();
             messageCache = [];
             upBtn.remove();
@@ -1824,6 +1835,9 @@
     };
 
     const readAloud = () => {
+        if (document.querySelector(stopBtnSelectors)) { setReadAloudPending(!readAloudPending); return; }
+        setReadAloudPending(false);
+
         const buttons = document.querySelectorAll('button[aria-label="More actions"]');
         const button = buttons[buttons.length - 1];
         if (!button) return;
@@ -1856,13 +1870,25 @@
         }, 100);
     };
 
+    const pauseIconPath = 'M5 4h3v12H5V4zm7 0h3v12h-3V4z';
+    const speakerIconPath = 'M9.75122 4.09203C9.75122 3.61482 9.21964 3.35044 8.84399 3.60277L8.77173 3.66039L6.55396 5.69262C6.05931 6.14604 5.43173 6.42255 4.7688 6.48461L4.48267 6.49828C3.52474 6.49851 2.74829 7.27565 2.74829 8.23363V11.7668C2.74829 12.7248 3.52474 13.501 4.48267 13.5012C5.24935 13.5012 5.98874 13.7889 6.55396 14.3069L8.77173 16.3401L8.84399 16.3967C9.21966 16.6493 9.75122 16.3858 9.75122 15.9084V4.09203ZM17.2483 10.0002C17.2483 8.67623 16.9128 7.43233 16.3235 6.34691L17.4924 5.71215C18.1849 6.9875 18.5784 8.4491 18.5784 10.0002C18.5783 11.5143 18.2033 12.9429 17.5413 14.1965C17.3697 14.5212 16.9675 14.6453 16.6428 14.4739C16.3182 14.3023 16.194 13.9001 16.3655 13.5754C16.9288 12.5086 17.2483 11.2927 17.2483 10.0002ZM13.9182 10.0002C13.9182 9.1174 13.6268 8.30445 13.135 7.64965L14.1985 6.85082C14.8574 7.72804 15.2483 8.81952 15.2483 10.0002L15.2336 10.3938C15.166 11.3044 14.8657 12.1515 14.3918 12.8743L14.3069 12.9797C14.0889 13.199 13.7396 13.2418 13.4709 13.0657C13.164 12.8643 13.0784 12.4528 13.2795 12.1457L13.4231 11.9084C13.6935 11.4246 13.8643 10.8776 13.9075 10.2942L13.9182 10.0002ZM13.2678 6.71801C13.5615 6.49772 13.978 6.55727 14.1985 6.85082L13.135 7.64965C12.9144 7.35599 12.9742 6.93858 13.2678 6.71801ZM16.5911 5.44555C16.9138 5.27033 17.3171 5.38949 17.4924 5.71215L16.3235 6.34691C16.1483 6.02419 16.2684 5.62081 16.5911 5.44555ZM11.0813 15.9084C11.0813 17.5226 9.22237 18.3912 7.9895 17.4202L7.87231 17.3205L5.65552 15.2873C5.33557 14.9941 4.91667 14.8313 4.48267 14.8313C2.7902 14.8311 1.41821 13.4594 1.41821 11.7668V8.23363C1.41821 6.54111 2.7902 5.16843 4.48267 5.1682L4.64478 5.16039C5.02003 5.12526 5.37552 4.96881 5.65552 4.71215L7.87231 2.67992L7.9895 2.58031C9.22237 1.60902 11.0813 2.47773 11.0813 4.09203V15.9084Z';
     const svgPath = (() => {
         const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-        path.setAttribute('d', 'M9.75122 4.09203C9.75122 3.61482 9.21964 3.35044 8.84399 3.60277L8.77173 3.66039L6.55396 5.69262C6.05931 6.14604 5.43173 6.42255 4.7688 6.48461L4.48267 6.49828C3.52474 6.49851 2.74829 7.27565 2.74829 8.23363V11.7668C2.74829 12.7248 3.52474 13.501 4.48267 13.5012C5.24935 13.5012 5.98874 13.7889 6.55396 14.3069L8.77173 16.3401L8.84399 16.3967C9.21966 16.6493 9.75122 16.3858 9.75122 15.9084V4.09203ZM17.2483 10.0002C17.2483 8.67623 16.9128 7.43233 16.3235 6.34691L17.4924 5.71215C18.1849 6.9875 18.5784 8.4491 18.5784 10.0002C18.5783 11.5143 18.2033 12.9429 17.5413 14.1965C17.3697 14.5212 16.9675 14.6453 16.6428 14.4739C16.3182 14.3023 16.194 13.9001 16.3655 13.5754C16.9288 12.5086 17.2483 11.2927 17.2483 10.0002ZM13.9182 10.0002C13.9182 9.1174 13.6268 8.30445 13.135 7.64965L14.1985 6.85082C14.8574 7.72804 15.2483 8.81952 15.2483 10.0002L15.2336 10.3938C15.166 11.3044 14.8657 12.1515 14.3918 12.8743L14.3069 12.9797C14.0889 13.199 13.7396 13.2418 13.4709 13.0657C13.164 12.8643 13.0784 12.4528 13.2795 12.1457L13.4231 11.9084C13.6935 11.4246 13.8643 10.8776 13.9075 10.2942L13.9182 10.0002ZM13.2678 6.71801C13.5615 6.49772 13.978 6.55727 14.1985 6.85082L13.135 7.64965C12.9144 7.35599 12.9742 6.93858 13.2678 6.71801ZM16.5911 5.44555C16.9138 5.27033 17.3171 5.38949 17.4924 5.71215L16.3235 6.34691C16.1483 6.02419 16.2684 5.62081 16.5911 5.44555ZM11.0813 15.9084C11.0813 17.5226 9.22237 18.3912 7.9895 17.4202L7.87231 17.3205L5.65552 15.2873C5.33557 14.9941 4.91667 14.8313 4.48267 14.8313C2.7902 14.8311 1.41821 13.4594 1.41821 11.7668V8.23363C1.41821 6.54111 2.7902 5.16843 4.48267 5.1682L4.64478 5.16039C5.02003 5.12526 5.37552 4.96881 5.65552 4.71215L7.87231 2.67992L7.9895 2.58031C9.22237 1.60902 11.0813 2.47773 11.0813 4.09203V15.9084Z');
+        path.setAttribute('d', speakerIconPath);
         return path;
     })();
 
     let readAloudButton = null;
+    let readAloudPending = false;
+    const setReadAloudPending = (pending) => {
+        readAloudPending = pending;
+        if (!readAloudButton) return;
+        readAloudButton.querySelector('path')?.setAttribute('d', pending ? pauseIconPath : speakerIconPath);
+        readAloudButton.title = pending ? 'Read aloud scheduled, waiting for ChatGPT - click to cancel' : 'Read aloud last message';
+        readAloudButton.setAttribute('aria-label', readAloudButton.title);
+        readAloudButton.setAttribute('aria-pressed', pending);
+    };
+
     const addReadAloudBtn = () => {
         const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
         const speakBtnLoc = page.querySelector('form[data-composer-placement="thread"]');
@@ -1880,8 +1906,9 @@
         speakBtn.appendChild(svg);
         speakBtn.onclick = readAloud;
         speakBtn.id = 'CentAnni-speak-btn';
-        speakBtn.title = 'Read Aloud Last Message';
+        if (!features.jumpToChatActive.enabled) speakBtn.classList.add('disabled');
         readAloudButton = speakBtn;
+        setReadAloudPending(readAloudPending);
         speakBtn.type = 'button';
         speakBtnLoc.appendChild(speakBtn);
     };
