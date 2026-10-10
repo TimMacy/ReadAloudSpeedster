@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.2
+// @version      6.2.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.2 - Read Aloud Speedster                *
+*                    Version: 6.2.2 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -72,6 +72,7 @@
             }
         }
 
+        nav[role="navigation"] [aria-label="Working"],
         nav[role="navigation"] .text-codex-description,
         [role="presentation"].items-center.justify-center .motion-safe\\:animate-spin svg {
             color: var(--primaryDefault);
@@ -184,19 +185,23 @@
         }
 
         /* chat container and content width */
-        [data-pip-obstacle="thread-footer"] {
-            margin: 0;
+        :is([data-thread-user-message-navigation-content="true"], [data-pip-obstacle="thread-footer"]) {
+            margin: auto;
             width: 100%;
-            padding: 0 16px;
-            max-width: unset;
             box-sizing: border-box;
+            max-width: calc(100dvw - 308px - var(--app-shell-left-panel-width));
+        }
+
+        [data-pip-obstacle="thread-footer"] {
+            padding: 0 16px;
         }
 
         [data-thread-user-message-navigation-content="true"] {
-            margin: 0;
-            max-width: unset;
             padding: 0 6.263%;
-            box-sizing: border-box;
+        }
+
+        [style="--thread-wide-block-inline-shift: 0px; transform: none;"] :is([data-thread-user-message-navigation-content="true"], [data-pip-obstacle="thread-footer"]) {
+            max-width: unset;
         }
 
         /**************************************
@@ -588,18 +593,21 @@
             enabled: true,
             sheet: null,
             style: `
-                div[data-user-message-bubble="true"]:has(button[aria-expanded="false"]) {
-                    overflow: auto !important;
-                    max-height: 25dvh !important;
-                    overscroll-behavior: contain;
+                div[data-user-message-bubble="true"] {
+                    width: var(--user-chat-width);
 
-                    .overflow-hidden {
-                        max-height: unset !important;
+                    [data-search-result-target] {
+                        overflow: auto !important;
+                        max-height: 25dvh !important;
+                        overscroll-behavior: contain;
                     }
 
-                    button[aria-expanded="false"],
                     span[aria-hidden="true"].block {
                         display: none;
+                    }
+
+                    button[aria-expanded] {
+                        position: static;
                     }
                 }
             `
@@ -647,11 +655,7 @@
                 }
 
                 [data-user-message-bubble="true"] {
-                    clip-path: polygon(0 0, 100% 0, 100% calc(100% - calc(var(--spacing) * 3)), calc(100% - calc(var(--spacing) * 3)) 100%, 0 100%);
-
-                    &:has(button[aria-expanded="false"]) {
-                        clip-path: polygon(0 0, 100% 0, 100% calc(100% - min(40%, calc(var(--spacing) * 7))), calc(100% - calc(var(--spacing) * 7)) 100%, 0 100%);
-                    }
+                    clip-path: polygon(0 0, 100% 0, 100% calc(100% - min(40%, calc(var(--spacing) * 7))), calc(100% - calc(var(--spacing) * 7)) 100%, 0 100%);
                 }
 
                 nav[role="navigation"] div[aria-current="page"] {
@@ -833,12 +837,47 @@
                     }
                 }
 
-                /* smaller avatar when app sidebar missing */
-                nav[role="navigation"][aria-label="Chat history"] + .bottom-0.z-20 {
-                    outline: 1px solid color-mix(in srgb, var(--color-text) 25%, transparent);
-                    .h-toolbar{min-height:fit-content;}
-                    .group{padding:0 10px;min-height: 24px;}
-                    .text-codex-description {display: none;}
+                /* hide top menu and smaller avatar when app sidebar missing */
+                nav[role="navigation"][aria-label="Chat history"] {
+                    > [data-app-action-sidebar-scroll] > div.flex.shrink-0.flex-col {
+                        display: none;
+                        height: 0;
+                        overflow: hidden;
+                        interpolate-size: allow-keywords;
+
+                        &:hover {
+                            display: flex;
+                            height: auto;
+                            margin-bottom: -4px;
+                        }
+                    }
+
+                    &:has(.shrink-0.px-row-x button[aria-haspopup="menu"][data-state="open"], > [class~="gap-(--sidebar-navigation-header-gap)"]:hover) > [data-app-action-sidebar-scroll] > div.flex.shrink-0.flex-col {
+                        display: flex;
+                        height: auto;
+                        margin-bottom: -4px;
+                        transition: height 0s .5s;
+
+                        @starting-style {
+                            height: 0;
+                        }
+                    }
+
+                    + .bottom-0.z-20 {
+                        outline: 1px solid color-mix(in srgb, var(--color-text) 25%, transparent);
+                        .h-toolbar {
+                            min-height: fit-content;
+                        }
+
+                        .group {
+                            padding: 0 10px;
+                            min-height: 24px;
+                        }
+
+                        .text-codex-description {
+                            display: none;
+                        }
+                    }
                 }
             `
         },
@@ -880,6 +919,14 @@
             style: `
                 [data-app-shell-active-page="true"] main [class*="MainContentFrame"] {
                     margin-top: 0;
+
+                    .pointer-events-none.right-0 {
+                        top: 27px;
+
+                        > .pe-2 {
+                            margin-right: 54px;
+                        }
+                    }
                 }
 
                 main [class*="MainContentTopFade"] {
