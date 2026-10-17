@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.2.2
+// @version      6.2.3
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.2.2 - Read Aloud Speedster              *
+*                    Version: 6.2.3 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -202,6 +202,19 @@
 
         [style="--thread-wide-block-inline-shift: 0px; transform: none;"] :is([data-thread-user-message-navigation-content="true"], [data-pip-obstacle="thread-footer"]) {
             max-width: unset;
+        }
+
+        /* composer fade effect */
+        [data-app-shell-active-page="true"] form::before {
+            content: '';
+            position: absolute;
+            width: 100%;
+            height: calc(var(--spacing) * 4);
+            top: 0;
+            transform: translateY(-100%);
+            pointer-events: none;
+            user-select: none;
+            background-image: linear-gradient(to top, var(--color-surface), transparent);
         }
 
         /**************************************
@@ -439,7 +452,7 @@
         }
 
         .speed-control-config-popup input {
-            transition: border-color 0.2s ease-in-out;
+            transition: border-color .2s ease-in-out;
         }
 
         .speed-control-config-popup input[type="number"] {
@@ -1061,7 +1074,6 @@
                     position: relative;
                     display: flex;
                     gap: 4px;
-                    order: 2;
                     margin: 0 4px;
                     background: transparent;
                     text-wrap: nowrap;
@@ -1126,6 +1138,24 @@
                         opacity: 0;
                     }
                 }
+
+                html.workmode-enabled.hide-model-picker form button[aria-label="Select ChatGPT model"],
+                html.workmode-enabled form button[aria-label="Select ChatGPT model"][data-state="closed"]:not(:hover) {
+                    width: 120px;
+                    overflow: hidden;
+                    font-size: 10px;
+                    padding-inline: 0;
+                    gap: 0;
+                    word-spacing: -.1em;
+
+                    span {
+                        gap: 0;
+                    }
+
+                    svg {
+                        display: none;
+                    }
+                }
             `
         },
         hideModelSelector: {
@@ -1133,17 +1163,27 @@
             enabled: false,
             sheet: null,
             style: `
-                form button[aria-haspopup="menu"][data-composer-navigation-target="reasoning"] {
+                form button[aria-label="Select ChatGPT model"][data-state="closed"] {
+                    transition: opacity 0s;
+                    max-width: 20px;
                     opacity: 0;
+                }
 
-                    &:hover,
-                    &[data-state="open"] {
-                        opacity: 1;
+                html:not(.hide-model-picker) form button[aria-label="Select ChatGPT model"][data-state="closed"]:hover {
+                    animation: expand-model-picker 0s .4s forwards;
+                    transition-delay: .4s;
+                    opacity: 1;
+                }
+
+                @keyframes expand-model-picker {
+                    to {
+                        max-width: none;
                     }
                 }
 
                 .hide-model-picker form button[aria-label="Select ChatGPT model"] {
                     opacity: 0 !important;
+                    max-width: 20px;
                 }
             `
         }
@@ -1836,7 +1876,8 @@
         const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
         if (page.contains(modelQuickbar) && modelQuickbar.childElementCount) return;
         const modelPicker = page.querySelector('form [data-composer-footer-responsive] button[aria-label="Select ChatGPT model"]');
-        if (!modelPicker?.parentElement) return;
+        const modelPickerContainer = modelPicker?.parentElement?.parentElement;
+        if (!modelPickerContainer) return;
 
         const bar = document.getElementById("CentAnni-gpt-model-quickbar") || document.createElement("div");
         bar.id = "CentAnni-gpt-model-quickbar";
@@ -1853,7 +1894,7 @@
             return b;
         };
 
-        if (bar.previousElementSibling !== modelPicker.parentElement) modelPicker.parentElement.insertAdjacentElement('afterend', bar);
+        if (bar.previousElementSibling !== modelPickerContainer) modelPickerContainer.insertAdjacentElement('afterend', bar);
 
         // color code model button
         const markExtendedButton = () => {
