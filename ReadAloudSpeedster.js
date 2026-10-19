@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.2.3
+// @version      6.2.4
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.2.3 - Read Aloud Speedster              *
+*                    Version: 6.2.4 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -40,8 +40,29 @@
             --color-surface-sidebar: var(--color-surface);
 
             --transparent-header-bg: black;
-            &.light {
+            --speed-control-btn-border: #5b5b5b;
+            --speed-control-btn-bg: #212121;
+            --speed-btn-bg: #ffffff1a;
+            --speed-btn-bg-active: #ffffff0d;
+            --model-btn-border: rgba(255 255 255 / .1);
+            --model-btn-bg: rgba(255 255 255 / .08);
+            --model-btn-border-hover: rgba(255 255 255 / .25);
+            --model-btn-bg-hover: rgba(255 255 255 / .12);
+            --model-btn-border-active: rgba(255 255 255 / .5);
+            --model-btn-bg-active: rgba(255 255 255 / .2);
+
+            &[data-theme="light"] {
                 --transparent-header-bg: white;
+                --speed-control-btn-border: rgba(0 0 0 / .27);
+                --speed-control-btn-bg: #0000000d;
+                --speed-btn-bg: #0d0d0d05;
+                --speed-btn-bg-active: #0d0d0d0d;
+                --model-btn-border: rgba(0 0 0 / .1);
+                --model-btn-bg: rgba(0 0 0 / .08);
+                --model-btn-border-hover: rgba(0 0 0 / .25);
+                --model-btn-bg-hover: rgba(0 0 0 / .12);
+                --model-btn-border-active: rgba(0 0 0 / .5);
+                --model-btn-bg-active: rgba(0 0 0 / .2);
             }
         }
 
@@ -284,22 +305,12 @@
 
         .speed-btn:hover,
         .speed-control-config-popup button:hover {
-            background-color: #ffffff1a;
-        }
-
-        .light .speed-btn:hover,
-        .light .speed-control-config-popup button:hover {
-            background-color: #0d0d0d05;
+            background-color: var(--speed-btn-bg);
         }
 
         .speed-btn:active,
         .speed-control-config-popup button:active {
-            background-color: #ffffff0d
-        }
-
-        .light .speed-btn:active,
-        .light .speed-control-config-popup button:active {
-            background-color: #0d0d0d0d
+            background-color: var(--speed-btn-bg-active);
         }
 
         .speed-display {
@@ -337,7 +348,7 @@
             left: 50%;
             transform: translateX(-50%);
             background: var(--color-background-panel, #2d2d2d);
-            border: 1px solid var(--border-default);
+            border: 1px solid var(--color-border, #5b5b5b);
             border-radius: 3px;
             padding: 15px 10px 15px 30px;
             margin-bottom: 4px;
@@ -356,7 +367,7 @@
             align-items: baseline;
             justify-content: center;
             font-family: -apple-system, "Roboto", "Arial", sans-serif;
-            color: var(--color-text-secondary, gray);
+            color: var(--color-text, gray);
             font-weight: 600;
             width: 100%;
             padding-right: 20px;
@@ -418,7 +429,7 @@
             grid-column: 3;
             padding: 0;
             margin: 0 0 0 5px;
-            color: ghostwhite;
+            color: var(--color-text-secondary, gray);
             cursor: default;
             opacity: .3;
             justify-self: start;
@@ -457,12 +468,13 @@
 
         .speed-control-config-popup input[type="number"] {
             width: 6ch;
-            border: 1px solid rgba(255, 255, 255, .27);
+            border: 1px solid var(--speed-control-btn-border);
             border-radius: 3px;
             background: transparent;
             color: var(--color-text, gray);
             text-align: center;
             margin-right: 10px;
+            padding: 5px 0;
         }
 
         .speed-control-config-popup input[type="number"] {
@@ -475,30 +487,6 @@
         .speed-control-config-popup input[type="number"]::-webkit-inner-spin-button {
             -webkit-appearance: none;
             margin: 0;
-        }
-
-        .speed-control-config-popup input[type="url"] {
-            flex: 1;
-            color: var(--color-text, gray);
-            background: transparent;
-            margin-left: 10px;
-            border-radius: 3px;
-            border: 1px solid rgba(255 255 255 / .27);
-        }
-
-        .light .speed-control-config-popup input[type="url"],
-        .light .speed-control-config-popup input[type="number"] {
-            border-color: rgba(0 0 0 /.27);
-        }
-
-        .speed-control-config-popup input[type="url"]:hover,
-        .speed-control-config-popup input[type="number"]:hover {
-            border-color: color(display-p3 0.1216 0.3059 0.5804);
-        }
-
-        .speed-control-config-popup input[type="url"]:focus,
-        .speed-control-config-popup input[type="number"]:focus {
-            border-color: color(display-p3 0 0.402 1);
         }
 
         .speed-control-config-popup .toggle-label {
@@ -542,9 +530,9 @@
             min-width: 0;
             padding: 4px;
             cursor: pointer;
-            border: 1px solid var(--border-default);
+            border: 1px solid var(--color-border, #5b5b5b);
             border-radius: 3px;
-            background: #212121;
+            background: var(--speed-control-btn-bg);
             color: var(--color-text, gray);
         }
 
@@ -565,15 +553,11 @@
 
         .speed-control-config-popup button {
             padding: 4px 8px;
-            border: 1px solid rgba(255 255 255 /.27);
+            border: 1px solid var(--speed-control-btn-border);
             border-radius: 3px;
             background: transparent;
-            color: var(--color-text-secondary, gray);
+            color: var(--color-text, gray);
             cursor: pointer;
-        }
-
-        .light .speed-control-config-popup button {
-            border-color: rgba(0 0 0 / .27);
         }
 
         .speed-control-config-popup .toggle-container {
@@ -1094,39 +1078,24 @@
                     font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
                     padding: 8px 10px;
                     border-radius: 3px;
-                    border: 1px solid rgba(255 255 255 / .1);
-                    background: rgba(255 255 255 / .08);
-                    color: white;
+                    border: 1px solid var(--model-btn-border);
+                    background: var(--model-btn-bg);
+                    color: var(--color-text, var(--color-background-composer-primary, gray));
                     cursor: pointer;
                     margin-right: 4px;
                     text-box: trim-both cap alphabetic;
                     transition: background-color .4s ease, border-color .4s ease;
-                }
 
-                .CentAnni-gpt-model-btn:hover {
-                    background: rgba(255 255 255 / .12) !important;
-                    border-color: rgba(255 255 255 / .25);
-                }
+                    &:hover {
+                        background: var(--model-btn-bg-hover) !important;
+                        border-color: var(--model-btn-border-hover);
+                    }
 
-                .CentAnni-gpt-model-btn:active {
-                    background: rgba(255 255 255 / .2) !important;
-                    border-color: rgba(255 255 255 / .5);
-                    transition: background-color .25s ease-out, border-color .1s ease-out;
-                }
-
-                html.light .CentAnni-gpt-model-btn {
-                    border: 1px solid rgba(0 0 0 / .1);
-                    color: black;
-                }
-
-                html.light .CentAnni-gpt-model-btn:hover {
-                    background: rgb(250 250 250) !important;
-                    border-color: rgba(0 0 0 / .2);
-                }
-
-                html.light .CentAnni-gpt-model-btn:active {
-                    background: rgb(245 245 245) !important;
-                    border-color: rgba(0 0 0 / .5);
+                    &:active {
+                        background: var(--model-btn-bg-active) !important;
+                        border-color: var(--model-btn-border-active);
+                        transition: background-color .25s ease-out, border-color .1s ease-out;
+                    }
                 }
 
                 .hide-model-picker {
