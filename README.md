@@ -1,10 +1,10 @@
-# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-6.2.3-white.svg" alt="Version: 6.2.3"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
+# Read Aloud Speedster <a href="#-changelog"><img align="right" src="https://img.shields.io/badge/Version-6.2.4-white.svg" alt="Version: 6.2.4"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster/blob/main/LICENSE"><img align="right" src="https://img.shields.io/badge/License-AGPL--3.0-blue.svg" alt="GNU Affero General Public License v3.0"></a><a href="https://github.com/TimMacy/ReadAloudSpeedster"><img align="right" src="https://img.shields.io/badge/Status-Maintained-brightgreen.svg" alt="Read Aloud Speedster Status: Maintained"></a>
 
 <a href="#"><picture><source media="(prefers-color-scheme: light)" srcset="https://github.com/user-attachments/assets/d7606cb8-1f8e-43a8-b906-db6edbeab075"/><img align="left" width="120px" alt="Read Aloud Speedster Logo" src="https://github.com/user-attachments/assets/13149deb-3738-49b7-b9e3-69644f77527e"/></picture></a>
 This script integrates intuitive playback speed controls into the chatbox interface and navigation buttons into the header to browse between messages. Clicking the speed display opens a settings menu to set a preferred default playback speed and to toggle additional UI tweaks. Additionally, the icons below Chat's responses and bold text are color-coded.
 <br clear="left"/>
 
-<p align="center"><img width="50%" alt="Read Aloud Speedster by Tim Macy Overview" title="Settings Panel" src="https://github.com/user-attachments/assets/11731e93-0eaf-4a29-a948-d99c709066f1" /></p>
+<p align="center"><img width="80%" alt="Read Aloud Speedster by Tim Macy Overview" title="Read Aloud Speedster by Tim Macy Overview" src="https://github.com/user-attachments/assets/96baf828-02a0-420d-a8e1-370f835da924" /></p>
 
 ## 🪄 Features
 - **Native Integration**: Implements a native-looking UI that seamlessly blends with the existing layout in both light and dark modes.
@@ -20,7 +20,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 
 <br><br>
 
-## 🚀 Installation <a href="https://www.opera.com"><img align="right" src="https://img.shields.io/badge/Opera-Untested-yellow.svg" alt="Opera Untested"></a><a href="https://www.microsoft.com/edge"><img align="right" src="https://img.shields.io/badge/Edge-Untested-yellow.svg" alt="Edge Untested"></a><a href="https://www.mozilla.org/firefox"><img align="right" src="https://img.shields.io/badge/Firefox-Supported-brightgreen.svg" alt="Firefox Support"></a><a href="https://www.google.com/chrome"><img align="right" src="https://img.shields.io/badge/Chrome-Supported-brightgreen.svg" alt="Chrome Support"></a><a href="https://www.apple.com/safari"><img align="right" src="https://img.shields.io/badge/Safari-Supported-brightgreen.svg" alt="Safari Support"></a>
+## 🚀 Installation <a href="https://www.opera.com"><img align="right" src="https://img.shields.io/badge/Opera-Untested-yellow.svg" alt="Opera Untested"></a><a href="https://www.microsoft.com/edge"><img align="right" src="https://img.shields.io/badge/Edge-Untested-yellow.svg" alt="Edge Untested"></a><a href="https://www.mozilla.org/firefox"><img align="right" src="https://img.shields.io/badge/Firefox-Untested-yellow.svg" alt="Firefox Untested"></a><a href="https://www.google.com/chrome"><img align="right" src="https://img.shields.io/badge/Chrome-Supported-brightgreen.svg" alt="Chrome Support"></a><a href="https://www.apple.com/safari"><img align="right" src="https://img.shields.io/badge/Safari-Supported-brightgreen.svg" alt="Safari Support"></a>
 
 1. **Install or open a userscript manager**.
    A userscript manager is required, such as [Userscripts for Safari](https://itunes.apple.com/us/app/userscripts/id1463298887) or [Tampermonkey](https://www.tampermonkey.net/) (available for [Chrome](https://chromewebstore.google.com/detail/tampermonkey/dhdgffkkebhmkfjojejmpbldmpobfkfo), [Microsoft Edge](https://microsoftedge.microsoft.com/addons/detail/tampermonkey/iikmkjmpaadaobahmlepeloendndfphd), [Safari](https://apps.apple.com/us/app/tampermonkey/id1482490089), [Opera Next](https://addons.opera.com/en/extensions/details/tampermonkey-beta/), and [Firefox](https://addons.mozilla.org/en-US/firefox/addon/tampermonkey/).
@@ -32,6 +32,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **6.2.4**: adjustments for DOM changes
 - **6.2.3**: adjustments for DOM changes
 - **6.2.2**: bug fixes and adjustments for DOM changes
 - **6.2**: bug fixes; feature change: With both "Read Aloud Last Message" and "Message Navigation Arrows" enabled, clicking the added Read Aloud button while ChatGPT is generating a response will start read aloud once the response is complete
