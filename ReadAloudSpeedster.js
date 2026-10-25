@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.2.4
+// @version      6.3.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.2.4 - Read Aloud Speedster              *
+*                    Version: 6.3.1 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -66,11 +66,9 @@
             }
         }
 
-
         /**************************************
                          colors
         **************************************/
-
         button[aria-label="Send"],
         button[aria-label="Stop"],
         button[aria-label="Start Voice"] {
@@ -208,9 +206,9 @@
         /* chat container and content width */
         :is([data-thread-user-message-navigation-content="true"], [data-pip-obstacle="thread-footer"]) {
             margin: auto;
-            width: 100%;
+            max-width: unset;
+            width: 100% !important;
             box-sizing: border-box;
-            max-width: calc(100dvw - 308px - var(--app-shell-left-panel-width));
         }
 
         [data-pip-obstacle="thread-footer"] {
@@ -219,10 +217,6 @@
 
         [data-thread-user-message-navigation-content="true"] {
             padding: 0 6.263%;
-        }
-
-        [style="--thread-wide-block-inline-shift: 0px; transform: none;"] :is([data-thread-user-message-navigation-content="true"], [data-pip-obstacle="thread-footer"]) {
-            max-width: unset;
         }
 
         /* composer fade effect */
@@ -893,7 +887,7 @@
             enabled: false,
             sheet: null,
             style: `
-                [data-chatgpt-conversation-selection-target="true"] [class*="UnorderedList"] {
+                [data-app-shell-active-page="true"] [class*="UnorderedList"] {
                     list-style: "-";
                     margin-left: -7px;
                 }
@@ -930,19 +924,24 @@
                     display: block;
                 }
 
-                header [data-app-shell-main-titlebar="true"] {
-                    contain: layout !important;
-                    overflow: visible !important;
+            header [data-app-shell-main-titlebar="true"] {
+                contain: layout !important;
+                overflow: visible !important;
 
-                    > .ms-auto {
-                        margin-top: 8px;
-                        align-self: flex-start;
-                        flex-direction: column;
-                    }
+                > .ms-auto {
+                    margin-top: 8px;
+                    align-self: flex-start;
+                    flex-direction: column;
+                }
 
-                    .gap-toolbar-action {
-                        flex-direction: column-reverse;
-                    }
+                > .gap-toolbar-action {
+                    flex-direction: column-reverse;
+                }
+
+                [data-app-shell-thread-content-overlap="true"] {
+                    max-width: fit-content;
+                    align-self: flex-start;
+                    backdrop-filter: blur(1px);
 
                     button[aria-label="Share"] {
                         gap: 0;
@@ -953,11 +952,37 @@
                         justify-content: center;
                     }
 
-                    [data-app-shell-thread-content-overlap="true"] {
-                        max-width: fit-content;
-                        align-self: flex-start;
-                        backdrop-filter: blur(1px);
+                    button[aria-label="More"] {
+                        width: 36px;
                     }
+                }
+            }
+            `
+        },
+        selectionColor: {
+            label: "Selection Color",
+            enabled: true,
+            sheet: null,
+            style: `
+                :root {
+                    --selectColor: color-mix(in srgb, var(--primaryDefault) 80%, black);
+                    --notification-bg: color-mix(in srgb, var(--primaryDefault) 50%, black);
+
+                    &[data-theme="light"] {
+                        --selectColor: color-mix(in srgb, var(--primaryDefault) 50%, white);
+                        --notification-bg: color-mix(in srgb, var(--primaryDefault) 30%, white);
+                    }
+
+                    --color-background-text-selection: var(--selectColor);
+                }
+
+                .codex-toast-area.pointer-events-none .bg-surface {
+                    background: var(--notification-bg);
+                }
+
+                :where(:root:not([data-codex-window-type="extension"]))[data-theme="dark"],
+                :where(:root:not([data-codex-window-type="extension"])) [data-theme="dark"] {
+                    --color-background-text-selection: var(--selectColor);
                 }
             `
         },
@@ -1055,6 +1080,7 @@
             sheet: null,
             style: `
                 #CentAnni-gpt-model-quickbar {
+                    align-items: center;
                     position: relative;
                     display: flex;
                     gap: 4px;
@@ -1075,16 +1101,17 @@
                 }
 
                 .CentAnni-gpt-model-btn {
-                    font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
+                    height: fit-content;
                     padding: 8px 10px;
                     border-radius: 3px;
                     border: 1px solid var(--model-btn-border);
                     background: var(--model-btn-bg);
-                    color: var(--color-text, var(--color-background-composer-primary, gray));
                     cursor: pointer;
                     margin-right: 4px;
                     text-box: trim-both cap alphabetic;
                     transition: background-color .4s ease, border-color .4s ease;
+                    color: var(--color-text, var(--color-background-composer-primary, gray));
+                    font: 600 12px system-ui, -apple-system, "Segoe UI", Roboto, Ubuntu, Cantarell, "Noto Sans", sans-serif;
 
                     &:hover {
                         background: var(--model-btn-bg-hover) !important;
