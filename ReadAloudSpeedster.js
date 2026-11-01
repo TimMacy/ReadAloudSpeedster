@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.3.1
+// @version      6.3.2
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.3.1 - Read Aloud Speedster              *
+*                    Version: 6.3.2 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -1143,6 +1143,7 @@
                     padding-inline: 0;
                     gap: 0;
                     word-spacing: -.1em;
+                    justify-content: flex-end;
 
                     span {
                         gap: 0;
@@ -1205,9 +1206,9 @@
     const thinkingModes = ['Light', 'Medium', 'High', 'Extra High', 'Max'];
     let workModelButtons = [
         { model: 'Luna', index: 2 },
+        { model: 'Terra', index: 4 },
         { model: 'Sol', index: 2 },
-        { model: 'Astra', index: 0 },
-        { model: 'Astra', index: 2 },
+        { model: 'Astra', index: 3 },
         { model: '', index: 0 }
     ];
 
@@ -2031,8 +2032,8 @@
 
     const observeUiTargets = () => {
         observer.disconnect();
-        mainRoot = document.querySelector('#root [data-app-shell-workspace-row]');
-        activePage = mainRoot?.querySelector(':scope > [data-app-shell-active-page="true"]') || null;
+        mainRoot = document.querySelector('#root [data-app-shell-workspace]') || document.querySelector('#root [data-app-shell-workspace-row]');
+        activePage = mainRoot?.querySelector('[data-app-shell-active-page="true"]') || null;
 
         if (!mainRoot) {
             observer.observe(document.body, { childList: true, subtree: true });
@@ -2040,7 +2041,7 @@
         }
 
         observer.observe(mainRoot, { childList: true });
-        for (const page of mainRoot.querySelectorAll(':scope > [data-app-shell-active-page]')) {
+        for (const page of mainRoot.querySelectorAll('[data-app-shell-active-page]')) {
             observer.observe(page, { attributes: true, attributeFilter: ['data-app-shell-active-page'] });
         }
         if (activePage) observer.observe(activePage, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-app-shell-active-page'] });
