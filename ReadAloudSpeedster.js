@@ -570,7 +570,7 @@
 
     const features = {
         enterNewLine: {
-            label: "Enter Creates a New Line",
+            label: "Return Creates a New Line",
             enabled: false
         },
         disableVoiceModeBtn: {
@@ -1298,7 +1298,7 @@
         return nativeAudioPlay.apply(this, args);
     };
 
-    // fix enter new line
+    // fix return new line
     let enterNewLineEditor = null;
     const handleEnterKeyDown = event => {
         if (event.key !== 'Enter' || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey || event.isComposing || event.keyCode === 229) return;
