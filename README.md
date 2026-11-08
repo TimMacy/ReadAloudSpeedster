@@ -35,7 +35,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **6.5**: adjustments for DOM changes; new feature: Remove Inactive Chat Pages
 - **6.4.2**: adjustments for DOM changes
 - **6.4.1**: adjustments for DOM changes
-- **6.4**: are-added feature: Enter Creates a New Line
+- **6.4**: are-added feature: Return Creates a New Line
 - **6.3.2**: adjustments for DOM changes
 - **6.3.1**: adjustments for DOM changes; new feature: Selection Color
 - **6.2.4**: adjustments for DOM changes
@@ -72,7 +72,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **5.25**: bug fixes and improvements
 - **5.24.2**: adjustments for DOM changes; "Darker Background for Header and Chatbox" now also keeps the gray backgrounds
 - **5.24**: added active state indicator for "Model Selector Buttons"; new feature: "Hide Model Selector Unless Hovered"
-- **5.23**: adjustments for DOM changes; removed "Send Message with Shift+Enter instead of Enter" as it is now natively supported
+- **5.23**: adjustments for DOM changes; removed "Send Message with Shift+Return instead of Return" as it is now natively supported
 - **5.22.1**: adjustments for DOM changes
 - **5.22**: adjustments for DOM changes
 - **5.21.1**: adjustments for DOM changes
@@ -119,7 +119,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 - **4.8.5**: bug fixes and adjustments for the latest changes
 - **4.8.1**: added custom avatar support for Sora
 - **4.8.1**: adjustments for the latest changes (added option to hide 'Get Plus')
-- **4.8**: bug fixes and a new toggleable option has been added to the settings menu: Send Message with Shift+Enter instead of Enter
+- **4.8**: bug fixes and a new toggleable option has been added to the settings menu: Send Message with Shift+Return instead of Return
 - **4.7**: bug fixes and adjustments for the latest changes
 - **4.5.3.2**: bug fixes (user message square design fix)
 - **4.5.3.1**: adjustments for the latest changes
