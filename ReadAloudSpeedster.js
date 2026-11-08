@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.4.2
+// @version      6.5
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.4.2 - Read Aloud Speedster              *
+*                    Version: 6.5 - Read Aloud Speedster                *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -933,24 +933,25 @@
                     display: block;
                 }
 
-            header [data-app-shell-main-titlebar="true"] {
-                contain: layout !important;
-                overflow: visible !important;
+                header [data-app-shell-main-titlebar="true"] {
+                    contain: layout !important;
+                    overflow: visible !important;
 
-                > .ms-auto {
-                    margin-top: 8px;
-                    align-self: flex-start;
-                    flex-direction: column;
-                }
+                    > .ms-auto {
+                        margin-top: 8px;
+                        align-self: flex-start;
+                        flex-direction: column;
+                    }
 
-                > .gap-toolbar-action {
-                    flex-direction: column-reverse;
-                }
+                    > .gap-toolbar-action {
+                        flex-direction: column-reverse;
+                    }
 
-                [data-app-shell-thread-content-overlap="true"] {
-                    max-width: fit-content;
-                    align-self: flex-start;
-                    backdrop-filter: blur(1px);
+                    [data-app-shell-thread-content-overlap="true"] {
+                        max-width: fit-content;
+                        align-self: flex-start;
+                        backdrop-filter: blur(1px);
+                    }
 
                     button[aria-label="Share"] {
                         gap: 0;
@@ -964,8 +965,20 @@
                     button[aria-label="More"] {
                         width: 36px;
                     }
+
+                    button[aria-haspopup="menu"] > span:first-child {
+                        display: none;
+                    }
                 }
-            }
+
+                #root header::before {
+                    content:'';
+                    width: 100%;
+                    position: absolute;
+                    align-self: baseline;
+                    height: calc(var(--spacing) * 4);
+                    background-image: linear-gradient(to bottom, var(--color-surface), transparent);
+                }
             `
         },
         selectionColor: {
@@ -1138,7 +1151,7 @@
                         background: transparent;
                     }
 
-                    [data-radix-popper-content-wrapper]:has([data-model-picker-view]) {
+                    [data-radix-popper-content-wrapper] {
                         opacity: 0;
                     }
                 }
@@ -1191,7 +1204,12 @@
                     max-width: 20px;
                 }
             `
-        }
+        },
+        removeDataShellActive: {
+            label: "Remove Inactive Chat Pages",
+            enabled: false,
+            sheet: null,
+        },
     };
 
     function applyFeature(key) {
@@ -1838,7 +1856,10 @@
                 clearTimeout(timeout);
                 timeout = 0;
             }
-            modelHideTimeout = setTimeout(() => docElement.classList.remove('hide-model-picker'), 320);
+            modelHideTimeout = setTimeout(() => {
+                docBody.click();
+                docElement.classList.remove('hide-model-picker');
+            }, 320);
         };
 
         const simulateClick = (element) => {
@@ -2074,20 +2095,21 @@
         if (!uiRefreshFrame) uiRefreshFrame = requestAnimationFrame(refreshUi);
     };
 
+    const removeInactivePages = (root) => { for (const page of root.querySelectorAll('[data-app-shell-active-page="false"]')) page.remove(); };
     const observeUiTargets = () => {
         observer.disconnect();
         mainRoot = document.querySelector('#root [data-app-shell-workspace]') || document.querySelector('#root [data-app-shell-workspace-row]');
-        activePage = mainRoot?.querySelector('[data-app-shell-active-page="true"]') || null;
 
         if (!mainRoot) {
             observer.observe(document.body, { childList: true, subtree: true });
             return;
         }
 
+        if (features.removeDataShellActive.enabled) removeInactivePages(mainRoot);
+        activePage = mainRoot.querySelector('[data-app-shell-active-page="true"]') || null;
+
         observer.observe(mainRoot, { childList: true });
-        for (const page of mainRoot.querySelectorAll('[data-app-shell-active-page]')) {
-            observer.observe(page, { attributes: true, attributeFilter: ['data-app-shell-active-page'] });
-        }
+        for (const page of mainRoot.querySelectorAll('[data-app-shell-active-page]')) observer.observe(page, { attributes: true, attributeFilter: ['data-app-shell-active-page'] });
         if (activePage) observer.observe(activePage, { childList: true, subtree: true, attributes: true, attributeFilter: ['data-app-shell-active-page'] });
     };
 
