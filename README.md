@@ -32,6 +32,7 @@ This script integrates intuitive playback speed controls into the chatbox interf
 <br>
 
 ## 📜 Changelog
+- **6.5.1**: adjustments for DOM changes; removed "Return Creates a New Line" as it can now be found under "Settings > General > Send shortcut"
 - **6.5**: adjustments for DOM changes; new feature: Remove Inactive Chat Pages
 - **6.4.2**: adjustments for DOM changes
 - **6.4.1**: adjustments for DOM changes
