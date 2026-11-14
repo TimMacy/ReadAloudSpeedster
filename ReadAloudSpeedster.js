@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.5.1
+// @version      6.5.3
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.5.1 - Read Aloud Speedster              *
+*                    Version: 6.5.3 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -967,6 +967,9 @@
                         justify-content: center;
                         background: radial-gradient(circle, var(--color-surface) 0%, var(--color-surface) 40%, transparent 70%);
 
+                        &:hover {
+                            background: var(--color-background-secondary-ghost-hover);
+                        }
 
                         > span:first-child {
                             display: none;
@@ -1512,7 +1515,7 @@
     // create controls
     function createControlButtons() {
         const page = document.querySelector('[data-app-shell-active-page="true"]') || document;
-        const addButton = page.querySelector('form [data-composer-footer-responsive] button[aria-label="Add files and more"]');
+        const addButton = page.querySelector('form [data-composer-footer-responsive] button[aria-label="Add files and more"]') || page.querySelector('form [data-composer-footer-responsive] button[data-composer-navigation-target="add-context"]');
         if (!addButton?.parentElement) return;
         if (controlsContainer?.isConnected) {
             if (controlsContainer.previousElementSibling !== addButton.parentElement) addButton.parentElement.insertAdjacentElement('afterend', controlsContainer);
