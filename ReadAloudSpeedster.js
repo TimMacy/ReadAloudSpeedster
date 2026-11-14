@@ -3,7 +3,7 @@
 // @description  Set playback speed for Read Aloud on ChatGPT.com, navigate between messages, and open a settings menu by clicking the speed display to toggle additional UI tweaks. Features include color-coded icons under ChatGPT's responses, highlighted color for bold text, compact sidebar, square design, and more.
 // @author       Tim Macy
 // @license      AGPL-3.0-or-later
-// @version      6.5
+// @version      6.5.1
 // @namespace    TimMacy.ReadAloudSpeedster
 // @icon         https://www.google.com/s2/favicons?sz=64&domain=chatgpt.com
 // @match        https://chatgpt.com/*
@@ -21,7 +21,7 @@
 *                                                                       *
 *                    Copyright © 2026 Tim Macy                          *
 *                    GNU Affero General Public License v3.0             *
-*                    Version: 6.5 - Read Aloud Speedster                *
+*                    Version: 6.5.1 - Read Aloud Speedster              *
 *                                                                       *
 *             Visit: https://github.com/TimMacy                         *
 *                                                                       *
@@ -80,8 +80,7 @@
 
         /* sidebar pinned, project, recents */
         nav[role="navigation"][aria-label="Chat history"] {
-            section .truncate,
-            .shrink-0.text-xs.text-tertiary {
+            [data-app-action-sidebar-section-toggle] span.truncate {
                 text-transform: lowercase;
                 color: var(--primaryDefault);
             }
@@ -569,10 +568,6 @@
     document.adoptedStyleSheets.push(constructedStyleSheet);
 
     const features = {
-        enterNewLine: {
-            label: "Return Creates a New Line",
-            enabled: false
-        },
         disableVoiceModeBtn: {
             label: "Disable Voice Mode Button",
             enabled: false,
@@ -917,7 +912,7 @@
             enabled: true,
             sheet: null,
             style: `
-                [data-app-shell-active-page="true"] main [class*="MainContentFrame"] {
+                [data-app-shell-active-page="true"] main .mt-\\(--app-shell-main-content-frame-top-offset\\) {
                     margin-top: 0;
 
                     .pointer-events-none.right-0 {
@@ -966,8 +961,16 @@
                         width: 36px;
                     }
 
-                    button[aria-haspopup="menu"] > span:first-child {
-                        display: none;
+                    button[aria-haspopup="menu"] {
+                        width: 36px;
+                        height: 36px;
+                        justify-content: center;
+                        background: radial-gradient(circle, var(--color-surface) 0%, var(--color-surface) 40%, transparent 70%);
+
+
+                        > span:first-child {
+                            display: none;
+                        }
                     }
                 }
 
@@ -1298,34 +1301,6 @@
         return nativeAudioPlay.apply(this, args);
     };
 
-    // fix return new line
-    let enterNewLineEditor = null;
-    const handleEnterKeyDown = event => {
-        if (event.key !== 'Enter' || event.metaKey || event.ctrlKey || event.altKey || event.shiftKey || event.isComposing || event.keyCode === 229) return;
-
-        event.preventDefault();
-        event.stopPropagation();
-        event.stopImmediatePropagation();
-
-        event.target.dispatchEvent(new KeyboardEvent('keydown', {
-            key: 'Enter',
-            code: 'Enter',
-            keyCode: 13,
-            which: 13,
-            shiftKey: true,
-            bubbles: true,
-            cancelable: true
-        }));
-    };
-
-    const enterNewLine = () => {
-        const editor = activePage?.querySelector('[data-composer-input] [contenteditable="true"][role="textbox"]');
-        if (!editor || editor === enterNewLineEditor) return;
-        enterNewLineEditor?.removeEventListener('keydown', handleEnterKeyDown, true);
-        enterNewLineEditor = editor;
-        editor.addEventListener('keydown', handleEnterKeyDown, true);
-    };
-
     // set playback speed
     function setPlaybackSpeed() {
         playingAudio.forEach(configureAudio);
@@ -1461,13 +1436,6 @@
                         else {
                             readAloudButton?.remove();
                             readAloudButton = null;
-                        }
-                    }
-                    if (key === 'enterNewLine') {
-                        if (features[key].enabled) enterNewLine();
-                        else {
-                            enterNewLineEditor?.removeEventListener('keydown', handleEnterKeyDown, true);
-                            enterNewLineEditor = null;
                         }
                     }
                 }
@@ -2088,7 +2056,6 @@
         }
         if (missing.readAloud) addReadAloudBtn();
         if (missing.models) addModelButtons();
-        if (features.enterNewLine.enabled) enterNewLine();
     };
 
     const scheduleUiRefresh = () => {
@@ -2130,7 +2097,6 @@
                 if (features.modelSelector.enabled) requestIdleCallback(addModelButtons, { timeout: 2000 });
                 if (features.jumpToChatActive.enabled) requestIdleCallback(() => (navCleanup = navBtns()), { timeout: 2000 });
                 if (features.readAloudBtn.enabled) requestIdleCallback(addReadAloudBtn, { timeout: 2000 });
-                if (features.enterNewLine.enabled) requestIdleCallback(enterNewLine, { timeout: 2000 });
             });
         }
     }
